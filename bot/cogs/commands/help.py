@@ -13,7 +13,7 @@
 # ╚══════════════════════════════════════════════════════════════════╝
 
 import discord
-from utils.emoji import ZARROW, BOOST, CAST, GAMES, LEVEL_UP, LOADING, LOCK, MESSAGE, MINECRAFT, MUSIC, NEW, PIN, SEED, STAR, SWORD, SYSTEM, THUNDER, TICKET, WIFI, ZAI, ZARROW, ZBAN, ZBOT, ZCIRCLE, ZCIRCLE_ALT1, ZCLOUD, ZCOUNTING, ZMODULE, ZPEOPLE, ZROCKET, ZSAFE, ZTADA, ZUNMUTE, ZWRENCH
+from utils.emoji import ARROWRED, BOOST, CAST, GAMES, LEVEL_UP, LOADINGRED, LOCK, MESSAGE, MINECRAFT, MUSIC, NEW, PIN, SEED, STAR, SWORD, SYSTEM, THUNDER, TICKET, WIFI, ZAI, ZARROW, ZBAN, ZBOT, ZCIRCLE, ZCIRCLE_ALT1, ZCLOUD, ZCOUNTING, ZMODULE, ZPEOPLE, ZROCKET, ZSAFE, ZTADA, ZUNMUTE, ZWRENCH
 from discord.ext import commands
 from discord import app_commands, Interaction
 from difflib import get_close_matches
@@ -96,7 +96,7 @@ class HelpCommand(commands.HelpCommand):
       return
 
     # Show loading message
-    loading_embed = CV2(f"{LOADING} Loading help Menu...")
+    loading_embed = CV2(f"{LOADINGRED} Loading help Menu...")
     loading_msg = await ctx.reply(view=loading_embed)
 
     # Wait 2 seconds
@@ -112,7 +112,7 @@ class HelpCommand(commands.HelpCommand):
 
     embed = CV2Embed(
         description=(
-         f"**{ZARROW} __Start {BotName} Today__**\n"        
+         f"**{ARROWRED} __Start {BotName} Today__**\n"        
          f"**{ZARROW} Type {prefix}antinuke enable**\n"
          f"**{ZARROW} Server Prefix:** `{prefix}`\n"
          f"**{ZARROW} Total Commands:** `{len(set(self.context.bot.walk_commands()))}`\n"),         

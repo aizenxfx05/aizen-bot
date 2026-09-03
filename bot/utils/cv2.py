@@ -33,11 +33,12 @@ def build_container(*items, accent_color=None):
 
 class CV2(LayoutView):
     """Quick helper: CV2("Title", "section1", "section2", ...)"""
-    def __init__(self, title, *sections):
+    def __init__(self, title, *sections, accent_color=0xA855F7):
         super().__init__(timeout=None)
         container = build_container(
             TextDisplay(f"**{title}**"),
-            *[item for s in sections for item in (Separator(visible=True), TextDisplay(str(s)))]
+            *[item for s in sections for item in (Separator(visible=True), TextDisplay(str(s)))],
+            accent_color=accent_color
         )
         self.add_item(container)
 
@@ -66,8 +67,8 @@ class CV2Embed(CV2):
         self._description = description or ""
         self._fields = []
         self._footer = None
-        super().__init__(title, self._description)
         self.color = kwargs.get("color", 0xA855F7)
+        super().__init__(title, self._description, accent_color=self.color)
     
     def _rebuild(self):
         self.clear_items()
@@ -80,7 +81,8 @@ class CV2Embed(CV2):
             
         container = build_container(
             TextDisplay(f"**{self._title}**"),
-            *[item for s in sections for item in (Separator(visible=True), TextDisplay(str(s)))]
+            *[item for s in sections for item in (Separator(visible=True), TextDisplay(str(s)))],
+            accent_color=self.color
         )
         self.add_item(container)
 

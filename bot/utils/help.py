@@ -108,7 +108,7 @@ class View(LayoutView):
             items.append(TextDisplay(f"*{page['footer']}*"))
 
         # Build the single container with everything inside
-        self.add_item(build_container(*items))
+        self.add_item(build_container(*items, accent_color=0xA855F7))
 
     async def _check(self, interaction):
         if interaction.user != self.ctx.author:

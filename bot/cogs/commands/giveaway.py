@@ -151,10 +151,20 @@ class Giveaway(commands.Cog):
 
     @tasks.loop(seconds=5)
     async def GiveawayEnd(self):
-        await self.cursor.execute("SELECT ends_at, guild_id, message_id, host_id, winners, prize, channel_id FROM Giveaway WHERE ends_at <= ?", (datetime.datetime.now().timestamp(),))
-        ends_raw = await self.cursor.fetchall()
-        for giveaway in ends_raw:
-            await self.end_giveaway(giveaway)
+        try:
+            if not hasattr(self, 'connection') or self.connection is None:
+                self.connection = await aiosqlite.connect(db_path)
+                self.cursor = await self.connection.cursor()
+            await self.cursor.execute("SELECT ends_at, guild_id, message_id, host_id, winners, prize, channel_id FROM Giveaway WHERE ends_at <= ?", (datetime.datetime.now().timestamp(),))
+            ends_raw = await self.cursor.fetchall()
+            for giveaway in ends_raw:
+                await self.end_giveaway(giveaway)
+        except Exception:
+            try:
+                self.connection = await aiosqlite.connect(db_path)
+                self.cursor = await self.connection.cursor()
+            except Exception:
+                pass
 
 
 

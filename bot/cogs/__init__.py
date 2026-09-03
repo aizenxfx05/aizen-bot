@@ -99,6 +99,10 @@ from .events.ai import AIResponses
 from .events.stickymessage import StickyMessageListener
 from .events.vc_ai_chat import VCAIChat           # Aizen XFX — AI in VC text channels
 from .events.channel_restore import ChannelRestore  # Aizen XFX — Channel Restore System
+from .commands.backup import Backup                 # Aizen XFX — 1-Click Server Backup
+from .events.vc_tts import VCAITTS                  # Aizen XFX — AI Voice TTS in VC
+from .events.ai_automod import AIAutoMod            # Aizen XFX — Neuro-AI Auto-Moderation
+from .commands.ticket_transcripts import TicketTranscripts # Aizen XFX — HTML Ticket Transcripts
 
 ########-------HELP-------########
 from .zyrox.antinuke import _antinuke
@@ -372,6 +376,10 @@ async def setup(bot: zyrox):
   await bot.add_cog(Moderation(bot))
   await bot.add_cog(TopCheck(bot))
   await bot.add_cog(Snipe(bot))
+  await bot.add_cog(Backup(bot))
+  await bot.add_cog(VCAITTS(bot))
+  await bot.add_cog(AIAutoMod(bot))
+  await bot.add_cog(TicketTranscripts(bot))
   
 
 

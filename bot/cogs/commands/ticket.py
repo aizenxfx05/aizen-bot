@@ -275,8 +275,11 @@ class TicketCog(commands.Cog, name="Ticket System"):
 
     async def load_persistent_views(self):
         await self.bot.wait_until_ready()
-        for config in self.db.fetchall("SELECT guild_id, panel_message_id FROM guild_configs WHERE panel_message_id IS NOT NULL"):
-            if view := self.create_panel_view(config['guild_id']): self.bot.add_view(view, message_id=config['panel_message_id'])
+        try:
+            for config in self.db.fetchall("SELECT guild_id, panel_message_id FROM guild_configs WHERE panel_message_id IS NOT NULL"):
+                if view := self.create_panel_view(config['guild_id']): self.bot.add_view(view, message_id=config['panel_message_id'])
+        except Exception:
+            pass
 
     def create_panel_view(self, guild_id):
         config = self.db.fetchone("SELECT panel_type FROM guild_configs WHERE guild_id=?", (guild_id,))

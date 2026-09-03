@@ -25,7 +25,7 @@ from slowapi.middleware import SlowAPIMiddleware
 from utils.config import *
 
 
-from api.routes import bot, guilds, admin
+from api.routes import bot, guilds, admin, server_management
 from api.dependencies import verify_api_key, limiter
 from api.db_manager import db_manager
 
@@ -125,6 +125,7 @@ def create_app() -> FastAPI:
     app.include_router(bot.router, prefix="/api/v1/bot", tags=["Bot"])
     app.include_router(guilds.router, prefix="/api/v1/guilds", tags=["Guilds"])
     app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin"])
+    app.include_router(server_management.router, prefix="/api/v1", tags=["Server Management"])
 
     @app.get("/", summary="API Root", description="Returns basic API information and online status.")
     async def root():

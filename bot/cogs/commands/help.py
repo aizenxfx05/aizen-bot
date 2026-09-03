@@ -153,7 +153,12 @@ class HelpCommand(commands.HelpCommand):
               f" {MINECRAFT} `»` Minecraft {NEW}\n"
               f" {MESSAGE} `»` Joindm {NEW}\n"
               f" {ZCIRCLE} `»` Birthday {NEW}\n"
-              f" {ZCIRCLE_ALT1} `»` Customrole\n"           
+              f" {ZCIRCLE_ALT1} `»` Customrole\n"
+              f" 🎙️ `»` VC AI & TTS {NEW}\n"
+              f" 🔄 `»` Channel Restore {NEW}\n"
+              f" 💾 `»` Server Backup {NEW}\n"
+              f" 🧠 `»` Neuro-AI Automod {NEW}\n"
+              f" 📜 `»` Transcripts {NEW}\n"           
     )
 
     embed.set_footer(

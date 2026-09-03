@@ -354,7 +354,7 @@ start_tunnel()
 # --- Main Bot Execution ---
 async def main():
     async with client:
-        os.system("clear")
+        os.system("cls" if os.name == "nt" else "clear")
         await client.load_extension("jishaku")
         
         max_retries = 5

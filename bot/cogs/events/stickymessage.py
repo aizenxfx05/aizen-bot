@@ -133,7 +133,7 @@ class StickyMessageListener(commands.Cog):
             elif msg_type == "embed" and embed_data:
                 try:
                     data = json.loads(embed_data)
-                    embed = discord.Embed(color=discord.Color.red())
+                    embed = discord.Embed(color=0xA855F7)
 
                     if data.get("title"):
                         embed.title = data["title"]
@@ -149,7 +149,7 @@ class StickyMessageListener(commands.Cog):
                                     int(color_str.lstrip("#"), 16)
                                 )
                         except:
-                            embed.color = discord.Color.red()
+                            embed.color = 0xA855F7
 
                     if data.get("footer"):
                         embed.set_footer(text=data["footer"])

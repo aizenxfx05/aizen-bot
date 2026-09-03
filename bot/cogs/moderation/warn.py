@@ -51,7 +51,7 @@ from utils.Tools import *
 class Warn(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.color = discord.Color.from_rgb(255, 0, 0)
+        self.color = 0xA855F7
         self.db_path = "db/warn.db"
 
         

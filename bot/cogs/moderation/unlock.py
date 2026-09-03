@@ -68,7 +68,7 @@ from discord import ui
 class Unlock(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.color = discord.Color.from_rgb(255, 0, 0)
+        self.color = 0xA855F7
 
     @commands.hybrid_command(
         name="unlock",

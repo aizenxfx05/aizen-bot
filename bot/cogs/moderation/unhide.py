@@ -19,7 +19,7 @@ from discord.ext import commands
 class Unhide(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.color = discord.Color.from_rgb(255,0, 0) # Green color for success
+        self.color = 0xA855F7 # Royal Purple for embeds
 
     @commands.hybrid_command(
         name="unhide",

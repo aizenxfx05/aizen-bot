@@ -219,7 +219,7 @@ class Blackjack(commands.Cog):
                     result = ("You win!", 'won')
 
             color = (
-                discord.Color.red() if result[1] == 'lost'
+                0xA855F7 if result[1] == 'lost'
                 else discord.Color.green() if result[1] == 'won'
                 else discord.Color.blue()
             )

@@ -87,7 +87,7 @@ class Slots(commands.Cog):
 
             embed = discord.Embed(
                 title=f'{ctx.author.display_name}, You {result}!',
-                color=discord.Color.green() if result == "won" else discord.Color.red()
+                color=discord.Color.green() if result == "won" else 0xA855F7
             )
 
             embed.set_image(url=f"attachment://{unique_filename}")

@@ -144,5 +144,5 @@ class FilterCog(commands.Cog):
         filters = wavelink.Filters()
         await player.set_filters(filters)
         self.active_filters.pop(ctx.guild.id, None)
-        await ctx.send(embed=discord.Embed(description="Filter disabled.", color=discord.Color.red()))
+        await ctx.send(embed=discord.Embed(description="Filter disabled.", color=0xA855F7))
 

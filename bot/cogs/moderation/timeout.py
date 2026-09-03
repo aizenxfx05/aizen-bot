@@ -114,7 +114,7 @@ from utils.Tools import *
 class Mute(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.color = discord.Color.from_rgb(255, 0, 0)
+        self.color = 0xA855F7
 
     def get_user_avatar(self, user):
         return user.avatar.url if user.avatar else user.default_avatar.url

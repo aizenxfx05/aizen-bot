@@ -20,8 +20,8 @@ from utils.Tools import * # Assuming these decorators exist as provided
 class Kick(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        # Color is set to Red (255, 0, 0) as requested
-        self.color = discord.Color.from_rgb(255, 0, 0)
+        # Color is set to Royal Purple (0xA855F7)
+        self.color = 0xA855F7
 
     @commands.hybrid_command(
         name="kick",

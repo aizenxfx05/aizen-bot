@@ -179,7 +179,7 @@ class Minecraft(commands.Cog):
         if not status: status = {'online': False}
         file = await self.create_status_image(status, ip, port, server_type, favicon)
         is_online = status.get("online", False)
-        embed = discord.Embed(title=f"{EMOJI_STATUS_ONLINE if is_online else EMOJI_STATUS_OFFLINE} Minecraft Server Status", color=discord.Color.dark_green() if is_online else discord.Color.red())
+        embed = discord.Embed(title=f"{EMOJI_STATUS_ONLINE if is_online else EMOJI_STATUS_OFFLINE} Minecraft Server Status", color=discord.Color.dark_green() if is_online else 0xA855F7)
         
         default_port = 25565 if server_type != 'bedrock' else 19132
         full_ip = f"{ip}:{port}" if port and port != default_port else ip

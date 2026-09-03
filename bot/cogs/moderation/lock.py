@@ -19,7 +19,7 @@ from discord.ext import commands
 class Lock(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.color = discord.Color.red()
+        self.color = 0xA855F7
 
     @commands.hybrid_command(
         name="lock",

@@ -13,7 +13,7 @@
 # ╚══════════════════════════════════════════════════════════════════╝
 
 from discord.ext import commands, tasks
-import datetime, pytz, time as t
+import datetime, time as t
 from discord.ui import Button, Select, View
 import aiosqlite, random, typing
 import sqlite3

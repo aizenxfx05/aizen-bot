@@ -1,0 +1,26 @@
+FROM python:3.11-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    DEBIAN_FRONTEND=noninteractive
+
+WORKDIR /app
+
+# Install system dependencies (ffmpeg for voice/music/TTS audio)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    git \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY bot/requirements.txt ./bot/
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r bot/requirements.txt
+
+COPY . .
+
+# Expose FastAPI backend port
+EXPOSE 8000
+
+WORKDIR /app/bot
+CMD ["python", "CodeX.py"]

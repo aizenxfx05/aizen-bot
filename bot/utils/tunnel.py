@@ -307,6 +307,18 @@ def _run_tunnel(binary: str, token: str, port: int, public_url: str) -> None:
         time.sleep(5)
 
 
+def _run_quick_tunnel(port: int):
+    try:
+        from pycloudflared import try_cloudflare
+        urls = try_cloudflare(port=port, verbose=False)
+        public_url = urls.tunnel
+        print(f"\n{_GREEN}◈ Tunnel: Free Cloudflare Quick Tunnel is LIVE!{_RESET}")
+        print(f"{_GREEN}  ↳ Live URL:           {public_url}{_RESET}")
+        print(f"{_CYAN}  ↳ NEXT_PUBLIC_API_URL = {public_url}/api/v1{_RESET}\n")
+    except Exception as exc:
+        print(f"{_YELLOW}◈ Tunnel: Quick tunnel fallback unavailable ({exc}){_RESET}")
+
+
 def start_tunnel() -> None:
     """
     Start the Cloudflare Tunnel in a background daemon thread.
@@ -317,10 +329,8 @@ def start_tunnel() -> None:
         return
 
     if not CF_TUNNEL_TOKEN:
-        print(
-            f"{_YELLOW}◈ Tunnel: CF_TUNNEL_TOKEN is not set — tunnel skipped.\n"
-            f"  Get your token from https://one.dash.cloudflare.com → Networks → Tunnels{_RESET}"
-        )
+        t = threading.Thread(target=_run_quick_tunnel, args=(API_PORT,), daemon=True)
+        t.start()
         return
 
     binary = _get_binary()

@@ -54,7 +54,7 @@ class Snipe(commands.Cog):
             # Create the simple embed
             embed = discord.Embed(
                 description=content,
-                color=0xFF0000,
+                color=0xA855F7,
                 timestamp=deleted_at
             )
             embed.set_author(name=f"Sniped message from {author.name}", icon_url=author.display_avatar.url)
@@ -65,7 +65,7 @@ class Snipe(commands.Cog):
             # Send an error message if no message is stored for this channel
             embed = discord.Embed(
                 description=f"{ERROR} | There are no deleted messages to snipe in this channel.",
-                color=0xFF0000
+                color=0xA855F7
             )
             await ctx.send(embed=embed)
 

@@ -74,7 +74,7 @@ class greet(commands.Cog):
                 elif welcome_type == "embed" and embed_data:
                     embed_info = json.loads(embed_data)
                     color_value = embed_info.get("color", None)
-                    embed_color = 0x2f3136
+                    embed_color = 0xA855F7
                     if color_value and isinstance(color_value, str) and color_value.startswith("#"):
                         embed_color = discord.Color(int(color_value.lstrip("#"), 16))
                     elif isinstance(color_value, int):

@@ -174,7 +174,7 @@ class CV2EmbedAdapter(CV2):
         self._fields = []
         self._footer = None
         super().__init__(t, self._description)
-        self.color = kwargs.get("color", 0xFF0000)
+        self.color = kwargs.get("color", 0xA855F7)
 
     def _rebuild(self):
         self.clear_items()
@@ -1440,7 +1440,7 @@ class Logging(commands.Cog):
             if channel_id and channel_id in ignore_channels:
                 return
 
-            embed.color = 0xFF0000
+            embed.color = 0xA855F7
 
             delete_after = (
                 auto_delete_duration
@@ -1479,7 +1479,7 @@ class Logging(commands.Cog):
             )
 
     def _create_modern_embed(
-        self, title: str, description: str = None, color: int = 0xFF0000
+        self, title: str, description: str = None, color: int = 0xA855F7
     ):
         """Create a modern CV2 container representation that supports Embed methods."""
         embed = CV2EmbedAdapter(title, description)

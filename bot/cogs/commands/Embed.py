@@ -30,7 +30,7 @@ class EmbedBuilder(ui.LayoutView):
         self.embed_data = {
             "title": "Edit your Embed!",
             "description": "Select Options from the menu below to customize.",
-            "color": 0xFF0000,
+            "color": 0xA855F7,
             "thumbnail": None,
             "image": None,
             "footer_text": None,

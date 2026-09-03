@@ -99,7 +99,7 @@ from utils.Tools import *
        # except discord.HTTPException:
          #   dm_status = "No"
 
-       # embed = discord.Embed(description=f"** Target User:** [{self.user}](https://discord.com/users/{self.user.id})\n **User Mention:** {self.user.mention}\n** DM Sent:** {dm_status}\n**Reason:** {reason}", color=0xFF0000)
+       # embed = discord.Embed(description=f"** Target User:** [{self.user}](https://discord.com/users/{self.user.id})\n **User Mention:** {self.user.mention}\n** DM Sent:** {dm_status}\n**Reason:** {reason}", color=0xA855F7)
        # embed.set_author(name=f"Successfully Unmuted {self.user.name}", icon_url=self.user.avatar.url if self.user.avatar else self.user.default_avatar.url)
      #   embed.add_field(name=" Moderator:", value=interaction.user.mention, inline=False)
        # embed.set_footer(text=f"Requested by {self.author}", icon_url=self.author.avatar.url if self.author.avatar else self.author.default_avatar.url)

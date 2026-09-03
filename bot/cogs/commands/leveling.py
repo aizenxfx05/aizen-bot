@@ -84,7 +84,7 @@ def hex_to_int (hex_color :str )->int :
             hex_color ='#'+hex_color 
         return int (hex_color .lstrip ('#'),16 )
     except (ValueError ,TypeError ):
-        return 0xFF0000 
+        return 0xA855F7 
 
 class PlaceholdersView (discord .ui .View ):
     def __init__ (self ):
@@ -101,7 +101,7 @@ class PlaceholdersView (discord .ui .View ):
         "`{server}` - Server name\n\n"
         "**Example:**\n"
         "`Congratulations {user}! You've reached level {level} in {server}!`",
-        color =0xFF0000 ,
+        color =0xA855F7 ,
         timestamp =datetime .now (timezone .utc )
         )
         await interaction .response .send_message (embed =embed ,ephemeral =True )
@@ -271,7 +271,7 @@ class LevelConfigModal (discord .ui .Modal ,title ="Leveling System Configuratio
             f"**Embed Color:** {color_value}\n"
             f"**Level Up Image:** {'Set' if image_value else 'None'}\n"
             f"**Thumbnail Enabled:** {thumbnail_bool}",
-            color =0xFF0000 ,
+            color =0xA855F7 ,
             timestamp =datetime .now (timezone .utc )
             )
 
@@ -679,7 +679,7 @@ class Leveling (commands .Cog ):
             embed =discord .Embed (
             title ="🎉 Level Up!",
             description =level_message ,
-            color =0xFF0000 ,
+            color =0xA855F7 ,
             timestamp =datetime .now (timezone .utc )
             )
 
@@ -1616,7 +1616,7 @@ class Leveling (commands .Cog ):
             description ="Let's configure your leveling system! I'll ask you a few questions.\n"
             "Type `cancel` at any time to stop, or `skip` to keep current value.\n\n"
             "**Current Settings:**",
-            color =0xFF0000 ,
+            color =0xA855F7 ,
             timestamp =datetime .now (timezone .utc )
             )
 
@@ -2059,7 +2059,7 @@ class Leveling (commands .Cog ):
                 await ctx .send ("No level rewards configured.")
                 return 
 
-            embed =discord .Embed (title ="Level Rewards",color =0xFF0000 ,timestamp =datetime .now (timezone .utc ))
+            embed =discord .Embed (title ="Level Rewards",color =0xA855F7 ,timestamp =datetime .now (timezone .utc ))
             for level ,role_id ,remove_previous in rewards :
                 role =ctx .guild .get_role (role_id )
                 role_name =role .mention if role else "Role not found"
@@ -2168,7 +2168,7 @@ class Leveling (commands .Cog ):
                 await ctx .send ("No XP multipliers configured.")
                 return 
 
-            embed =discord .Embed (title ="XP Multipliers",color =0xFF0000 ,timestamp =datetime .now (timezone .utc ))
+            embed =discord .Embed (title ="XP Multipliers",color =0xA855F7 ,timestamp =datetime .now (timezone .utc ))
             for target_id ,target_type ,multiplier in multipliers :
                 if target_type =="role":
                     role =ctx .guild .get_role (target_id )
@@ -2277,7 +2277,7 @@ class Leveling (commands .Cog ):
                 await ctx .send ("The leveling blacklist is empty.")
                 return 
 
-            embed =discord .Embed (title ="Leveling Blacklist",color =0xFF0000 ,timestamp =datetime .now (timezone .utc ))
+            embed =discord .Embed (title ="Leveling Blacklist",color =0xA855F7 ,timestamp =datetime .now (timezone .utc ))
             for target_id ,target_type in blacklisted :
                 if target_type =="role":
                     role =ctx .guild .get_role (target_id )
@@ -2359,7 +2359,7 @@ class Leveling (commands .Cog ):
                 await ctx .send ("No level roles set for this server.")
                 return 
 
-            embed =discord .Embed (title ="Level Roles",color =0xFF0000 ,timestamp =datetime .now (timezone .utc ))
+            embed =discord .Embed (title ="Level Roles",color =0xA855F7 ,timestamp =datetime .now (timezone .utc ))
             for level ,role_id in roles :
                 role =ctx .guild .get_role (role_id )
                 role_name =role .mention if role else "Role not found"
@@ -2437,7 +2437,7 @@ class Leveling (commands .Cog ):
                 embed =discord .Embed (
                 title ="📊 Server Level Leaderboard",
                 description ="No users found in the leaderboard yet!",
-                color =0xFF0000 
+                color =0xA855F7 
                 )
                 if isinstance (ctx ,discord .Interaction ):
                     await ctx .followup .send (embed =embed )
@@ -2987,7 +2987,7 @@ class Leveling (commands .Cog ):
             "• Level-up notifications will stop\n"
             "• Existing user data is preserved\n"
             "• Use `/level enable` to re-enable anytime",
-            color =0xFF0000 ,
+            color =0xA855F7 ,
             timestamp =datetime .now (timezone .utc )
             )
             await ctx .send (embed =embed )
@@ -3027,7 +3027,7 @@ class Leveling (commands .Cog ):
 
             embed =discord .Embed (
             title =f"📊 Level Statistics for {member.display_name}",
-            color =0xFF0000 ,
+            color =0xA855F7 ,
             timestamp =datetime .now (timezone .utc )
             )
 

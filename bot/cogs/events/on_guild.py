@@ -51,7 +51,7 @@ class Guild(Cog):
                 return
 
             channels = len(set(self.client.get_all_channels()))
-            embed = discord.Embed(title=f"{guild.name}'s Information", color=0xFF0000)
+            embed = discord.Embed(title=f"{guild.name}'s Information", color=0xA855F7)
 
             embed.set_author(name="Guild Joined")
             embed.set_footer(text=f"Added in {guild.name}")
@@ -101,7 +101,7 @@ Threads : {len(guild.threads)}
 
             embed = discord.Embed(
                 description=f"{ARROWRED} Prefix For This Server is `>`\n{ARROWRED} Get Started with `>help`\n{ARROWRED} For detailed guides, FAQ & information, visit our **[Support Server](https://discord.gg/M8qJ9W7vBb)**",
-                color=0xFF0000,
+                color=0xA855F7,
             )
             embed.set_author(
                 name="Thanks for adding me!", icon_url=guild.me.display_avatar.url
@@ -166,7 +166,7 @@ Threads : {len(guild.threads)}
                 return
 
             channels = len(set(self.client.get_all_channels()))
-            embed = discord.Embed(title=f"{guild.name}'s Information", color=0xFF0000)
+            embed = discord.Embed(title=f"{guild.name}'s Information", color=0xA855F7)
 
             embed.set_author(name="Guild Removed")
             embed.set_footer(text=f"{guild.name}")

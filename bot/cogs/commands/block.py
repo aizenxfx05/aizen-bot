@@ -120,7 +120,7 @@ class Block(commands.Cog):
         title=f"List of Blacklisted Users - {len(blacklist)}",
         description="",
         per_page=10,
-        color=0xFF0000),
+        color=0xA855F7),
         ctx=ctx
       )
       await paginator.paginate()
@@ -183,7 +183,7 @@ class Block(commands.Cog):
         title=f"List of Blacklisted Guilds - {len(blacklist)}",
         description="",
         per_page=10,
-        color=0xFF0000),
+        color=0xA855F7),
         ctx=ctx
       )
       await paginator.paginate()

@@ -42,7 +42,7 @@ class Global(commands.Cog):
         confirm_embed = discord.Embed(
             title=f"Are you sure to Ban {user.display_name} Globally?",
             description=f"The user is in **{mutual_count}** mutual guilds with the bot.\n\nGlobal Ban Requestor: {ctx.author.mention}",
-            color=0xFF0000
+            color=0xA855F7
         )
         yes_button = Button(label="Yes", style=discord.ButtonStyle.green)
         no_button = Button(label="No", style=discord.ButtonStyle.red)
@@ -66,7 +66,7 @@ class Global(commands.Cog):
             embed = discord.Embed(
                 title="Success",
                 description=f"Banned the user in {len(success)} of {mutual_count} mutual guilds.",
-                color=0xFF0000
+                color=0xA855F7
             )
             embed.add_field(name="Success Count", value=f"{len(success)} Guilds")
             embed.add_field(name="Failure Count", value=f"{len(failure)} Guilds")
@@ -81,7 +81,7 @@ class Global(commands.Cog):
                     return await interaction.response.send_message("This interaction is not for you.", ephemeral=True)
                 entries = [f"{i+1}. {name}" for i, name in enumerate(success)]
                 paginator = Paginator(
-                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Successful Bans [{len(success)}]", color=0xFF0000, per_page=10),
+                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Successful Bans [{len(success)}]", color=0xA855F7, per_page=10),
                     ctx=ctx
                 )
                 await paginator.paginate()
@@ -91,7 +91,7 @@ class Global(commands.Cog):
                     return await interaction.response.send_message("This interaction is not for you.", ephemeral=True)
                 entries = [f"{i+1}. {name}" for i, name in enumerate(failure)]
                 paginator = Paginator(
-                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Unsuccessful Bans [{len(failure)}]", color=0xFF0000, per_page=10),
+                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Unsuccessful Bans [{len(failure)}]", color=0xA855F7, per_page=10),
                     ctx=ctx
                 )
                 await paginator.paginate()
@@ -118,7 +118,7 @@ class Global(commands.Cog):
         confirm_embed = discord.Embed(
             title=f"Are you sure to Kick {user.display_name} Globally?",
             description=f"The user is in **{mutual_count}** mutual guilds with the bot.\n\nGlobal Kick Requestor: {ctx.author.mention}",
-            color=0xFF0000
+            color=0xA855F7
         )
         yes_button = Button(label="Yes", style=discord.ButtonStyle.green)
         no_button = Button(label="No", style=discord.ButtonStyle.red)
@@ -142,7 +142,7 @@ class Global(commands.Cog):
             embed = discord.Embed(
                 title="Success",
                 description=f"Kicked the user in {len(success)} of {mutual_count} mutual guilds.",
-                color=0xFF0000
+                color=0xA855F7
             )
             embed.add_field(name="Success Count", value=f"{len(success)} Guilds")
             embed.add_field(name="Failure Count", value=f"{len(failure)} Guilds")
@@ -157,7 +157,7 @@ class Global(commands.Cog):
                     return await interaction.response.send_message("This interaction is not for you.", ephemeral=True)
                 entries = [f"{i+1}. {name}" for i, name in enumerate(success)]
                 paginator = Paginator(
-                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Successful Kicks [{len(success)}]", color=0xFF0000, per_page=10),
+                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Successful Kicks [{len(success)}]", color=0xA855F7, per_page=10),
                     ctx=ctx
                 )
                 await paginator.paginate()
@@ -167,7 +167,7 @@ class Global(commands.Cog):
                     return await interaction.response.send_message("This interaction is not for you.", ephemeral=True)
                 entries = [f"{i+1}. {name}" for i, name in enumerate(failure)]
                 paginator = Paginator(
-                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Unsuccessful Kicks [{len(failure)}]", color=0xFF0000, per_page=10),
+                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Unsuccessful Kicks [{len(failure)}]", color=0xA855F7, per_page=10),
                     ctx=ctx
                 )
                 await paginator.paginate()
@@ -194,7 +194,7 @@ class Global(commands.Cog):
         confirm_embed = discord.Embed(
             title=f"Are you sure  to Timeout {user.display_name} Globally for 28 days?",
             description=f"The user is in **{mutual_count}** mutual guilds with the bot.\n\nGlobal Timeout Requestor: {ctx.author.mention}",
-            color=0xFF0000
+            color=0xA855F7
         )
         yes_button = Button(label="Yes", style=discord.ButtonStyle.green)
         no_button = Button(label="No", style=discord.ButtonStyle.red)
@@ -222,7 +222,7 @@ class Global(commands.Cog):
             embed = discord.Embed(
                 title="Success",
                 description=f"Timed out the user in {len(success)} of {mutual_count} mutual guilds.",
-                color=0xFF0000
+                color=0xA855F7
             )
             embed.add_field(name="Success Count", value=f"{len(success)} Guilds")
             embed.add_field(name="Failure Count", value=f"{len(failure)} Guilds")
@@ -237,7 +237,7 @@ class Global(commands.Cog):
                     return await interaction.response.send_message("This interaction is not for you.", ephemeral=True)
                 entries = [f"{i+1}. {name}" for i, name in enumerate(success)]
                 paginator = Paginator(
-                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Successful Timeouts [{len(success)}]", color=0xFF0000, per_page=10),
+                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Successful Timeouts [{len(success)}]", color=0xA855F7, per_page=10),
                     ctx=ctx
                 )
                 await paginator.paginate()
@@ -247,7 +247,7 @@ class Global(commands.Cog):
                     return await interaction.response.send_message("This interaction is not for you.", ephemeral=True)
                 entries = [f"{i+1}. {name}" for i, name in enumerate(failure)]
                 paginator = Paginator(
-                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Unsuccessful Timeouts [{len(failure)}]", color=0xFF0000, per_page=10),
+                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Unsuccessful Timeouts [{len(failure)}]", color=0xA855F7, per_page=10),
                     ctx=ctx
                 )
                 await paginator.paginate()
@@ -278,7 +278,7 @@ class Global(commands.Cog):
         confirm_embed = discord.Embed(
             title=f"Are you sure to Change {user.display_name}'s Nickname Globally?",
             description=f"The user is in **{mutual_count}** mutual guilds with the bot.\n\nGlobal Nick Requestor: {ctx.author.mention}",
-            color=0xFF0000
+            color=0xA855F7
         )
         yes_button = Button(label="Yes", style=discord.ButtonStyle.green)
         no_button = Button(label="No", style=discord.ButtonStyle.red)
@@ -304,7 +304,7 @@ class Global(commands.Cog):
             embed = discord.Embed(
                 title="Success",
                 description=f"Set the nickname for {user.name} in {len(success)} of {mutual_count} mutual guilds.",
-                color=0xFF0000
+                color=0xA855F7
             )
             embed.add_field(name="Success Count", value=f"{len(success)} Guilds")
             embed.add_field(name="Failure Count", value=f"{len(failure)} Guilds")
@@ -319,7 +319,7 @@ class Global(commands.Cog):
                     return await interaction.response.send_message("This interaction is not for you.", ephemeral=True)
                 entries = [f"{i+1}. {name}" for i, name in enumerate(success)]
                 paginator = Paginator(
-                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Successful Nickname Change [{len(success)}]", color=0xFF0000, per_page=10),
+                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Successful Nickname Change [{len(success)}]", color=0xA855F7, per_page=10),
                     ctx=ctx
                 )
                 await paginator.paginate()
@@ -329,7 +329,7 @@ class Global(commands.Cog):
                     return await interaction.response.send_message("This interaction is not for you.", ephemeral=True)
                 entries = [f"{i+1}. {name}" for i, name in enumerate(failure)]
                 paginator = Paginator(
-                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Unsuccessful Nickname Change [{len(failure)}]", color=0xFF0000, per_page=10),
+                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Unsuccessful Nickname Change [{len(failure)}]", color=0xA855F7, per_page=10),
                     ctx=ctx
                 )
                 await paginator.paginate()
@@ -357,7 +357,7 @@ class Global(commands.Cog):
         confirm_embed = discord.Embed(
             title=f"Are you sure to Clear {user.display_name}'s Nickname Globally?",
             description=f"The user is in **{mutual_count}** mutual guilds with the bot.\n\nGlobal Clearnick Requestor: {ctx.author.mention}",
-            color=0xFF0000
+            color=0xA855F7
         )
         yes_button = Button(label="Yes", style=discord.ButtonStyle.green)
         no_button = Button(label="No", style=discord.ButtonStyle.red)
@@ -383,7 +383,7 @@ class Global(commands.Cog):
             embed = discord.Embed(
                 title="Success",
                 description=f"Cleared the nickname for {user.name} in {len(success)} of {mutual_count} mutual guilds.",
-                color=0xFF0000
+                color=0xA855F7
             )
             embed.add_field(name="Success Count", value=f"{len(success)} Guilds")
             embed.add_field(name="Failure Count", value=f"{len(failure)} Guilds")
@@ -398,7 +398,7 @@ class Global(commands.Cog):
                     return await interaction.response.send_message("This interaction is not for you.", ephemeral=True)
                 entries = [f"{i+1}. {name}" for i, name in enumerate(success)]
                 paginator = Paginator(
-                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Successful Nickname Clear [{len(success)}]", color=0xFF0000, per_page=10),
+                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Successful Nickname Clear [{len(success)}]", color=0xA855F7, per_page=10),
                     ctx=ctx
                 )
                 await paginator.paginate()
@@ -408,7 +408,7 @@ class Global(commands.Cog):
                     return await interaction.response.send_message("This interaction is not for you.", ephemeral=True)
                 entries = [f"{i+1}. {name}" for i, name in enumerate(failure)]
                 paginator = Paginator(
-                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Unsuccessful Nickname Clear [{len(failure)}]", color=0xFF0000, per_page=10),
+                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Unsuccessful Nickname Clear [{len(failure)}]", color=0xA855F7, per_page=10),
                     ctx=ctx
                 )
                 await paginator.paginate()
@@ -442,7 +442,7 @@ class Global(commands.Cog):
         confirm_embed = discord.Embed(
             title=f"Are you sure to Freeze {user.display_name}'s Nickname Globally?",
             description=f"The user is in {mutual_count} mutual guilds with the bot.\n\nGlobal Freezenick Requestor: {ctx.author.mention}",
-            color=0xFF0000
+            color=0xA855F7
         )
         yes_button = Button(label="Yes", style=discord.ButtonStyle.green)
         no_button = Button(label="No", style=discord.ButtonStyle.red)
@@ -474,7 +474,7 @@ class Global(commands.Cog):
             embed = discord.Embed(
                 title="Results",
                 description=f"Frozen nickname for {user.name} in {len(success)} of {mutual_count} mutual guilds.",
-                color=0xFF0000
+                color=0xA855F7
             )
             embed.add_field(name="Success Count", value=f"{len(success)} Guilds")
             embed.add_field(name="Failure Count", value=f"{len(failure)} Guilds")
@@ -492,7 +492,7 @@ class Global(commands.Cog):
                     return await interaction.response.send_message("This interaction is not for you.", ephemeral=True)
                 entries = [f"{i+1}. {name}" for i, name in enumerate(success)]
                 paginator = Paginator(
-                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Successful Freezes [{len(success)}]", color=0xFF0000, per_page=10),
+                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Successful Freezes [{len(success)}]", color=0xA855F7, per_page=10),
                     ctx=ctx
                 )
                 await paginator.paginate()
@@ -502,7 +502,7 @@ class Global(commands.Cog):
                     return await interaction.response.send_message("This interaction is not for you.", ephemeral=True)
                 entries = [f"{i+1}. {name}" for i, name in enumerate(failure)]
                 paginator = Paginator(
-                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Unsuccessful Freezes [{len(failure)}]", color=0xFF0000, per_page=10),
+                    source=DescriptionEmbedPaginator(entries=entries, description="", title=f"Unsuccessful Freezes [{len(failure)}]", color=0xA855F7, per_page=10),
                     ctx=ctx
                 )
                 await paginator.paginate()

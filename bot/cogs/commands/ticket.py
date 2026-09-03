@@ -27,7 +27,7 @@ import re
 from utils.config import *
 
 # --- Configurable Variables ---
-EMBED_COLOR = 0xFF0000
+EMBED_COLOR = 0xA855F7
 TICKET_CHANNEL_IMAGE_URL = "https://cdn.discordapp.com/attachments/1403014653214330951/1403022431303630900/images_2.jpg?ex=68a1e776&is=68a095f6&hm=2c4e74b079fa409410920507bfb55549d485aafa89e194d15ab548eaba684555&"
 
 # --- Emoji Variables ---

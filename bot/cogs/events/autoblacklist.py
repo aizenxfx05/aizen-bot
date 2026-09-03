@@ -46,7 +46,7 @@ class AutoBlacklist(Cog):
                                 f"This guild has been blacklisted due to spamming or automation. "
                                 f"If you believe this is a mistake, please contact our [Support Server](https://discord.gg/M8qJ9W7vBb) with any proof if possible."
                             ),
-                            color=0xFF0000
+                            color=0xA855F7
                         )
                         await channel.send(embed=embed)
                 elif user_id:
@@ -104,7 +104,7 @@ class AutoBlacklist(Cog):
                         f"The guild has been blacklisted for excessive command usage. "
                         f"If you believe this is a mistake, please contact our [Support Server](https://discord.gg/M8qJ9W7vBb)."
                     ),
-                    color=0xFF0000
+                    color=0xA855F7
                 )
                 await message.channel.send(embed=embed)
                 return
@@ -124,7 +124,7 @@ class AutoBlacklist(Cog):
                     embed = discord.Embed(
                         title=f"{ZWARNING} User Blacklisted",
                         description=f"**{message.author.mention} has been blacklisted for repeatedly mentioning me. If you believe this is a mistake, please contact our [Support Server](https://discord.gg/M8qJ9W7vBb) with any proof if possible.**",
-                        color=0xFF0000
+                        color=0xA855F7
                     )
                     await message.channel.send(embed=embed)
                     return
@@ -156,6 +156,6 @@ class AutoBlacklist(Cog):
                 embed = discord.Embed(
                     title=f"{ZWARNING} User Blacklisted",
                     description=f"**{ctx.author.mention} has been blacklisted for spamming commands. If you believe this is a mistake, please contact our [Support Server](https://discord.gg/M8qJ9W7vBb) with any proof if possible.**",
-                    color=0xFF0000
+                    color=0xA855F7
                 )
                 await ctx.reply(embed=embed)

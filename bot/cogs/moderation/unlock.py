@@ -49,7 +49,7 @@ from discord import ui
 
       #  embed = discord.Embed(
           #  description=f" **Channel**: {self.channel.mention}\n **Status**: Locked\n **Reason:** Lock request by {self.author}",
-        #    color=0xFF0000
+        #    color=0xA855F7
        # )
       #  embed.add_field(name=" **Moderator:**", value=self.ctx.author.mention, inline=False)
      #   embed.set_author(name=f"Successfully Locked {self.channel.name}")

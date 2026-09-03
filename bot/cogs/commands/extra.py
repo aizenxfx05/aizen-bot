@@ -122,7 +122,7 @@ class Extra(commands.Cog):
 
   def __init__(self, bot):
     self.bot = bot
-    self.color = 0xFF0000
+    self.color = 0xA855F7
     self.start_time = datetime.datetime.now()
 
   @commands.hybrid_group(name="banner")

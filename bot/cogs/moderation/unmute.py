@@ -95,7 +95,7 @@ from datetime import timedelta
 
       #  success_embed = discord.Embed(
          #   description=f"** Target User:** [{self.user}](https://discord.com/users/{self.user.id})\n**User Mention:** {self.user.mention}\n**Reason:** {reason}\n **DM Sent:** {dm_status}", 
-          #  color=0xFF0000
+          #  color=0xA855F7
       #  )
        # success_embed.set_author(name=f"Muted {self.user.name}", icon_url=self.user.avatar.url if self.user.avatar else self.user.default_avatar.url)
       #  success_embed.add_field(name=" Moderator:", value=self.author.mention, inline=False)

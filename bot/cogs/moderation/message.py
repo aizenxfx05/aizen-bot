@@ -87,7 +87,7 @@ class Message(commands.Cog):
 
   def __init__(self, bot):
     self.bot = bot
-    self.color = 0xFF0000
+    self.color = 0xA855F7
 
 
   @commands.group(invoke_without_command=True, aliases=["purge"], help="Clears the messages")

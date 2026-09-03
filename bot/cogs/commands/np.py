@@ -133,7 +133,7 @@ class TimeSelect(Select):
             embed = CV2Embed(
                 title="User Added to No Prefix",
                 description=f"**User**: [{self.user}](https://discord.com/users/{self.user.id})\n**User Mention**: {self.user.mention}\n** ID**: {self.user.id}\n\n** Added By**: [{self.author.display_name}](https://discord.com/users/{self.author.id})\n{TIMER_ALT1}**Expiry Time**: {expiry_text}\n{ZDIL} **Timestamp**: {expiry_timestamp}\n\n{PREMIUM} **Tier**: **{self.values[0].upper()}**",
-                color=0xFF0000,
+                color=0xA855F7,
             )
             embed.set_thumbnail(
                 url=self.user.avatar.url
@@ -144,7 +144,7 @@ class TimeSelect(Select):
 
         embed = CV2Embed(
             description=f"**Added Global No Prefix**:\n{ZHUMAN} User: **{self.user.mention}**\n{MENTION} User Mention: {self.user.mention}\n{ZYROXSYS} User ID: {self.user.id}\n\n__**Additional Info**__:\n{ZYROXHAMMER} Added By: **{self.author.display_name}**\n{TIME} Expiry Time: {expiry_text}\n{BOOST} Timestamp: {expiry_timestamp}",
-            color=0xFF0000,
+            color=0xA855F7,
         )
         embed.set_author(
             name="Added No Prefix",
@@ -243,7 +243,7 @@ class NoPrefix(commands.Cog):
                     f"**ID**: {user.id}\n\n"
                     f"**Removed By**: **{BotName}**\n"
                 ),
-                                color=0xFF0000,
+                                color=0xA855F7,
                             )
                             embed_log.set_thumbnail(
                                 url=user.display_avatar.url
@@ -265,7 +265,7 @@ class NoPrefix(commands.Cog):
 
                         embed = CV2Embed(
                             description=f"{ICONS_WARNING} Your No Prefix status has **Expired**. You will now require the prefix to use commands.",
-                            color=0xFF0000,
+                            color=0xA855F7,
                         )
                         embed.set_author(
                             name="No Prefix Expired",
@@ -327,7 +327,7 @@ class NoPrefix(commands.Cog):
                         title=f"No Prefix Users [{len(ids)}]",
                         description="",
                         per_page=10,
-                        color=0xFF0000,
+                        color=0xA855F7,
                     ),
                     ctx=ctx,
                 )
@@ -344,7 +344,7 @@ class NoPrefix(commands.Cog):
             if result:
                 embed = CV2Embed(
                     description=f"**{user}** is Already in No prefix list\n\n **Requested By**: [{ctx.author.display_name}](https://discord.com/users/{ctx.author.id})\n",
-                    color=0xFF0000,
+                    color=0xA855F7,
                 )
                 embed.set_author(name="Error")
                 await ctx.reply(view=embed)
@@ -356,7 +356,7 @@ class NoPrefix(commands.Cog):
         embed = CV2Embed(
             title="Select No Prefix Duration",
             description="**Choose the duration for how long no-prefix should be enabled for this user:**",
-            color=0xFF0000,
+            color=0xA855F7,
         )
         for item in view.children:
             embed.children[0].add_item(ActionRow(item))
@@ -373,7 +373,7 @@ class NoPrefix(commands.Cog):
             if not result:
                 embed = CV2Embed(
                     description=f"**{user}** is Not in the No Prefix list\n\n{U_ADMIN} **Requested By**: [{ctx.author.display_name}](https://discord.com/users/{ctx.author.id})\n",
-                    color=0xFF0000,
+                    color=0xA855F7,
                 )
                 embed.set_author(name="Error")
                 await ctx.reply(view=embed)
@@ -397,7 +397,7 @@ class NoPrefix(commands.Cog):
                 f"** ID**: {user.id}\n\n"
                 f"** Removed By**: **{BotName}**\n"
             ),
-            color=0xFF0000,
+            color=0xA855F7,
         )
         embed.set_author(name="Removed No Prefix")
         await ctx.reply(view=embed)
@@ -412,7 +412,7 @@ class NoPrefix(commands.Cog):
                     f"** ID**: {user.id}\n\n"
                     f"**Removed By**: **{BotName}**\n"
                 ),
-                color=0xFF0000,
+                color=0xA855F7,
             )
             embed_log.set_thumbnail(
                 url=user.display_avatar.url if user.avatar else user.default_avatar.url
@@ -437,7 +437,7 @@ class NoPrefix(commands.Cog):
                     description=f"**{user}** is Not in the No Prefix list\n\n"
                     f"**Requested By**: "
                     f"[{ctx.author.display_name}](https://discord.com/users/{ctx.author.id})\n",
-                    color=0xFF0000,
+                    color=0xA855F7,
                 )
                 await ctx.reply(view=embed)
                 return
@@ -458,7 +458,7 @@ class NoPrefix(commands.Cog):
                     f"**User ID**: {user.id}\n\n"
                     f"{TIME} Expiry: {expire_time} ({expire_timestamp})"
                 ),
-                color=0xFF0000,
+                color=0xA855F7,
             )
 
             embed.set_thumbnail(
@@ -542,7 +542,7 @@ class NoPrefix(commands.Cog):
                 embed = CV2Embed(
                     title="Added No prefix due to Boosting Partner Server",
                     description=f"**User**: **[{after}](https://discord.com/users/{after.id})** (ID: {after.id})\n**Server**: {after.guild.name}",
-                    color=0xFF0000,
+                    color=0xA855F7,
                 )
                 message = await log_channel.send(" ".join(f"<@{oid}>" for oid in OWNER_IDS), view=embed)
                 await message.publish()
@@ -567,7 +567,7 @@ class NoPrefix(commands.Cog):
             embed = CV2Embed(
                 title="Removed No prefix due to Unboosting Partner Server",
                 description=f"**User**: **[{user}](https://discord.com/users/{user.id})** (ID: {user.id})\n**Server**: {user.guild.name}",
-                color=0xFF0000,
+                color=0xA855F7,
             )
             message = await log_channel.send(" ".join(f"<@{oid}>" for oid in OWNER_IDS), view=embed)
             await message.publish()
@@ -584,7 +584,7 @@ class NoPrefix(commands.Cog):
         embed = CV2Embed(
             title="Congratulations you got 2 months No Prefix!",
             description=f"You've been credited 2 months of global No Prefix for boosting our Partnered Servers. You can now use my commands without prefix. If you wish to remove it, please reach out [Support Server](https://discord.gg/M8qJ9W7vBb).",
-            color=0xFF0000,
+            color=0xA855F7,
         )
         try:
             await user.send(view=embed)
@@ -616,7 +616,7 @@ class NoPrefix(commands.Cog):
         embed = CV2Embed(
             title=f"{ICONS_WARNING} Global No Prefix Expired",
             description=f"Hey {user.mention}, your global no prefix has expired!\n\n__**Reason:**__ Unboosting our partnered Server.\nIf you think this is a mistake then please reach out [Support Server](https://discord.gg/M8qJ9W7vBb).",
-            color=0xFF0000,
+            color=0xA855F7,
         )
 
         try:
@@ -641,7 +641,7 @@ class NoPrefix(commands.Cog):
         embed = CV2Embed(
             title="Confirm Reset",
             description="Are you sure you want to remove **ALL** users from the no-prefix list? This action cannot be undone.",
-            color=0xFF0000,
+            color=0xA855F7,
         )
 
         # Create confirmation buttons
@@ -689,7 +689,7 @@ class NoPrefix(commands.Cog):
             success_embed = CV2Embed(
                 title=f"{TICK} No-Prefix Reset Complete",
                 description=f"Successfully removed {count} users from the no-prefix list.",
-                color=0xFF0000,
+                color=0xA855F7,
             )
             await interaction.response.edit_message(view=success_embed)
 
@@ -699,7 +699,7 @@ class NoPrefix(commands.Cog):
                 log_embed = CV2Embed(
                     title="No-Prefix List Reset",
                     description=f"**Reset By**: [{ctx.author.display_name}](https://discord.com/users/{ctx.author.id})\n{INFO} Users Removed: {count}",
-                    color=0xFF0000,
+                    color=0xA855F7,
                 )
                 log_embed.set_footer(text="No Prefix Reset Log")
                 await log_channel.send("<#1396794297386532978>", view=log_embed)
@@ -713,7 +713,7 @@ class NoPrefix(commands.Cog):
             cancel_embed = CV2Embed(
                 title="Reset Cancelled",
                 description="No changes have been made to the no-prefix list.",
-                color=0xFF0000,
+                color=0xA855F7,
             )
             await interaction.response.edit_message(view=cancel_embed)
 

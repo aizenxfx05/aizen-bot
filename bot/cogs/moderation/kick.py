@@ -69,7 +69,7 @@ class Kick(commands.Cog):
             description=(
                 f"**{TICK} | {member.mention} has been kicked successfully\nReason:{reason}**"
             ),
-            color=self.color # Uses the red color 0xFF0000
+            color=self.color # Uses the red color 0xA855F7
         )
         embed.set_author(name=f"Successfully Kicked {member.name}")
         embed.set_footer(text=f"Action by {ctx.author.name}", icon_url=ctx.author.avatar.url if ctx.author.avatar else None)

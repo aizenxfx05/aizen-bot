@@ -751,7 +751,7 @@ Support server: https://discord.gg/M8qJ9W7vBb"""
                         embed =discord .Embed (
                         title ="💻 Generated Code",
                         description =f"**Language:** {self.language}\n**Task:** {self.description}\n\n{content}",
-                        color =0xFF0000 ,
+                        color =0xA855F7 ,
                         timestamp =datetime .now (timezone .utc )
                         )
                         maximum =self .get_max_pages ()

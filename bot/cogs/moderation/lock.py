@@ -39,7 +39,7 @@ class Lock(commands.Cog):
         if not channel.permissions_for(ctx.guild.default_role).send_messages:
             embed = discord.Embed(
                 description=f"**Channel: {channel.mention}\n{TICK} Status: Already Locked**",
-                color=0xFF0000
+                color=0xA855F7
             )
             #embed.set_author(name=f"{c", icon_url="")
             embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar.url)
@@ -53,7 +53,7 @@ class Lock(commands.Cog):
         embed = discord.Embed(
             title="{BRAND_NAME} | Lockdown",
             description=f"{TICK} | Successfully Locked {channel.mention}",
-            color=0xFF0000
+            color=0xA855F7
         )
         #embed.set_author(name=f"Successfully Locked {channel.name}", icon_url="")
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar.url)

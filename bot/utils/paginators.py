@@ -39,7 +39,7 @@ class FieldPagePaginator(menus.ListPageSource):
         self.embed: discord.Embed = discord.Embed(
             title=kwargs.get('title'),
             description=kwargs.get('description'),
-            color=0xFF0000)
+            color=0xA855F7)
         self.inline: bool = inline
 
     async def format_page(self, menu: EmbedPaginator,
@@ -89,7 +89,7 @@ class DescriptionEmbedPaginator(menus.ListPageSource):
         super().__init__(entries, per_page=per_page)
         self.embed: discord.Embed = discord.Embed(
             title=kwargs.get('title'),
-            color=0xFF0000,
+            color=0xA855F7,
         )
 
     async def format_page(self, menu: EmbedPaginator,

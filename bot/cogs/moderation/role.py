@@ -54,7 +54,7 @@ class Role(commands.Cog):
 
   def __init__(self, bot):
     self.bot = bot
-    self.color = 0xFF0000
+    self.color = 0xA855F7
 
 
   @commands.group(name="role",invoke_without_command=True)
@@ -350,7 +350,7 @@ class Role(commands.Cog):
     else:
         denied = discord.Embed(title=f"{ZWARNING} Access Denied",
             description="Your role should be above my top role.",
-            color=0xFF0000)
+            color=0xA855F7)
         denied.set_footer(text=f"“{ctx.command.qualified_name}” Command executed by {ctx.author}",
                    icon_url=ctx.author.avatar.url if ctx.author.avatar else ctx.author.default_avatar.url)
         await ctx.send(embed=denied, mention_author=False)
@@ -433,7 +433,7 @@ class Role(commands.Cog):
     else:
         denied = discord.Embed(title=f"{CROSS} Access Denied",
             description="Your role should be above my top role.",
-            color=0xFF0000)
+            color=0xA855F7)
         denied.set_footer(text=f"“{ctx.command.qualified_name}” Command executed by {ctx.author}",
                    icon_url=ctx.author.avatar.url if ctx.author.avatar else ctx.author.default_avatar.url)
         await ctx.send(embed=denied, mention_author=False)
@@ -512,7 +512,7 @@ class Role(commands.Cog):
     else:
         denied = discord.Embed(title=f"{CROSS} Access Denied",
             description="Your role should be above my top role.",
-            color=0xFF0000)
+            color=0xA855F7)
         denied.set_footer(text=f"“{ctx.command.qualified_name}” Command executed by {ctx.author}",
                    icon_url=ctx.author.avatar.url if ctx.author.avatar else ctx.author.default_avatar.url)
         await ctx.send(embed=denied, mention_author=False)
@@ -592,7 +592,7 @@ class Role(commands.Cog):
     else:
         denied = discord.Embed(title=f"{CROSS} Access Denied",
             description="Your role should be above my top role.",
-            color=0xFF0000)
+            color=0xA855F7)
         denied.set_footer(text=f"“{ctx.command.qualified_name}” Command executed by {ctx.author}",
                    icon_url=ctx.author.avatar.url if ctx.author.avatar else ctx.author.default_avatar.url)
         await ctx.send(embed=denied, mention_author=False)
@@ -688,7 +688,7 @@ class Role(commands.Cog):
     else:
         denied = discord.Embed(title=f"{CROSS} Access Denied",
             description="Your role should be above my top role.",
-            color=0xFF0000)
+            color=0xA855F7)
         denied.set_footer(text=f"“{ctx.command.qualified_name}” Command executed by {ctx.author}",
                    icon_url=ctx.author.avatar.url if ctx.author.avatar else ctx.author.default_avatar.url)
         await ctx.send(embed=denied, mention_author=False)
@@ -770,7 +770,7 @@ class Role(commands.Cog):
     else:
         denied = discord.Embed(title=f"{CROSS} Access Denied",
             description="Your role should be above my top role.",
-            color=0xFF0000)
+            color=0xA855F7)
         denied.set_footer(text=f"“{ctx.command.qualified_name}” Command executed by {ctx.author}",
                    icon_url=ctx.author.avatar.url if ctx.author.avatar else ctx.author.default_avatar.url)
         await ctx.send(embed=denied, mention_author=False)
@@ -851,7 +851,7 @@ class Role(commands.Cog):
     else:
         denied = discord.Embed(title=f"{CROSS} Access Denied",
             description="Your role should be above my top role.",
-            color=0xFF0000)
+            color=0xA855F7)
         denied.set_footer(text=f"“{ctx.command.qualified_name}” Command executed by {ctx.author}",
                    icon_url=ctx.author.avatar.url if ctx.author.avatar else ctx.author.default_avatar.url)
         await ctx.send(embed=denied, mention_author=False)
@@ -933,7 +933,7 @@ class Role(commands.Cog):
     else:
         denied = discord.Embed(title=f"{CROSS} Access Denied",
             description="Your role should be above my top role.",
-            color=0xFF0000)
+            color=0xA855F7)
         denied.set_footer(text=f"“{ctx.command.qualified_name}” Command executed by {ctx.author}",
                    icon_url=ctx.author.avatar.url if ctx.author.avatar else ctx.author.default_avatar.url)
         await ctx.send(embed=denied, mention_author=False)

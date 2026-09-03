@@ -51,7 +51,7 @@ datefmt ="%H:%M:%S",
 class Booster (Cog ):
     def __init__ (self ,bot : Zyrox ):
         self .bot =bot 
-        self .color =0xFF0000 
+        self .color =0xA855F7 
         self .db_path ="db/boost.db"
         self .bot .loop .create_task (self .setup_database ())
 

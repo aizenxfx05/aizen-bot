@@ -64,7 +64,7 @@ class AntiLink(commands.Cog):
         if log_channel_id and log_channel_id[0]:
             log_channel = guild.get_channel(log_channel_id[0])
             if log_channel:
-                embed = discord.Embed(title="Automod Log: Anti-Link", color=0xFF0000)
+                embed = discord.Embed(title="Automod Log: Anti-Link", color=0xA855F7)
                 embed.add_field(name="User", value=user.mention, inline=False)
                 embed.add_field(name="Action", value=action, inline=False)
                 embed.add_field(name="Channel", value=channel.mention, inline=False)
@@ -124,7 +124,7 @@ class AntiLink(commands.Cog):
                     action_taken = "Banned"
                 await message.delete()
 
-                simple_embed = discord.Embed(title="Automod Anti-Link", color=0xFF0000)
+                simple_embed = discord.Embed(title="Automod Anti-Link", color=0xA855F7)
                 simple_embed.description = f"{TICK} | {user.mention} has been successfully **{action_taken}** for **Posting a link.**"
                 
                 simple_embed.set_footer(text="Use the “automod logging” command to get automod logs if it is not enabled.", icon_url=self.bot.user.avatar.url)

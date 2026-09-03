@@ -50,7 +50,7 @@ class VariableButton(Button):
         embed = discord.Embed(
             title="Available Placeholders",
             description="Use these placeholders in your welcome message:",
-            color=discord.Color(0xFF0000)
+            color=discord.Color(0xA855F7)
         )
 
         for var, desc in variables.items():
@@ -98,7 +98,7 @@ class Welcomer(commands.Cog):
                 row = await cursor.fetchone()
         
         if row:
-            error = discord.Embed(description=f"A welcome message has already been set in {ctx.guild.name}. Use `{ctx.prefix}greet reset` to reconfigure.", color=0xFF0000)
+            error = discord.Embed(description=f"A welcome message has already been set in {ctx.guild.name}. Use `{ctx.prefix}greet reset` to reconfigure.", color=0xA855F7)
             error.set_author(name="Error", icon_url="https://cdn.discordapp.com/emojis/1294218790082711553.png")
             return await ctx.send(embed=error)
             
@@ -135,7 +135,7 @@ class Welcomer(commands.Cog):
         embed = discord.Embed(
             title="Welcome Message Setup",
             description="Choose the type of welcome message you want to create:",
-            color=0xFF0000
+            color=0xA855F7
         )
 
         embed.add_field(
@@ -302,7 +302,7 @@ class Welcomer(commands.Cog):
             embed = discord.Embed(
     title=safe_format(embed_data["title"]) or "",
     description=safe_format(embed_data["description"]) or "```Customize your welcome embed, take help of variables.```",
-    color=discord.Color(embed_data["color"]) if embed_data["color"] else discord.Color(0x2f3136)
+    color=discord.Color(embed_data["color"]) if embed_data["color"] else discord.Color(0xA855F7)
             )
 
             
@@ -436,14 +436,14 @@ class Welcomer(commands.Cog):
             is_set_up = await cursor.fetchone()
 
         if not is_set_up: 
-            error = discord.Embed(description=f"No welcome message has been set for {ctx.guild.name}! Please set a welcome message first using `{ctx.prefix}greet setup`", color=0xFF0000)
+            error = discord.Embed(description=f"No welcome message has been set for {ctx.guild.name}! Please set a welcome message first using `{ctx.prefix}greet setup`", color=0xA855F7)
             error.set_author(name="Greet is not configured!", icon_url="https://cdn.discordapp.com/emojis/1294218790082711553.png")
             return await ctx.send(embed=error)
             
         embed = discord.Embed(
             title="Are you sure?",
             description="This will remove all welcome configurations & data related to welcome messages for this server!",
-            color=0xFF0000
+            color=0xA855F7
         )
 
         yes_button = Button(label="Confirm", style=discord.ButtonStyle.danger)
@@ -458,7 +458,7 @@ class Welcomer(commands.Cog):
                 await db.execute("DELETE FROM welcome WHERE guild_id = ?", (ctx.guild.id,))
                 await db.commit()
 
-            embed.color = discord.Color(0xFF0000)
+            embed.color = discord.Color(0xA855F7)
             embed.title = f"{TICK}> Success"
             embed.description = "Welcome message configuration has been successfully reset."
             await interaction.message.edit(embed=embed, view=None)
@@ -468,7 +468,7 @@ class Welcomer(commands.Cog):
                 await interaction.response.send_message("Only the command author can cancel this action.", ephemeral=True)
                 return
 
-            embed.color = discord.Color(0xFF0000)
+            embed.color = discord.Color(0xA855F7)
             embed.title = "Cancelled"
             embed.description = "Greet Reset operation has been cancelled."
             await interaction.message.edit(embed=embed, view=None)
@@ -497,7 +497,7 @@ class Welcomer(commands.Cog):
                 welcome_channel = ctx.guild.get_channel(result[1]) if result and result[1] else None
 
         if not welcome_message:
-            error = discord.Embed(description=f"No welcome message has been set for {ctx.guild.name}! Please set a welcome message first using `{ctx.prefix}greet setup`", color=0xFF0000)
+            error = discord.Embed(description=f"No welcome message has been set for {ctx.guild.name}! Please set a welcome message first using `{ctx.prefix}greet setup`", color=0xA855F7)
             error.set_author(name="Greet is not configured!", icon_url="https://cdn.discordapp.com/emojis/1294218790082711553.png")
             await ctx.send(embed=error)
             return
@@ -565,7 +565,7 @@ class Welcomer(commands.Cog):
         embed = discord.Embed(
             title=f"Welcome Channel for {ctx.guild.name}",
             description=f"Current Welcome Channel: {welcome_channel.mention if welcome_channel else 'None'}",
-            color=0xFF0000
+            color=0xA855F7
         )
         embed.set_footer(text="Use the dropdown menu to select a channel. Navigate pages if needed.")
 
@@ -585,7 +585,7 @@ class Welcomer(commands.Cog):
                 row = await cursor.fetchone()
 
         if row is None:
-            error = discord.Embed(description=f"No welcome message has been set for {ctx.guild.name}! Please set a welcome message first using `{ctx.prefix}greet setup`", color=0xFF0000)
+            error = discord.Embed(description=f"No welcome message has been set for {ctx.guild.name}! Please set a welcome message first using `{ctx.prefix}greet setup`", color=0xA855F7)
             error.set_author(name="Greet is not configured!", icon_url="https://cdn.discordapp.com/emojis/1294218790082711553.png")
             await ctx.send(embed=error)
             return
@@ -594,7 +594,7 @@ class Welcomer(commands.Cog):
         welcome_channel = self.bot.get_channel(channel_id)
 
         if not welcome_channel:
-            error2 = discord.Embed(description=f"Welcome channel not set or invalid. Use `{ctx.prefix}greet channel` to set one.", color=0xFF0000)
+            error2 = discord.Embed(description=f"Welcome channel not set or invalid. Use `{ctx.prefix}greet channel` to set one.", color=0xA855F7)
             error2.set_author(name="Channel not set", icon_url="https://cdn.discordapp.com/emojis/1294218790082711553.png")
             await ctx.send(embed=error2)
             return
@@ -633,7 +633,7 @@ class Welcomer(commands.Cog):
                 color_value = embed_info.get("color", None)
 
                 
-                embed_color = 0x2f3136
+                embed_color = 0xA855F7
 
                 
                 if color_value and isinstance(color_value, str) and color_value.startswith("#"):
@@ -690,7 +690,7 @@ class Welcomer(commands.Cog):
 
             embed = discord.Embed(
                 title=f"Greet Configuration for {ctx.guild.name}",
-                color=0xFF0000
+                color=0xA855F7
             )
 
             embed.add_field(name="Response Type", value=response_type, inline=False)
@@ -717,7 +717,7 @@ class Welcomer(commands.Cog):
         else:
             error = discord.Embed(
                 description=f"No welcome message has been set for {ctx.guild.name}! Please set a welcome message first using `{ctx.prefix}greet setup`",
-                color=0xFF0000
+                color=0xA855F7
             )
             error.set_author(name="Greet is not configured!", icon_url="https://cdn.discordapp.com/emojis/1294218790082711553.png")
             await ctx.send(embed=error)
@@ -774,7 +774,7 @@ class Welcomer(commands.Cog):
                 row = await cursor.fetchone()
 
         if row is None:
-            error = discord.Embed(description=f"No welcome message has been set for {ctx.guild.name}! Please set a welcome message first using `{ctx.prefix}greet setup`", color=0xFF0000)
+            error = discord.Embed(description=f"No welcome message has been set for {ctx.guild.name}! Please set a welcome message first using `{ctx.prefix}greet setup`", color=0xA855F7)
             error.set_author(name="Greet is not configured!", icon_url="https://cdn.discordapp.com/emojis/1294218790082711553.png")
             await ctx.send(embed=error)
             return
@@ -787,7 +787,7 @@ class Welcomer(commands.Cog):
             embed = discord.Embed(
                 title="Edit Welcome Message",
                 description=f"**Response Type:** Simple\n**Message Content:** {welcome_message or 'None'}",
-                color=0xFF0000
+                color=0xA855F7
             )
             edit_button = Button(label="Edit", style=discord.ButtonStyle.primary)
             cancel_button = Button(label="Cancel", style=discord.ButtonStyle.danger)
@@ -850,7 +850,7 @@ class Welcomer(commands.Cog):
             embed = discord.Embed(
                 title="Edit Welcome Message",
                 description=f"**Response Type:** Embed\n**Embed Data:**\n```{formatted_embed_data}```",
-                color=0xFF0000
+                color=0xA855F7
             )
 
             select_menu = Select(

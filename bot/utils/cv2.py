@@ -67,7 +67,7 @@ class CV2Embed(CV2):
         self._fields = []
         self._footer = None
         super().__init__(title, self._description)
-        self.color = kwargs.get("color", 0xFF0000)
+        self.color = kwargs.get("color", 0xA855F7)
     
     def _rebuild(self):
         self.clear_items()

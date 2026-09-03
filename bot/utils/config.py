@@ -22,6 +22,12 @@ BRAND_NAME = os.environ.get("brand_name", "Aizen XFX")
 NAME       = BRAND_NAME
 BotName    = BRAND_NAME
 
+# Bot Theme Colors — Aizen XFX Royal Purple
+THEME_COLOR = 0xA855F7
+MAIN_COLOR  = 0xA855F7
+COLOR       = 0xA855F7
+EMBED_COLOR = 0xA855F7
+
 server     = "https://discord.gg/M8qJ9W7vBb"
 serverLink = "https://discord.gg/M8qJ9W7vBb"
 ch         = "https://discord.com/channels/699587669059174461/1271825678710476911"

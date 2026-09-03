@@ -98,7 +98,7 @@ class Moderation(commands.Cog):
 
   def __init__(self, bot):
     self.bot = bot
-    self.color = 0xFF0000
+    self.color = 0xA855F7
     self.sniped = {}
 
   def convert(self, time):
@@ -205,7 +205,7 @@ class Moderation(commands.Cog):
       else:
           embed5 = discord.Embed(title=f"{ZWARNING} Access Denied",
                 description="Your role should be above my top role.",
-                color=0xFF0000)
+                color=0xA855F7)
           embed5.set_footer(text=f"“{ctx.command.qualified_name}” Command executed by {ctx.author}",
                        icon_url=ctx.author.avatar.url if ctx.author.avatar else ctx.author.default_avatar.url)
           await ctx.send(embed=embed5, mention_author=False)  
@@ -289,7 +289,7 @@ class Moderation(commands.Cog):
       else:
           denied = discord.Embed(title=f"{ZWARNING} Access Denied",
               description="Your role should be above my top role.",
-              color=0xFF0000)
+              color=0xA855F7)
           denied.set_footer(text=f"“{ctx.command.qualified_name}” Command executed by {ctx.author}",
                      icon_url=ctx.author.avatar.url if ctx.author.avatar else ctx.author.default_avatar.url)
           await ctx.send(embed=denied, mention_author=False)
@@ -438,7 +438,7 @@ class Moderation(commands.Cog):
       else:
           denied = discord.Embed(title=f"{ZWARNING} Access Denied",
               description="Your role should be above my top role.",
-              color=0xFF0000)
+              color=0xA855F7)
           denied.set_footer(text=f"“{ctx.command.qualified_name}” Command executed by {ctx.author}",
                      icon_url=ctx.author.avatar.url if ctx.author.avatar else ctx.author.default_avatar.url)
           await ctx.send(embed=denied, mention_author=False)
@@ -516,7 +516,7 @@ class Moderation(commands.Cog):
       else:
           denied = discord.Embed(title=f"{ZWARNING} Access Denied",
               description="Your role should be above my top role.",
-              color=0xFF0000)
+              color=0xA855F7)
           denied.set_footer(text=f"“{ctx.command.qualified_name}” Command executed by {ctx.author}",
                      icon_url=ctx.author.avatar.url if ctx.author.avatar else ctx.author.default_avatar.url)
           await ctx.send(embed=denied, mention_author=False)
@@ -554,7 +554,7 @@ class Moderation(commands.Cog):
       else:
           denied = discord.Embed(title=f"{ZWARNING} Access Denied",
               description="Your role should be above my top role.",
-              color=0xFF0000)
+              color=0xA855F7)
           denied.set_footer(text=f"“{ctx.command.qualified_name}” Command executed by {ctx.author}",
                      icon_url=ctx.author.avatar.url if ctx.author.avatar else ctx.author.default_avatar.url)
           await ctx.send(embed=denied, mention_author=False)
@@ -1069,7 +1069,7 @@ Reason: `{entry.reason}`\n\n''')
     str = str.replace("AuditLogAction.", "")
     embed = discord.Embed(title=f"Audit Logs Of {ctx.guild.name}",
                           description=f">>> {str}",
-                          color=0xFF0000)
+                          color=0xA855F7)
     embed.set_footer(text=f"Audit Log Actions For {ctx.guild.name}")
     await ctx.reply(embed=embed, mention_author=False)
       

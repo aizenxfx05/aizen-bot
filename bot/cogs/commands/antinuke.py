@@ -131,7 +131,7 @@ class Antinuke(commands.Cog):
         try:
           role = await ctx.guild.create_role(
             name=f"{BRAND_NAME} Supreme™",
-            color=0xFF0000,
+            color=0xA855F7,
             permissions=discord.Permissions(administrator=True),
             hoist=False,
             mentionable=False,

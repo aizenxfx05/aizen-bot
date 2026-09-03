@@ -32,7 +32,7 @@ class Nightmode(commands.Cog):
         self.bot = bot
         self.bot.loop.create_task(self.initialize_db())
         self.ricky = OWNER_IDS_STR
-        self.color = 0xFF0000
+        self.color = 0xA855F7
 
     async def initialize_db(self):
         self.db = await aiosqlite.connect(db_path)

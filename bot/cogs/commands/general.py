@@ -100,7 +100,7 @@ class General(commands.Cog):
     self.bot = bot
     self.aiohttp = aiohttp.ClientSession()
     self._URL_REGEX = r'(?P<url><[^: >]+:\/[^ >]+>|(?:https?|steam):\/\/[^\s<]+[^<.,:;"\'\\]\s])'
-    self.color = 0xFF0000
+    self.color = 0xA855F7
 
 
   @commands.hybrid_command(

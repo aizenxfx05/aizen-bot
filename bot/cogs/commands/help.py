@@ -32,7 +32,7 @@ from utils.Tools import *
 from utils.cv2 import CV2, CV2Embed
 from utils.config import *
 
-color = 0xFF0000
+color = 0xA855F7
 client = zyrox()
 
 from utils.config import BotName
@@ -78,7 +78,7 @@ class HelpCommand(commands.HelpCommand):
     embed = CV2Embed(
         title=f"{BotName} Helper",
         description=f">>> **Ops! Command not found with the name** `{string}`.",
-        color=0xFF0000
+        color=0xA855F7
     )
 
     await ctx.reply(view=embed, mention_author=True)
@@ -116,7 +116,7 @@ class HelpCommand(commands.HelpCommand):
          f"**{ZARROW} Type {prefix}antinuke enable**\n"
          f"**{ZARROW} Server Prefix:** `{prefix}`\n"
          f"**{ZARROW} Total Commands:** `{len(set(self.context.bot.walk_commands()))}`\n"),         
-        color=0xFF0000)
+        color=0xA855F7)
     
     embed.add_field(
         name=f"{ZCLOUD} Main Features",
@@ -262,7 +262,7 @@ class HelpCommand(commands.HelpCommand):
       entries=entries,
       title=f"{BRAND_NAME}'s {cog.qualified_name.title()} ({len(cog.get_commands())})",
       description="`<..> Required | [..] Optional`\n\n",
-      color=0xFF0000,
+      color=0xA855F7,
       per_page=4),
                           ctx=self.context)
     await paginator.paginate()

@@ -32,7 +32,7 @@ class Autorole(Cog):
             if entry.action == discord.AuditLogAction.bot_add:
                 embed = discord.Embed(
                    description=f"{ZMODULE} **Thanks for adding me.**\n\n{ARROWRED} My default prefix is `>`\n{ARROWRED}> Use the `>help` command to see a list of commands\n{ARROWRED} For detailed guides, FAQ and information, visit our **[Support Server](https://discord.gg/M8qJ9W7vBb)**",
-                    color=0xFF0000
+                    color=0xA855F7
                )
                 embed.set_thumbnail(url=entry.user.avatar.url if entry.user.avatar else entry.user.default_avatar.url)
                 embed.set_author(name=f"{guild.name}", icon_url=guild.me.display_avatar.url)

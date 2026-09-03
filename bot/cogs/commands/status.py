@@ -31,7 +31,7 @@ class Status(commands.Cog):
     async def status(self, ctx, user: discord.User = None):
         user = user or ctx.author
         processing = await ctx.send(f"{LOADING_ALT1} Loading Status...")
-        embed = discord.Embed(title=f"{user.display_name}'s Status", color=0xFF0000)
+        embed = discord.Embed(title=f"{user.display_name}'s Status", color=0xA855F7)
 
         status_emoji = {
             "online": f"{ONLINE} Online",

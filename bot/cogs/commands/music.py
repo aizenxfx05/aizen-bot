@@ -647,7 +647,7 @@ class Music(commands.Cog):
 
         view = CV2Embed(
             title="🎶 Now Playing",
-            color=0x1DB954 if source_name == "Spotify" else 0xFF0000
+            color=0x1DB954 if source_name == "Spotify" else 0xA855F7
         )
         view.add_field(name="Track", value=f"[{track.title}]({track.uri})", inline=False)
         view.add_field(name="Song By", value=track.author, inline=False)
@@ -857,7 +857,7 @@ class Music(commands.Cog):
             title="Current Queue",
             description="List of upcoming songs.",
             per_page=10,
-            color=0xFF0000),
+            color=0xA855F7),
             ctx=ctx)
         await paginator.paginate()
 

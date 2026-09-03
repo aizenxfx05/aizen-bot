@@ -47,7 +47,7 @@ class Timer(commands.Cog):
                 embed = discord.Embed(
                     title=f'{title}',
                     description=f"**{time//3600}** hours, **{time%3600//60}** minutes, **{time%60}** seconds",
-                    color=0xFF0000
+                    color=0xA855F7
                 )
                 embed.set_footer(text=f'Requested by {ctx.author.name}')
                 message = await ctx.send(embed=embed)
@@ -56,7 +56,7 @@ class Timer(commands.Cog):
                 embed = discord.Embed(
                     title=f'{title}',
                     description=f"**{time//60}** minutes, **{time%60}** seconds",
-                    color=0xFF0000
+                    color=0xA855F7
                 )
                 embed.set_footer(text=f'Requested by {ctx.author.name}')
                 message = await ctx.send(embed=embed)
@@ -65,7 +65,7 @@ class Timer(commands.Cog):
                 embed = discord.Embed(
                     title=f'{title}',
                     description=f'**{time}** seconds',
-                    color=0xFF0000
+                    color=0xA855F7
                 )
                 embed.set_footer(text=f'Requested by {ctx.author.name}')
                 message = await ctx.send(embed=embed)
@@ -78,7 +78,7 @@ class Timer(commands.Cog):
                         embed = discord.Embed(
                             title=f'{title}',
                             description=f"**{time//3600}** hours, **{time%3600//60}** minutes, **{time%60}** seconds",
-                            color=0xFF0000
+                            color=0xA855F7
                         )
                         embed.set_footer(text=f'Requested by {ctx.author.name}')
                         await message.edit(embed=embed)
@@ -86,7 +86,7 @@ class Timer(commands.Cog):
                         embed = discord.Embed(
                             title=f'{title}',
                             description=f"**{time//60}** minutes, **{time%60}** seconds",
-                            color=0xFF0000
+                            color=0xA855F7
                         )
                         embed.set_footer(text=f'Requested by {ctx.author.name}')
                         await message.edit(embed=embed)
@@ -94,7 +94,7 @@ class Timer(commands.Cog):
                         embed = discord.Embed(
                             title=f'{title}',
                             description=f"**{time}** seconds",
-                            color=0xFF0000
+                            color=0xA855F7
                         )
                         embed.set_footer(text=f'Requested by {ctx.author.name}')
                         await message.edit(embed=embed)
@@ -102,7 +102,7 @@ class Timer(commands.Cog):
                         embed = discord.Embed(
                             title=f'{title}',
                             description='Time is up!',
-                            color=0xFF0000
+                            color=0xA855F7
                         )
                         content= ctx.author.mention
                         await message.edit(content=content, embed=embed)

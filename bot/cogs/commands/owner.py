@@ -164,28 +164,28 @@ class Owner(commands.Cog):
     @commands.is_owner()
     async def staff_add(self, ctx, user: discord.User):
         if user.id in self.staff:
-            sonu = discord.Embed(title=f"{ZWARNING}  Access Denied", description=f"{user} is already in the staff list.", color=0xFF0000)
+            sonu = discord.Embed(title=f"{ZWARNING}  Access Denied", description=f"{user} is already in the staff list.", color=0xA855F7)
             await ctx.reply(embed=sonu, mention_author=False)
         else:
             self.staff.add(user.id)
             async with aiosqlite.connect(self.db_path) as db:
                 await db.execute('INSERT OR IGNORE INTO staff (id) VALUES (?)', (user.id,))
                 await db.commit()
-            sonu2 = discord.Embed(title=f"{TICK} Success", description=f"Added {user} to the staff list.", color=0xFF0000)
+            sonu2 = discord.Embed(title=f"{TICK} Success", description=f"Added {user} to the staff list.", color=0xA855F7)
             await ctx.reply(embed=sonu2, mention_author=False)
 
     @commands.command(name="staff_remove", aliases=["staffremove", "removestaff"], help="Removes a user from the staff list.")
     @commands.is_owner()
     async def staff_remove(self, ctx, user: discord.User):
         if user.id not in self.staff:
-            sonu = discord.Embed(title=f"{ZWARNING} Access Denied", description=f"{user} is not in the staff list.", color=0xFF0000)
+            sonu = discord.Embed(title=f"{ZWARNING} Access Denied", description=f"{user} is not in the staff list.", color=0xA855F7)
             await ctx.reply(embed=sonu, mention_author=False)
         else:
             self.staff.remove(user.id)
             async with aiosqlite.connect(self.db_path) as db:
                 await db.execute('DELETE FROM staff WHERE id = ?', (user.id,))
                 await db.commit()
-                sonu2 = discord.Embed(title=f"{TICK} Success", description=f"Removed {user} from the staff list.", color=0xFF0000)
+                sonu2 = discord.Embed(title=f"{TICK} Success", description=f"Removed {user} from the staff list.", color=0xA855F7)
             await ctx.reply(embed=sonu2, mention_author=False)
 
     @commands.command(name="staff_list", aliases=["stafflist", "liststaff", "staffs"], help="Lists all staff members.")
@@ -199,7 +199,7 @@ class Owner(commands.Cog):
                 member = await self.client.fetch_user(staff_id)
                 member_list.append(f"{member.name}#{member.discriminator} (ID: {staff_id})")
             staff_display = "\n".join(member_list)
-            sonu = discord.Embed(title=f"{TICK} {BotName} Staffs", description=f"\n{staff_display}", color=0xFF0000)
+            sonu = discord.Embed(title=f"{TICK} {BotName} Staffs", description=f"\n{staff_display}", color=0xA855F7)
             await ctx.send(embed=sonu)
 
     @commands.command(name="slist")
@@ -214,7 +214,7 @@ class Owner(commands.Cog):
             entries=entries,
             description="",
             title=f"Guild List of {BotName} [{len(self.client.guilds)}]",
-            color=0xFF0000,
+            color=0xA855F7,
             per_page=10),
             ctx=ctx)
         await paginator.paginate()
@@ -232,7 +232,7 @@ class Owner(commands.Cog):
             entries=entries,
             description="",
             title=f"Mutual Guilds of {user.name} [{len(guilds)}]",
-            color=0xFF0000,
+            color=0xA855F7,
             per_page=10),
             ctx=ctx)
         await paginator.paginate()
@@ -256,7 +256,7 @@ class Owner(commands.Cog):
                     title=f"Active Invites for {guild.name}",
                     description="",
                     per_page=10,
-                    color=0xFF0000),
+                    color=0xA855F7),
                     ctx=ctx)
                 await paginator.paginate()
             elif invite_krskta:
@@ -316,7 +316,7 @@ class Owner(commands.Cog):
             title=f"{BRAND_NAME} Owners [{len(nplist)}]",
             description="",
             per_page=10,
-            color=0xFF0000),
+            color=0xA855F7),
                               ctx=ctx)
         await paginator.paginate()
 
@@ -368,14 +368,14 @@ class Owner(commands.Cog):
                 embed = discord.Embed(
                     title="Successfully Banned",
                     description=f"{TICK} | **{member.name}** has been successfully banned from {ctx.guild.name} by the Bot Owner.",
-                    color=0xFF0000)
+                    color=0xA855F7)
                 await ctx.reply(embed=embed, mention_author=False, delete_after=3)
                 await ctx.message.delete()
             except discord.Forbidden:
                 embed = discord.Embed(
                     title="Error!",
                     description=f"{ZWARNING}  I do not have permission to ban **{member.name}** in this guild.",
-                    color=0xFF0000
+                    color=0xA855F7
                 )
                 await ctx.reply(embed=embed, mention_author=False, delete_after=5)
                 await ctx.message.delete()
@@ -383,7 +383,7 @@ class Owner(commands.Cog):
                 embed = discord.Embed(
                     title="Error!",
                     description=f"{ZWARNING}  An error occurred while banning **{member.name}**.",
-                    color=0xFF0000
+                    color=0xA855F7
                 )
                 await ctx.reply(embed=embed, mention_author=False, delete_after=5)
                 await ctx.message.delete()
@@ -401,21 +401,21 @@ class Owner(commands.Cog):
                 embed = discord.Embed(
                     title="Successfully Unbanned",
                     description=f"{TICK} | **{user.name}** has been successfully unbanned from {ctx.guild.name} by the Bot Owner.",
-                    color=0xFF0000
+                    color=0xA855F7
                 )
                 await ctx.reply(embed=embed, mention_author=False)
             except discord.Forbidden:
                 embed = discord.Embed(
                     title="Error!",
                     description=f"{ZWARNING}  I do not have permission to unban **{user.name}** in this guild.",
-                    color=0xFF0000
+                    color=0xA855F7
                 )
                 await ctx.reply(embed=embed, mention_author=False)
             except discord.HTTPException:
                 embed = discord.Embed(
                     title="Error!",
                     description=f"{ZWARNING}  An error occurred while unbanning **{user.name}**.",
-                    color=0xFF0000
+                    color=0xA855F7
                 )
                 await ctx.reply(embed=embed, mention_author=False)
         else:
@@ -601,7 +601,7 @@ class Owner(commands.Cog):
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def bdg(self, ctx):
         if ctx.invoked_subcommand is None:
-            embed = discord.Embed(description='Invalid `bdg` command passed. Use `add` or `remove`.', color=0xFF0000)
+            embed = discord.Embed(description='Invalid `bdg` command passed. Use `add` or `remove`.', color=0xA855F7)
             await ctx.send(embed=embed)
 
     @bdg.command()
@@ -617,17 +617,17 @@ class Owner(commands.Cog):
                 for b in BADGE_URLS.keys():
                     add_badge(user_id, b)
                 add_badge(user_id, 'bug')
-                embed = discord.Embed(description=f"All badges added to {member.mention}.", color=0xFF0000)
+                embed = discord.Embed(description=f"All badges added to {member.mention}.", color=0xA855F7)
                 await ctx.send(embed=embed)
             else:
                 success = add_badge(user_id, badge)
                 if success:
-                    embed = discord.Embed(description=f"Badge `{badge}` added to {member.mention}.", color=0xFF0000)
+                    embed = discord.Embed(description=f"Badge `{badge}` added to {member.mention}.", color=0xA855F7)
                 else:
-                    embed = discord.Embed(description=f"{member.mention} already has the badge `{badge}`.", color=0xFF0000)
+                    embed = discord.Embed(description=f"{member.mention} already has the badge `{badge}`.", color=0xA855F7)
                 await ctx.send(embed=embed)
         else:
-            embed = discord.Embed(description=f"Invalid badge: `{badge}`", color=0xFF0000)
+            embed = discord.Embed(description=f"Invalid badge: `{badge}`", color=0xA855F7)
             await ctx.send(embed=embed)
 
     @bdg.command()
@@ -643,17 +643,17 @@ class Owner(commands.Cog):
                 for b in BADGE_URLS.keys():
                     remove_badge(user_id, b)
                 remove_badge(user_id, 'bug')
-                embed = discord.Embed(description=f"All badges removed from {member.mention}.", color=0xFF0000)
+                embed = discord.Embed(description=f"All badges removed from {member.mention}.", color=0xA855F7)
                 await ctx.send(embed=embed)
             else:
                 success = remove_badge(user_id, badge)
                 if success:
-                    embed = discord.Embed(description=f"Badge `{badge}` removed from {member.mention}.", color=0xFF0000)
+                    embed = discord.Embed(description=f"Badge `{badge}` removed from {member.mention}.", color=0xA855F7)
                 else:
-                    embed = discord.Embed(description=f"{member.mention} does not have the badge `{badge}`.", color=0xFF0000)
+                    embed = discord.Embed(description=f"{member.mention} does not have the badge `{badge}`.", color=0xA855F7)
                 await ctx.send(embed=embed)
         else:
-            embed = discord.Embed(description=f"Invalid badge: `{badge}`", color=0xFF0000)
+            embed = discord.Embed(description=f"Invalid badge: `{badge}`", color=0xA855F7)
             await ctx.send(embed=embed)
 
 
@@ -770,7 +770,7 @@ class Badges(commands.Cog):
         
         loading_embed = discord.Embed(
             title="{LOADINGRED} Loading Profile...",
-            color=0xFF0000
+            color=0xA855F7
         )
         processing_msg = await ctx.send(embed=loading_embed)
 
@@ -792,11 +792,11 @@ class Badges(commands.Cog):
             error_embed = discord.Embed(
                 title="Error", 
                 description=f"Failed to create profile image: {e}",
-                color=0xFF0000
+                color=0xA855F7
             )
             return await processing_msg.edit(embed=error_embed)
 
-        embed = discord.Embed(color=0xFF0000)
+        embed = discord.Embed(color=0xA855F7)
         embed.set_thumbnail(url=member.display_avatar.url)
         embed.set_author(name=f"◇ {member.name}'s Profile", icon_url=self.bot.user.display_avatar.url)
         

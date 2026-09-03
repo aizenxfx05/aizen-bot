@@ -20,7 +20,7 @@ import os
 from discord.ext import commands
 from typing import Optional
 
-RED_THEME_COLOR = 0xFF0000
+RED_THEME_COLOR = 0xA855F7
 
 class StickyMessage(commands.Cog):
     def __init__(self, bot: commands.Bot):

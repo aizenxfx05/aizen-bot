@@ -55,6 +55,7 @@ package-lock.json
 .next/
 out/
 
+*.tsbuildinfo
 # Ignore Python cache
 __pycache__/
 *.pyc

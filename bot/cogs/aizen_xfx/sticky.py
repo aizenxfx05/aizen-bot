@@ -1,0 +1,36 @@
+# ╔══════════════════════════════════════════════════════════════════╗
+# ║                                                                  ║
+# ║   ░█▀█░▀█▀░▀▀█░█▀▀░█▀█   ░█░█░█▀▀░█░█                         ║
+# ║   ░█▀█░░█░░▄▀░░█▀▀░█░█   ░▄▀▄░█▀▀░▄▀▄                         ║
+# ║   ░▀░▀░▀▀▀░█▄▄░▀▀▀░▀░▀   ░▀░▀░▀░░░▀░▀                         ║
+# ║                                                                  ║
+# ║            © 2026 Aizen XFX — All Rights Reserved               ║
+# ║                                                                  ║
+# ║   discord  ──  https://discord.gg/M8qJ9W7vBb                    ║
+# ║   youtube  ──  https://youtube.com/@aizen_xfx                   ║
+# ║   github   ──  https://github.com/aizenxfx05                    ║
+# ║                                                                  ║
+# ╚══════════════════════════════════════════════════════════════════╝
+
+import discord
+from utils.emoji import PIN
+from discord.ext import commands
+
+
+class _sticky(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    """Sticky commands"""
+  
+    def help_custom(self):
+		      emoji = PIN
+		      label = "Sticky Commands"
+		      description = "Show you Commands of Sticky"
+		      return emoji, label, description
+
+    @commands.group()
+    async def __Sticky__(self, ctx: commands.Context):
+        """`sticky setup` , `sticky edit` , `sticky list` , `sticky remove`"""
+        pass
+

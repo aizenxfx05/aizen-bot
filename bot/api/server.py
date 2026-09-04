@@ -53,7 +53,7 @@ def create_app() -> FastAPI:
     api_key = os.getenv("DASHBOARD_API_KEY", "")
     if not api_key:
         raise RuntimeError("DASHBOARD_API_KEY is not set. Set it in your .env file before starting.")
-    if api_key in ("AIZEN_XFX_SECURE_API_KEY_CHANGE_THIS_NOW", "ZYROX_SECURE_API_KEY_12345_CHANGE_THIS_ASAP_BY_CODEX_DEVS"):
+    if api_key in ("AIZEN_XFX_SECURE_API_KEY_CHANGE_THIS_NOW", "AIZEN_XFX_SECURE_API_KEY_12345_CHANGE_THIS_ASAP_BY_CODEX_DEVS", "ZYROX_SECURE_API_KEY_12345_CHANGE_THIS_ASAP_BY_CODEX_DEVS"):
         import warnings
         warnings.warn(
             "\033[33m⚠ DASHBOARD_API_KEY is still set to the default placeholder! Change it immediately.\033[0m",

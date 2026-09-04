@@ -20,12 +20,12 @@ from utils.config import *
 
 
 if TYPE_CHECKING:
-    from core.zyrox import zyrox
+    from core import AizenBot
 
 router = APIRouter()
 
 @router.get("/status", response_model=BotStatus, summary="Get bot status", description="Returns real-time health metrics, latency, and scale information.")
-async def get_status(bot: "zyrox" = Depends(get_bot)):
+async def get_status(bot: "AizenBot" = Depends(get_bot)):
     """
     Returns the live status of the bot.
     """
@@ -39,7 +39,7 @@ async def get_status(bot: "zyrox" = Depends(get_bot)):
     )
 
 @router.get("/info", response_model=BotInfo, summary="Get bot info", description="Returns general information about the bot including command count and user reach.")
-async def get_bot_info(bot: "zyrox" = Depends(get_bot)):
+async def get_bot_info(bot: "AizenBot" = Depends(get_bot)):
     """
     Get general information about the Discord bot.
     """

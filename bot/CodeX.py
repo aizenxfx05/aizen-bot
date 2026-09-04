@@ -35,9 +35,7 @@ import discord
 from discord import Spotify
 from discord.ext import commands, tasks
 
-from core import Context
-from core.Cog import Cog
-from core.zyrox import zyrox
+from core import Context, Cog, AizenBot
 from utils.Tools import *
 from utils.config import *
 from utils.emoji import SUCCESS, ERROR, TICK, CROSS, REACTION_TEST_EMOJIS
@@ -63,7 +61,7 @@ USER_COUNT_CHANNEL_ID = 1419729283861184632    # Replace with your user count ch
 LOG_CHANNEL_ID = 1396794297386532978 # Replace with the channel ID for join/leave logs
 
 
-client = zyrox()
+client = AizenBot()
 tree = client.tree
 
 # --- Background Task for Stats ---

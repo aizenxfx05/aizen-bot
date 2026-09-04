@@ -140,6 +140,11 @@ class zyrox(commands.AutoShardedBot):
                 return
             await self.invoke(ctx)
 
+# Aliases for Aizen XFX branding
+aizen_xfx = zyrox
+AizenXFX = zyrox
+AizenBot = zyrox
+
 def setup_bot():
     intents = discord.Intents.all()
     bot = zyrox(intents=intents)

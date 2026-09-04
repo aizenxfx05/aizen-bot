@@ -238,4 +238,68 @@ export const api = {
       method: "PATCH",
       body: JSON.stringify(data),
     }),
+
+  // Server Management & Live Control
+  getServerStats: (guildId: string) => 
+    request<any>(`/guilds/${guildId}/server-control/stats`),
+
+  getServerChannels: (guildId: string) => 
+    request<any[]>(`/guilds/${guildId}/server-control/channels`),
+
+  getServerRoles: (guildId: string) => 
+    request<any[]>(`/guilds/${guildId}/server-control/roles`),
+
+  triggerLockdown: (guildId: string, data: { locked: boolean; reason?: string }) =>
+    request<{ success: boolean; affected_channels: number }>(`/guilds/${guildId}/server-control/lockdown`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  sendAnnouncement: (guildId: string, data: { channel_id: number; title: string; message: string }) =>
+    request<{ success: boolean; message_id: string }>(`/guilds/${guildId}/server-control/announce`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  purgeMessages: (guildId: string, data: { channel_id: number; amount: number; bot_only?: boolean }) =>
+    request<{ success: boolean; deleted_count: number }>(`/guilds/${guildId}/server-control/purge`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  setSlowmode: (guildId: string, data: { channel_id: number; delay: number; reason?: string }) =>
+    request<{ success: boolean; slowmode_delay: number }>(`/guilds/${guildId}/server-control/slowmode`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  timeoutMember: (guildId: string, data: { user_id: number; duration_minutes: number; reason?: string }) =>
+    request<{ success: boolean; action: string }>(`/guilds/${guildId}/server-control/moderation/timeout`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  kickMember: (guildId: string, data: { user_id: number; reason?: string }) =>
+    request<{ success: boolean; action: string }>(`/guilds/${guildId}/server-control/moderation/kick`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  banMember: (guildId: string, data: { user_id: number; delete_message_days?: number; reason?: string }) =>
+    request<{ success: boolean; action: string }>(`/guilds/${guildId}/server-control/moderation/ban`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  unbanMember: (guildId: string, data: { user_id: number; reason?: string }) =>
+    request<{ success: boolean; action: string }>(`/guilds/${guildId}/server-control/moderation/unban`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  manageMemberRole: (guildId: string, data: { user_id: number; role_id: number; action: "add" | "remove" }) =>
+    request<{ success: boolean; action: string }>(`/guilds/${guildId}/server-control/roles/manage`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

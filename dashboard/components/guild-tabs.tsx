@@ -42,7 +42,8 @@ import {
   Link2,
   Zap,
   Mic,
-  Mail
+  Mail,
+  SlidersHorizontal
 } from "lucide-react";
 
 interface Tab {
@@ -67,6 +68,7 @@ export function GuildTabs({ guildId }: { guildId: string }) {
 
   const tabs: Tab[] = [
     { name: "Overview", href: `/dashboard/guild/${guildId}`, icon: Layers },
+    { name: "Server Control", href: `/dashboard/guild/${guildId}/server-control`, icon: SlidersHorizontal },
     { name: "Anti-Nuke", href: `/dashboard/guild/${guildId}/antinuke`, icon: Sword },
     { name: "Automod", href: `/dashboard/guild/${guildId}/automod`, icon: ShieldCheck },
     { name: "Tickets", href: `/dashboard/guild/${guildId}/tickets`, icon: Ticket },

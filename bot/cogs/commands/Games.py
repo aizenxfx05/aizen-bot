@@ -15,7 +15,7 @@
 import discord
 from discord.ext import commands
 import os
-from core import Cog, zyrox, Context
+from core import Cog, AizenBot, Context
 import games as games
 from utils.Tools import *
 from utils.cv2 import CV2
@@ -26,9 +26,9 @@ import asyncio
 
 
 class Games(Cog):
-    """Zyrox Games"""
+    """Aizen XFX Games"""
 
-    def __init__(self, client: zyrox):
+    def __init__(self, client: AizenBot):
         self.client = client
 
 

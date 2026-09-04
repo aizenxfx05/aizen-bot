@@ -13,7 +13,7 @@
 # ╚══════════════════════════════════════════════════════════════════╝
 
 from discord.ext import commands
-from core import zyrox, Cog
+from core import Cog, AizenBot
 import discord
 from utils.emoji import ARROWRED, KING, ZBOT, ZHUMAN, ZROCKET
 import logging
@@ -26,11 +26,11 @@ logging.basicConfig(
     datefmt="%H:%M:%S",
 )
 
-client = zyrox()
+client = AizenBot()
 
 
 class Guild(Cog):
-    def __init__(self, client: zyrox):
+    def __init__(self, client: AizenBot):
         self.client = client
         self.recently_removed_guilds = set()
         self._removal_timestamps = {}

@@ -19,7 +19,7 @@ from discord import app_commands, Interaction
 from difflib import get_close_matches
 from contextlib import suppress
 from core import Context
-from core.zyrox import zyrox
+from core import AizenBot
 from core.Cog import Cog
 from utils.Tools import getConfig
 from itertools import chain
@@ -33,7 +33,7 @@ from utils.cv2 import CV2, CV2Embed
 from utils.config import *
 
 color = 0xA855F7
-client = zyrox()
+client = AizenBot()
 
 from utils.config import BotName
 
@@ -180,9 +180,9 @@ class HelpCommand(commands.HelpCommand):
       await self.send_ignore_message(ctx, "command")
       return
 
-    zyrox = f">>> {command.help}" if command.help else '>>> No Help Provided...'
+    cmd_desc = f">>> {command.help}" if command.help else '>>> No Help Provided...'
     embed = CV2Embed(
-        description=f"""{zyrox}""",
+        description=f"""{cmd_desc}""",
         color=color)
     alias = ' & '.join(command.aliases)
 
@@ -275,7 +275,7 @@ class HelpCommand(commands.HelpCommand):
 
 class Help(Cog, name="help"):
 
-  def __init__(self, client: zyrox):
+  def __init__(self, client: AizenBot):
     self._original_help_command = client.help_command
     attributes = {
       'name': "help",

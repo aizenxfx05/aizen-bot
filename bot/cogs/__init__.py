@@ -13,7 +13,7 @@
 # ╚══════════════════════════════════════════════════════════════════╝
 
 from __future__ import annotations
-from core import zyrox
+from core import AizenBot
 from colorama import Fore, Style, init
 
 
@@ -105,36 +105,36 @@ from .events.ai_automod import AIAutoMod            # Aizen XFX — Neuro-AI Aut
 from .commands.ticket_transcripts import TicketTranscripts # Aizen XFX — HTML Ticket Transcripts
 
 ########-------HELP-------########
-from .zyrox.antinuke import _antinuke
-from .zyrox.extra import _extra
-from .zyrox.general import _general
-from .zyrox.automod import _automod 
-from .zyrox.moderation import _moderation
-#from .zyrox.inviteTracker import _inviteTracker
-from .zyrox.music import _music
-from .zyrox.fun import _fun
-from .zyrox.games import _games
-from .zyrox.ignore import _ignore
-from .zyrox.server import _server
-from .zyrox.voice import _voice 
-from .zyrox.welcome import _welcome 
-from .zyrox.giveaway import _giveaway
-from .zyrox.ticket import _ticket
+from .aizen_xfx.antinuke import _antinuke
+from .aizen_xfx.extra import _extra
+from .aizen_xfx.general import _general
+from .aizen_xfx.automod import _automod 
+from .aizen_xfx.moderation import _moderation
+#from .aizen_xfx.inviteTracker import _inviteTracker
+from .aizen_xfx.music import _music
+from .aizen_xfx.fun import _fun
+from .aizen_xfx.games import _games
+from .aizen_xfx.ignore import _ignore
+from .aizen_xfx.server import _server
+from .aizen_xfx.voice import _voice 
+from .aizen_xfx.welcome import _welcome 
+from .aizen_xfx.giveaway import _giveaway
+from .aizen_xfx.ticket import _ticket
 #from .axon.vanityroles import Vanityroles69999
-from .zyrox.logging import _logging
-from .zyrox.vanity import _vanity
-from .zyrox.inviteTracker import inviteTracker 
-from .zyrox.counting import _Counting
-from .zyrox.j2c import _J2C
-from .zyrox.ai import _ai
-from .zyrox.booster import __boost 
-from .zyrox.leveling import _leveling
-from .zyrox.sticky import _sticky
-from .zyrox.verify import _verify
-from .zyrox.encryption import _encrypt
-from .zyrox.mc import _mc
-from .zyrox.joindm import _joindm
-from .zyrox.birth import _birth
+from .aizen_xfx.logging import _logging
+from .aizen_xfx.vanity import _vanity
+from .aizen_xfx.inviteTracker import inviteTracker 
+from .aizen_xfx.counting import _Counting
+from .aizen_xfx.j2c import _J2C
+from .aizen_xfx.ai import _ai
+from .aizen_xfx.booster import __boost 
+from .aizen_xfx.leveling import _leveling
+from .aizen_xfx.sticky import _sticky
+from .aizen_xfx.verify import _verify
+from .aizen_xfx.encryption import _encrypt
+from .aizen_xfx.mc import _mc
+from .aizen_xfx.joindm import _joindm
+from .aizen_xfx.birth import _birth
 
 #########ANTINUKE#########
 
@@ -192,7 +192,7 @@ from .moderation.snipe import Snipe
 
 from utils.config import BotName
 
-async def setup(bot: zyrox):
+async def setup(bot: AizenBot):
   cogs_to_load = [
         Help, General, Moderation, Automod, Welcomer, Fun, Games, Extra,
         Voice, Owner, Customrole, afk, Embed, Media, Ignore, TicketCog, Logging,

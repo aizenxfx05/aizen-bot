@@ -12,6 +12,6 @@
 # ║                                                                  ║
 # ╚══════════════════════════════════════════════════════════════════╝
 
-from .zyrox import zyrox
+from .zyrox import zyrox, aizen_xfx, AizenXFX, AizenBot
 from .Context import Context
 from .Cog import Cog

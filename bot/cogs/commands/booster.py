@@ -28,7 +28,7 @@ import datetime
 import re 
 from typing import *
 from time import strftime 
-from core import Cog ,zyrox ,Context 
+from core import Cog, AizenBot, Context 
 from discord.ui import LayoutView, TextDisplay, Separator, Container
 from utils.cv2 import CV2, build_container
 
@@ -49,7 +49,7 @@ datefmt ="%H:%M:%S",
 )
 
 class Booster (Cog ):
-    def __init__ (self ,bot : Zyrox ):
+    def __init__ (self ,bot: AizenBot ):
         self .bot =bot 
         self .color =0xA855F7 
         self .db_path ="db/boost.db"

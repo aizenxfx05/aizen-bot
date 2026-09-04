@@ -15,14 +15,14 @@
 import discord
 from utils.emoji import ARROWRED, ZMODULE
 from discord.utils import *
-from core import zyrox, Cog
+from core import Cog, AizenBot
 from utils.Tools import *
 from utils.config import BotName, serverLink
 from discord.ext import commands
 from discord.ui import Button, View
 
 class Autorole(Cog):
-    def __init__(self, bot: zyrox):
+    def __init__(self, bot: AizenBot):
        self.bot = bot
 
 

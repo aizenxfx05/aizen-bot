@@ -1,15 +1,15 @@
 <div align="center">
 
 ```
-███████╗██╗   ██╗██████╗  ██████╗ ██╗  ██╗
-╚══███╔╝╚██╗ ██╔╝██╔══██╗██╔═══██╗╚██╗██╔╝
-  ███╔╝  ╚████╔╝ ██████╔╝██║   ██║ ╚███╔╝ 
- ███╔╝    ╚██╔╝  ██╔══██╗██║   ██║ ██╔██╗ 
-███████╗   ██║   ██║  ██║╚██████╔╝██╔╝ ██╗
-╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝
+  █████╗ ██╗███████╗███████╗███╗   ██╗    ██╗  ██╗███████╗██╗  ██╗
+ ██╔══██╗██║╚══███╔╝██╔════╝████╗  ██║    ╚██╗██╔╝██╔════╝╚██╗██╔╝
+ ███████║██║  ███╔╝ █████╗  ██╔██╗ ██║     ╚███╔╝ █████╗   ╚███╔╝ 
+ ██╔══██║██║ ███╔╝  ██╔══╝  ██║╚██╗██║     ██╔██╗ ██╔══╝   ██╔██╗ 
+ ██║  ██║██║███████╗███████╗██║ ╚████║    ██╔╝ ██╗██║     ██╔╝ ██╗
+ ╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═╝  ╚═══╝    ╚═╝  ╚═╝╚═╝     ╚═╝  ╚═╝
 ```
 
-<h3>ZyroX Dashboard — Next.js Web Interface</h3>
+<h3>Aizen XFX Dashboard — Next.js Web Interface</h3>
 
 <a href="https://nexiohost.in"><img src="https://img.shields.io/badge/⭐%20PREMIUM%20HOSTING-NexioHost-FFD700?style=for-the-badge&labelColor=1a1a2e&color=FFD700&logoColor=FFD700"/></a>
 
@@ -32,7 +32,7 @@
 
 ## ✦ Overview
 
-This folder contains the ZyroX web dashboard built with `Next.js 14` (App Router), `TypeScript`, and `Tailwind CSS`. It connects to the bot's FastAPI backend via a permanent Cloudflare Tunnel HTTPS URL and lets server admins manage all bot settings through a sleek, branded UI.
+This folder contains the Aizen XFX web dashboard built with `Next.js 14` (App Router), `TypeScript`, and `Tailwind CSS`. It connects to the bot's FastAPI backend via a permanent Cloudflare Tunnel HTTPS URL and lets server admins manage all bot settings through a sleek, branded UI.
 
 ```
 dashboard/
@@ -79,7 +79,7 @@ dashboard/
 | Requirement | Notes |
 |---|---|
 | Node.js 18+ | — |
-| ZyroX bot running | with `API_ENABLED=true` and `TUNNEL_ENABLED=true` |
+| Aizen XFX bot running | with `API_ENABLED=true` and `TUNNEL_ENABLED=true` |
 | Discord OAuth app | from [Discord Developer Portal](https://discord.com/developers/applications) |
 
 ---
@@ -112,8 +112,8 @@ DISCORD_CLIENT_SECRET         = your_discord_oauth_client_secret
 
 # ── Branding ──────────────────────────────────────────────────────
 NEXT_PUBLIC_ADMIN_IDS         = your_discord_user_id
-NEXT_PUBLIC_BRAND_NAME        = "ZyroX"
-NEXT_PUBLIC_BRAND_NAME_WORD   = "ZX"
+NEXT_PUBLIC_BRAND_NAME        = "Aizen XFX"
+NEXT_PUBLIC_BRAND_NAME_WORD   = "AXFX"
 ```
 
 ### 3 — Run locally

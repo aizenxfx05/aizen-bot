@@ -13,7 +13,7 @@
 # ╚══════════════════════════════════════════════════════════════════╝
 
 """
-Centralized emoji module for the Zyrox bot.
+Centralized emoji module for the Aizen XFX bot.
 All emoji definitions are stored here for easy management and consistency.
 """
 
@@ -136,6 +136,17 @@ ZYROX_COMMAND = "<:p_zyrox_command:1545115525259071499>"
 ZYROX_GLOBAL = "<:p_zyrox_global:1545115532385198091>"
 ZYROX_OWNER = "<:p_zyrox_owner:1545115538131386448>"
 ZYROX_SEARCH = "<:p_zyrox_search:1545115543642578954>"
+
+# Aizen XFX Aliases
+AIZEN_CONNECTION = ZYROXCONNECTION
+AIZEN_HAMMER = ZYROXHAMMER
+AIZEN_LINKS = ZYROXLINKS
+AIZEN_SYS = ZYROXSYS
+AIZEN_CODE = ZYROX_CODE
+AIZEN_COMMAND = ZYROX_COMMAND
+AIZEN_GLOBAL = ZYROX_GLOBAL
+AIZEN_OWNER = ZYROX_OWNER
+AIZEN_SEARCH = ZYROX_SEARCH
 
 # ============================================================================
 # DISCORD CUSTOM EMOJIS (Animated)

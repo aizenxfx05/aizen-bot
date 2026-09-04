@@ -131,6 +131,7 @@ class Backup(Cog):
 
     async def _create_snapshot_data(self, guild: discord.Guild, creator_id: int) -> str:
         """Captures a snapshot of the guild and stores it in the database. Returns backup_id."""
+        await self._ensure_tables()
         roles_data = []
         for role in reversed(guild.roles):
             if role.is_default():
@@ -208,6 +209,7 @@ class Backup(Cog):
 
     async def _restore_from_snapshot(self, guild: discord.Guild, backup_id: str, reason: str = "Aizen XFX Server Restore") -> dict:
         """Restores missing roles, categories, and channels from a snapshot. Returns stats dictionary."""
+        await self._ensure_tables()
         async with aiosqlite.connect(DB_PATH) as db:
             async with db.execute("SELECT data FROM backups WHERE backup_id = ?", (backup_id,)) as cursor:
                 row = await cursor.fetchone()

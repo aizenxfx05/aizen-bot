@@ -118,5 +118,9 @@ class Errors(Cog):
     if isinstance(error, commands.CommandInvokeError):
       print(f"[ERROR] CommandInvokeError in {ctx.command}: {error}")
       print(f"  Original: {error.original}")
+      try:
+        await ctx.send(f"❌ **An error occurred while executing `{ctx.command}`:** `{error.original}`")
+      except Exception:
+        pass
       return
 

@@ -97,7 +97,7 @@ from .events.autoreact import AutoReactListener
 #from .events.topgg import TopGG
 from .events.ai import AIResponses 
 from .events.stickymessage import StickyMessageListener
-from .events.vc_ai_chat import VCAIChat           # Aizen XFX — AI in VC text channels
+# from .events.vc_ai_chat import VCAIChat           # Removed per user request
 from .events.channel_restore import ChannelRestore  # Aizen XFX — Channel Restore System
 from .commands.backup import Backup                 # Aizen XFX — 1-Click Server Backup
 from .events.vc_tts import VCAITTS                  # Aizen XFX — AI Voice TTS in VC
@@ -316,7 +316,7 @@ async def setup(bot: AizenBot):
   await bot.add_cog(NotifCommands(bot))
   await bot.add_cog(StickyMessageListener(bot))
   await bot.add_cog(AIResponses(bot))
-  await bot.add_cog(VCAIChat(bot))            # Aizen XFX — AI replies in VC text channels
+  # await bot.add_cog(VCAIChat(bot))            # Removed per user request
   await bot.add_cog(ChannelRestore(bot))      # Aizen XFX — Auto-restore deleted channels
 
 

@@ -109,74 +109,14 @@ async def _call_groq(channel_id: int, user_message: str) -> str:
 
 
 class VCAIChat(commands.Cog):
-    """Aizen XFX — AI replies in voice-linked text channels."""
+    """Aizen XFX — VC AI Chat (Disabled per user request)"""
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self._processing: set = set()
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
-        if message.author.bot:
-            return
-        if message.guild is None:
-            return
-        if message.type != discord.MessageType.default:
-            return
-
-        channel = message.channel
-
-        if not _is_vc_text_channel(channel):
-            return
-
-        if channel.id in self._processing:
-            return
-        self._processing.add(channel.id)
-
-        try:
-            user_input = message.content.strip()
-            if not user_input:
-                return
-
-            if _nsfw_clean(user_input):
-                await message.reply(
-                    "That content is not allowed here.",
-                    mention_author=False,
-                    delete_after=8,
-                )
-                return
-
-            async with channel.typing():
-                reply = await _call_groq(channel.id, user_input)
-
-            if not reply:
-                return
-
-            if _nsfw_clean(reply):
-                await message.reply(
-                    "The AI generated inappropriate content. Message blocked.",
-                    mention_author=False,
-                )
-                return
-
-            if len(reply) > MAX_RESPONSE_LEN:
-                reply = reply[:MAX_RESPONSE_LEN] + "..."
-
-            await message.reply(reply, mention_author=False)
-
-        finally:
-            self._processing.discard(channel.id)
-
-    @commands.command(name="vc-ai-clear", aliases=["clearvcai"])
-    @commands.has_permissions(manage_channels=True)
-    async def clear_vc_history(self, ctx: commands.Context):
-        """Clears the AI conversation history for the current VC text channel."""
-        if ctx.channel.id in _history:
-            _history[ctx.channel.id].clear()
-        await ctx.send(
-            "AI conversation history for this channel has been cleared.",
-            delete_after=10,
-        )
+    async def on_ready(self):
+        pass
 
 
 async def setup(bot: commands.Bot):

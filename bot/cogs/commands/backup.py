@@ -24,13 +24,28 @@ from discord.ext import commands, tasks
 from discord.ui import View, Button
 
 from core import Context, Cog
-from utils.config import THEME_COLOR, BotName, serverLink
+from utils.config import THEME_COLOR, BotName, serverLink, OWNER_IDS
 
 logger = logging.getLogger("backup")
 
 # ── DB path (robust against any CWD) ──────────────────────────────────────────
 _BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DB_PATH = os.path.join(_BASE_DIR, "db", "backup.db")
+
+
+def backup_admin_check():
+    """Allows server owners, bot owners, or members with administrator permissions."""
+    async def predicate(ctx: Context):
+        if ctx.guild is None:
+            return False
+        if ctx.author.id == ctx.guild.owner_id:
+            return True
+        if ctx.author.id in OWNER_IDS:
+            return True
+        if getattr(ctx.author.guild_permissions, "administrator", False):
+            return True
+        raise commands.MissingPermissions(["administrator"])
+    return commands.check(predicate)
 
 
 class BackupConfirmView(View):
@@ -89,6 +104,7 @@ class Backup(Cog):
     async def _ensure_tables(self):
         """Create tables for backups and auto-restore configuration."""
         try:
+            os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
             async with aiosqlite.connect(DB_PATH) as db:
                 await db.execute("""
                     CREATE TABLE IF NOT EXISTS backups (
@@ -420,7 +436,7 @@ class Backup(Cog):
         aliases=["serverbackup", "server-backup", "server_backup", "sb"],
         invoke_without_command=True
     )
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def backup_group(self, ctx: Context, *, sub: str = None):
         """Aizen XFX Backup & Auto-Restore command hub."""
         if sub:
@@ -475,7 +491,7 @@ class Backup(Cog):
         await ctx.reply(embed=embed, mention_author=False)
 
     @backup_group.command(name="create", aliases=["new", "make", "save"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def backup_create(self, ctx: Context):
         """Creates a snapshot of the current server's roles, channels, and structure."""
         progress_msg = await ctx.reply("🟣 *Capturing server state (roles, categories, channels)...*", mention_author=False)
@@ -500,7 +516,7 @@ class Backup(Cog):
         await progress_msg.edit(content=None, embed=embed)
 
     @backup_group.command(name="list", aliases=["all", "show"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def backup_list(self, ctx: Context):
         """Lists all snapshots created for this server."""
         async with aiosqlite.connect(DB_PATH) as db:
@@ -519,7 +535,7 @@ class Backup(Cog):
         await ctx.reply(embed=embed, mention_author=False)
 
     @backup_group.command(name="info", aliases=["view", "details"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def backup_info(self, ctx: Context, backup_id: str):
         """View detailed snapshot contents and statistics."""
         async with aiosqlite.connect(DB_PATH) as db:
@@ -566,7 +582,7 @@ class Backup(Cog):
         await ctx.reply(embed=embed, mention_author=False)
 
     @backup_group.command(name="load", aliases=["restore", "apply"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def backup_load(self, ctx: Context, backup_id: str):
         """Restores a server snapshot with confirmation."""
         guild = ctx.guild
@@ -629,7 +645,7 @@ class Backup(Cog):
         await msg.edit(embed=done_embed)
 
     @backup_group.command(name="delete", aliases=["del", "remove"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def backup_delete(self, ctx: Context, backup_id: str):
         """Deletes a saved snapshot."""
         async with aiosqlite.connect(DB_PATH) as db:
@@ -649,7 +665,7 @@ class Backup(Cog):
         aliases=["auto-restore", "autobackup", "auto_restore"],
         invoke_without_command=True
     )
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def autorestore_cmd(self, ctx: Context, *, sub: str = None):
         """Automatic server restore command hub."""
         if sub:
@@ -714,7 +730,7 @@ class Backup(Cog):
         await ctx.reply(embed=embed, mention_author=False)
 
     @autorestore_cmd.command(name="enable", aliases=["on"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def autorestore_enable(self, ctx: Context):
         """Enable automatic server restore protection."""
         progress_msg = None
@@ -768,7 +784,7 @@ class Backup(Cog):
             await ctx.send(f"❌ Failed to enable Automatic Server Restore: `{err}`")
 
     @autorestore_cmd.command(name="disable", aliases=["off"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def autorestore_disable(self, ctx: Context):
         """Disable automatic server restore protection."""
         await self._ensure_tables()
@@ -819,7 +835,7 @@ class Backup(Cog):
         await ctx.reply(embed=embed, mention_author=False)
 
     @autorestore_cmd.command(name="sync", aliases=["snapshot", "update"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def autorestore_sync(self, ctx: Context):
         """Immediately captures a fresh master snapshot for auto-restore."""
         progress_msg = await ctx.reply("🟣 *Synchronizing master server snapshot...*", mention_author=False)
@@ -834,7 +850,7 @@ class Backup(Cog):
         await progress_msg.edit(content=None, embed=embed)
 
     @autorestore_cmd.command(name="restore", aliases=["run", "now", "trigger"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def autorestore_run(self, ctx: Context):
         """1-Click manual trigger to restore missing server elements from master snapshot."""
         config = await self._get_auto_config(ctx.guild.id)
@@ -864,7 +880,7 @@ class Backup(Cog):
         await progress_msg.edit(content=None, embed=embed)
 
     @autorestore_cmd.command(name="logchannel", aliases=["log", "logs"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def autorestore_logchannel(self, ctx: Context, channel: discord.TextChannel):
         """Set the channel where auto-restore alert logs are sent."""
         await self._ensure_tables()
@@ -890,44 +906,44 @@ class Backup(Cog):
     # ── Server namespace group (>server backup ..., >server restore ...) ─────
 
     @commands.group(name="server", invoke_without_command=True)
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def server_cmd(self, ctx: Context, *, sub: str = None):
         """Server management commands."""
         await self.backup_group(ctx, sub=sub)
 
     @server_cmd.group(name="backup", invoke_without_command=True)
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def server_backup_cmd(self, ctx: Context, *, sub: str = None):
         """Server backup commands under server namespace."""
         await self.backup_group(ctx, sub=sub)
 
     @server_backup_cmd.command(name="create", aliases=["new", "make", "save"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def server_backup_create(self, ctx: Context):
         await self.backup_create(ctx)
 
     @server_backup_cmd.command(name="load", aliases=["restore", "apply"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def server_backup_load(self, ctx: Context, backup_id: str):
         await self.backup_load(ctx, backup_id)
 
     @server_backup_cmd.command(name="list", aliases=["all", "show"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def server_backup_list(self, ctx: Context):
         await self.backup_list(ctx)
 
     @server_backup_cmd.command(name="info", aliases=["view", "details"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def server_backup_info(self, ctx: Context, backup_id: str):
         await self.backup_info(ctx, backup_id)
 
     @server_backup_cmd.command(name="delete", aliases=["del", "remove"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def server_backup_delete(self, ctx: Context, backup_id: str):
         await self.backup_delete(ctx, backup_id)
 
     @server_cmd.group(name="restore", invoke_without_command=True)
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def server_restore_cmd(self, ctx: Context, *, sub: str = None):
         """Server restore command under server namespace."""
         await self.autorestore_cmd(ctx, sub=sub)
@@ -939,24 +955,24 @@ class Backup(Cog):
         aliases=["automatic"],
         invoke_without_command=True
     )
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def auto_cmd(self, ctx: Context, *, sub: str = None):
         """Auto commands group."""
         await self.autorestore_cmd(ctx, sub=sub)
 
     @auto_cmd.group(name="restore", invoke_without_command=True)
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def auto_restore_subgroup(self, ctx: Context, *, sub: str = None):
         """Auto restore command under auto namespace."""
         await self.autorestore_cmd(ctx, sub=sub)
 
     @auto_restore_subgroup.command(name="enable", aliases=["on"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def auto_restore_enable_sub(self, ctx: Context):
         await self.autorestore_enable(ctx)
 
     @auto_restore_subgroup.command(name="disable", aliases=["off"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def auto_restore_disable_sub(self, ctx: Context):
         await self.autorestore_disable(ctx)
 
@@ -966,12 +982,12 @@ class Backup(Cog):
         await self.autorestore_status(ctx)
 
     @auto_restore_subgroup.command(name="sync", aliases=["snapshot", "update"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def auto_restore_sync_sub(self, ctx: Context):
         await self.autorestore_sync(ctx)
 
     @auto_restore_subgroup.command(name="run", aliases=["restore", "now", "trigger"])
-    @commands.has_permissions(administrator=True)
+    @backup_admin_check()
     async def auto_restore_run_sub(self, ctx: Context):
         await self.autorestore_run(ctx)
 

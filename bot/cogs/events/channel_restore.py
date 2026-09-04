@@ -269,6 +269,13 @@ class ChannelRestore(commands.Cog):
         """Manage the Aizen XFX Channel Restore feature."""
         if sub:
             sub_lower = sub.strip().lower()
+            parts = sub.strip().split()
+            if parts[0].lower() in ["server", "guild"]:
+                autorestore_cmd = self.bot.get_command("autorestore")
+                if autorestore_cmd:
+                    sub_args = " ".join(parts[1:]) if len(parts) > 1 else None
+                    await ctx.invoke(autorestore_cmd, sub=sub_args)
+                    return
             if sub_lower in ["enable", "on", "true", "start", "1"]:
                 await self.restore_enable(ctx)
                 return

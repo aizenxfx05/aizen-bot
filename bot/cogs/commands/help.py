@@ -156,7 +156,7 @@ class HelpCommand(commands.HelpCommand):
               f" {ZCIRCLE_ALT1} `»` Customrole\n"
               f" 🎙️ `»` VC AI & TTS {NEW}\n"
               f" 🔄 `»` Channel Restore {NEW}\n"
-              f" 💾 `»` Server Backup {NEW}\n"
+              f" 💾 `»` Server Backup & Auto-Restore {NEW}\n"
               f" 🧠 `»` Neuro-AI Automod {NEW}\n"
               f" 📜 `»` Transcripts {NEW}\n"           
     )

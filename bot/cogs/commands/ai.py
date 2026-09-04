@@ -284,13 +284,13 @@ class TriviaAnswerView (discord .ui .View ):
 
 class AI (commands .Cog ):
     def __init__ (self ,bot ):
-        self .bot =bot 
-        self .gemini_api_key =os .getenv ("GOOGLE_API_KEY")
-        if not self .gemini_api_key :
-            logger .warning ("GOOGLE_API_KEY environment variable not set. Gemini AI will not work.")
-        self .groq_api_key =(os .getenv ("GROQ_API_KEY")or GROQ_API_KEY or "").strip ().strip ("'\"")
-        if not self .groq_api_key :
-            logger .warning ("GROQ_API_KEY environment variable not set. Groq AI will not work.")
+        self.bot = bot
+        self.gemini_api_key = os.getenv("GOOGLE_API_KEY")
+        self.groq_api_key = (os.getenv("GROQ_API_KEY") or GROQ_API_KEY or "").strip().strip("'\"")
+        if not self.gemini_api_key and not self.groq_api_key:
+            logger.warning("Neither GOOGLE_API_KEY nor GROQ_API_KEY is set. AI features will not work.")
+        elif self.groq_api_key:
+            logger.info("AI Cog initialized with Groq API.")
         self .chatbot_enabled ={}
         self .chatbot_channels ={}
         self .conversation_history ={}

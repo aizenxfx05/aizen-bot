@@ -15,7 +15,8 @@
 import os
 import random
 import discord
-from utils.emoji import FORWARD, ICONLOAD, ICONS_MUSIC, ICONS_PAUSE, ICONS_WARNING_ALT1, MUSICSTOP_ICONS, MUSIC_ALT1, MUTE, REWIND, REWIND_ALT1, SHUFFLE, SKIP, TICK, WARNING, ZMUSICPAUSE, ZPLUS, ZUNMUTE
+import aiosqlite
+from utils.emoji import ENABLE, DISABLE, CROSS, FORWARD, ICONLOAD, ICONS_MUSIC, ICONS_PAUSE, ICONS_WARNING_ALT1, MUSICSTOP_ICONS, MUSIC_ALT1, MUTE, REWIND, REWIND_ALT1, SHUFFLE, SKIP, TICK, WARNING, ZMUSICPAUSE, ZPLUS, ZUNMUTE
 from discord.ext import commands, tasks
 import datetime
 from discord.ui import Button, View, LayoutView, TextDisplay, Separator, Container, ActionRow
@@ -162,7 +163,13 @@ class SearchResultView(LayoutView):
                 return
 
             track = self.results[index]
-            vc = self.ctx.voice_client or await self.ctx.author.voice.channel.connect(cls=wavelink.Player, self_deaf=True)
+            # Ensure we always use a wavelink.Player for audio streaming
+            if self.ctx.voice_client and not isinstance(self.ctx.voice_client, wavelink.Player):
+                try:
+                    await self.ctx.voice_client.disconnect(force=True)
+                except Exception:
+                    pass
+            vc: wavelink.Player = self.ctx.voice_client if isinstance(self.ctx.voice_client, wavelink.Player) else await self.ctx.author.voice.channel.connect(cls=wavelink.Player, self_deaf=True)
             vc.ctx = self.ctx
             try:
                 await vc.set_volume(100)
@@ -341,11 +348,86 @@ class MusicControlView(LayoutView):
 class Music(commands.Cog):
     def __init__(self, client: AizenBot):
         self.client = client
+        self.twenty_four_seven = {}
+        self.db_path = 'db/247.db'
+        self.client.loop.create_task(self.init_247_db())
+        self.client.loop.create_task(self.reconnect_247_task())
         self.client.loop.create_task(self.connect_nodes())
         self.client.loop.create_task(self.monitor_inactivity())
         
         self.inactivity_timeout = 120 
         self.player_inactivity = {}  
+
+    async def init_247_db(self):
+        try:
+            os.makedirs("db", exist_ok=True)
+            async with aiosqlite.connect(self.db_path) as db:
+                await db.execute('''
+                    CREATE TABLE IF NOT EXISTS twentyfour_seven (
+                        guild_id INTEGER PRIMARY KEY,
+                        channel_id INTEGER,
+                        text_channel_id INTEGER
+                    )
+                ''')
+                await db.commit()
+                async with db.execute('SELECT guild_id, channel_id, text_channel_id FROM twentyfour_seven') as cursor:
+                    rows = await cursor.fetchall()
+                    for guild_id, channel_id, text_channel_id in rows:
+                        self.twenty_four_seven[guild_id] = {
+                            "channel_id": channel_id,
+                            "text_channel_id": text_channel_id
+                        }
+            print(f"[Music] Loaded {len(self.twenty_four_seven)} guilds with 24/7 mode active.")
+        except Exception as e:
+            print(f"[Music] Error loading 24/7 database: {e}")
+
+    def is_247(self, guild_id: int) -> bool:
+        return guild_id in self.twenty_four_seven
+
+    async def set_247(self, guild_id: int, channel_id: int, text_channel_id: int):
+        self.twenty_four_seven[guild_id] = {
+            "channel_id": channel_id,
+            "text_channel_id": text_channel_id
+        }
+        try:
+            async with aiosqlite.connect(self.db_path) as db:
+                await db.execute('''
+                    INSERT INTO twentyfour_seven (guild_id, channel_id, text_channel_id)
+                    VALUES (?, ?, ?)
+                    ON CONFLICT(guild_id) DO UPDATE SET
+                        channel_id = excluded.channel_id,
+                        text_channel_id = excluded.text_channel_id
+                ''', (guild_id, channel_id, text_channel_id))
+                await db.commit()
+        except Exception as e:
+            print(f"[Music] Error saving 24/7 setting for guild {guild_id}: {e}")
+
+    async def remove_247(self, guild_id: int):
+        self.twenty_four_seven.pop(guild_id, None)
+        try:
+            async with aiosqlite.connect(self.db_path) as db:
+                await db.execute('DELETE FROM twentyfour_seven WHERE guild_id = ?', (guild_id,))
+                await db.commit()
+        except Exception as e:
+            print(f"[Music] Error removing 24/7 for guild {guild_id}: {e}")
+
+    async def reconnect_247_task(self):
+        await self.client.wait_until_ready()
+        await asyncio.sleep(8)
+        for guild_id, data in list(self.twenty_four_seven.items()):
+            try:
+                guild = self.client.get_guild(guild_id)
+                if not guild:
+                    continue
+                channel_id = data.get("channel_id")
+                channel = guild.get_channel(channel_id)
+                if not channel or not isinstance(channel, discord.VoiceChannel):
+                    continue
+                if guild.voice_client is None:
+                    await channel.connect(cls=wavelink.Player, self_deaf=True)
+                    print(f"[Music 24/7] Auto-reconnected to {channel.name} in {guild.name}")
+            except Exception as e:
+                print(f"[Music 24/7] Reconnect error for guild {guild_id}: {e}")
 
     async def monitor_inactivity(self):
         while True:
@@ -354,6 +436,9 @@ class Music(commands.Cog):
             await asyncio.sleep(60) 
 
     async def check_inactivity(self, guild_id):
+        if self.is_247(guild_id):
+            return
+
         guild = self.client.get_guild(guild_id)
         if not guild:
             return
@@ -368,32 +453,38 @@ class Music(commands.Cog):
             await self.inactivity_timer(guild)
 
     async def inactivity_timer(self, guild):
+        if self.is_247(guild.id):
+            return
         await asyncio.sleep(self.inactivity_timeout)
-        if len(guild.voice_channels[0].members) == 1:
-            player = None
-            for vc in self.client.voice_clients:
-                if vc.guild.id == guild.id:
-                    player = vc
-                    break
-            if player:
-                await player.disconnect(force=True)
-                try:
-                    support = Button(label='Support', style=discord.ButtonStyle.link, url='https://discord.gg/M8qJ9W7vBb')
-                    vote = Button(label='Vote', style=discord.ButtonStyle.link, url='https://top.gg/bot//vote')
-                    view = LayoutView(timeout=None)
-                    container = build_container(
-                        TextDisplay("**Inactive Timeout**"),
-                        Separator(visible=True),
-                        TextDisplay("Bot has been disconnected due to inactivity (being idle in Voice Channel) for more than 2 minutes."),
-                        Separator(visible=True),
-                        ActionRow(support, vote),
-                        Separator(visible=True),
-                        TextDisplay(f"*Thanks for choosing {BRAND_NAME}!*"),
-                    )
-                    view.add_item(container)
+        if self.is_247(guild.id):
+            return
+
+        player = None
+        for vc in self.client.voice_clients:
+            if vc.guild.id == guild.id:
+                player = vc
+                break
+
+        if player and len(player.channel.members) == 1:
+            await player.disconnect(force=True)
+            try:
+                support = Button(label='Support', style=discord.ButtonStyle.link, url='https://discord.gg/M8qJ9W7vBb')
+                vote = Button(label='Vote', style=discord.ButtonStyle.link, url='https://top.gg/bot//vote')
+                view = LayoutView(timeout=None)
+                container = build_container(
+                    TextDisplay("**Inactive Timeout**"),
+                    Separator(visible=True),
+                    TextDisplay("Bot has been disconnected due to inactivity (being idle in Voice Channel) for more than 2 minutes."),
+                    Separator(visible=True),
+                    ActionRow(support, vote),
+                    Separator(visible=True),
+                    TextDisplay(f"*Thanks for choosing {BRAND_NAME}!*"),
+                )
+                view.add_item(container)
+                if hasattr(player, 'ctx') and player.ctx and player.ctx.channel:
                     await player.ctx.channel.send(view=view)
-                except:
-                    pass
+            except:
+                pass
 
     async def connect_nodes(self) -> None:
         await self.client.wait_until_ready()
@@ -440,6 +531,8 @@ class Music(commands.Cog):
                 else:
                     await player.ctx.send(view=CV2("No suitable track found for autoplay."))
             else:
+                if self.is_247(player.guild.id):
+                    return
                 await player.disconnect()
                 support = Button(label='Support', style=discord.ButtonStyle.link, url='https://discord.gg/M8qJ9W7vBb')
                 vote = Button(label='Vote', style=discord.ButtonStyle.link, url='https://top.gg/bot//vote')
@@ -476,7 +569,14 @@ class Music(commands.Cog):
                 await ctx.send(view=CV2(f"{WARNING} Music service is connecting to audio nodes. Please try again in 5 seconds."))
                 return
 
-        vc = ctx.voice_client or await ctx.author.voice.channel.connect(cls=wavelink.Player, self_deaf=True)
+        # If voice_client exists but is NOT a wavelink.Player, disconnect and reconnect properly
+        if ctx.voice_client and not isinstance(ctx.voice_client, wavelink.Player):
+            try:
+                await ctx.voice_client.disconnect(force=True)
+            except Exception:
+                pass
+        
+        vc: wavelink.Player = ctx.voice_client if isinstance(ctx.voice_client, wavelink.Player) else await ctx.author.voice.channel.connect(cls=wavelink.Player, self_deaf=True)
         vc.ctx = ctx
         try:
             await vc.set_volume(100)
@@ -500,9 +600,13 @@ class Music(commands.Cog):
             return"""
             
         try:
-            tracks = await wavelink.Playable.search(query)
-            if not tracks and not query.startswith("http"):
-                tracks = await wavelink.Playable.search(f"ytsearch:{query}") or await wavelink.Playable.search(f"scsearch:{query}")
+            # Try YouTube first (most reliable), then soundcloud as fallback
+            if not query.startswith("http"):
+                tracks = await wavelink.Playable.search(f"ytsearch:{query}")
+                if not tracks:
+                    tracks = await wavelink.Playable.search(f"scsearch:{query}")
+            else:
+                tracks = await wavelink.Playable.search(query)
         except wavelink.InvalidNodeException:
             await ctx.send(view=CV2(f"{WARNING} Audio nodes are currently reconnecting. Please try again in a few moments."))
             return
@@ -852,8 +956,12 @@ class Music(commands.Cog):
         if vc and player:
             await vc.channel.edit(status=None)
             vc.queue.clear()
-            await vc.disconnect(force=True)
-            await ctx.send(view=CV2(f"Stopped and queue cleared by {ctx.author.mention}."))
+            if self.is_247(ctx.guild.id):
+                await vc.stop()
+                await ctx.send(view=CV2(f"{TICK} Stopped and queue cleared by {ctx.author.mention}."))
+            else:
+                await vc.disconnect(force=True)
+                await ctx.send(view=CV2(f"Stopped and queue cleared by {ctx.author.mention}."))
         else:
             await ctx.send(view=CV2("Nothing is playing to stop."))
 
@@ -954,11 +1062,20 @@ class Music(commands.Cog):
     @ignore_check()
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def join(self, ctx: commands.Context):
-        if ctx.author.voice:
-            await ctx.author.voice.channel.connect(cls=wavelink.Player, self_deaf=True)
-            await ctx.send(view=CV2("Joined the voice channel."))
+        if not ctx.author.voice:
+            await ctx.send(view=CV2(f"{WARNING} You need to join a voice channel first."))
+            return
+
+        author_channel = ctx.author.voice.channel
+        if ctx.voice_client:
+            if ctx.voice_client.channel.id == author_channel.id:
+                await ctx.send(view=CV2(f"Already connected to {author_channel.mention}."))
+                return
+            await ctx.voice_client.move_to(author_channel)
+            await ctx.send(view=CV2(f"Moved to {author_channel.mention}."))
         else:
-            await ctx.send(view=CV2("You need to join a voice channel first."))
+            await author_channel.connect(cls=wavelink.Player, self_deaf=True)
+            await ctx.send(view=CV2(f"Joined {author_channel.mention}."))
 
     @commands.hybrid_command(name="disconnect", aliases=["dc", "leave"], usage="disconnect", help="Disconnects the bot from the voice channel.")
     @blacklist_check()
@@ -967,18 +1084,22 @@ class Music(commands.Cog):
     async def disconnect(self, ctx: commands.Context):
         vc = ctx.voice_client
         if not vc:
-            await ctx.send(view=CV2(f"{ICONS_WARNING_ALT1}  I'm not connected to any voice channel."))
+            await ctx.send(view=CV2(f"{ICONS_WARNING_ALT1} I'm not connected to any voice channel."))
             return
 
         if not ctx.author.voice or ctx.author.voice.channel.id != vc.channel.id:
             await ctx.send(view=CV2(f"{WARNING} You need to be in the same voice channel as me to use this command."))
             return
 
-        if vc:
-            await vc.disconnect()
-            await ctx.send(view=CV2("Disconnected from the voice channel."))
+        was_247 = self.is_247(ctx.guild.id)
+        if was_247:
+            await self.remove_247(ctx.guild.id)
+
+        await vc.disconnect(force=True)
+        if was_247:
+            await ctx.send(view=CV2(f"{TICK} Disconnected from the voice channel and disabled 24/7 mode."))
         else:
-            await ctx.send(view=CV2("Bot is not connected to any voice channel."))
+            await ctx.send(view=CV2("Disconnected from the voice channel."))
 
     @commands.command(name="seek", usage="seek <percentage>", help="Seeks to a specific percentage of the song.")
     @blacklist_check()
@@ -1032,3 +1153,100 @@ class Music(commands.Cog):
         if voice_channel:
             await voice_channel.edit(status=None)  # type: ignore
         await self.on_track_end(payload)
+
+    @commands.hybrid_command(
+        name="247",
+        aliases=["24/7", "twentyfourseven", "24-7"],
+        usage="24/7 [enable/disable/status]",
+        help="Toggles 24/7 mode, keeping the bot in the voice channel permanently."
+    )
+    @blacklist_check()
+    @ignore_check()
+    @commands.cooldown(1, 3, commands.BucketType.user)
+    async def twenty_four_seven_cmd(self, ctx: commands.Context, mode: str = None):
+        if not ctx.guild:
+            return
+
+        is_owner = ctx.author.id == ctx.guild.owner_id or await self.client.is_owner(ctx.author)
+        has_perm = (
+            ctx.author.guild_permissions.manage_guild
+            or ctx.author.guild_permissions.manage_channels
+            or ctx.author.guild_permissions.administrator
+            or is_owner
+        )
+        if not has_perm:
+            await ctx.send(view=CV2(f"{WARNING} You need `Manage Server` or `Manage Channels` permissions to configure 24/7 mode."))
+            return
+
+        current_status = self.is_247(ctx.guild.id)
+
+        if mode and mode.lower() in ["status", "check", "info"]:
+            if current_status:
+                ch_id = self.twenty_four_seven[ctx.guild.id].get("channel_id")
+                ch = ctx.guild.get_channel(ch_id)
+                ch_mention = ch.mention if ch else f"<#{ch_id}>"
+                await ctx.send(view=CV2(f"{ENABLE} **24/7 Mode is ENABLED** in {ch_mention}."))
+            else:
+                await ctx.send(view=CV2(f"{DISABLE} **24/7 Mode is DISABLED** in this server."))
+            return
+
+        if mode and mode.lower() in ["enable", "on", "true", "yes"]:
+            target_enable = True
+        elif mode and mode.lower() in ["disable", "off", "false", "no"]:
+            target_enable = False
+        else:
+            target_enable = not current_status
+
+        if target_enable:
+            voice_channel = None
+            if ctx.voice_client and ctx.voice_client.channel:
+                voice_channel = ctx.voice_client.channel
+            elif ctx.author.voice and ctx.author.voice.channel:
+                voice_channel = ctx.author.voice.channel
+            else:
+                await ctx.send(view=CV2(f"{WARNING} You must be in a voice channel (or have the bot in a voice channel) to enable 24/7 mode."))
+                return
+
+            if not ctx.voice_client or not isinstance(ctx.voice_client, wavelink.Player):
+                try:
+                    if ctx.voice_client:
+                        await ctx.voice_client.disconnect(force=True)
+                    await voice_channel.connect(cls=wavelink.Player, self_deaf=True)
+                except Exception as e:
+                    await ctx.send(view=CV2(f"{WARNING} Failed to connect to {voice_channel.mention}: {e}"))
+                    return
+
+            await self.set_247(ctx.guild.id, voice_channel.id, ctx.channel.id)
+            await ctx.send(view=CV2(f"{ENABLE} **24/7 Mode Enabled!**\nI will stay connected to {voice_channel.mention} 24/7 and won't disconnect when idle or when the queue ends."))
+        else:
+            if not current_status:
+                await ctx.send(view=CV2(f"{WARNING} 24/7 mode is already disabled in this server."))
+                return
+
+            await self.remove_247(ctx.guild.id)
+            await ctx.send(view=CV2(f"{DISABLE} **24/7 Mode Disabled!**\nThe bot will now disconnect automatically when idle or when the queue ends."))
+
+    @commands.Cog.listener()
+    async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
+        if member.id != self.client.user.id:
+            return
+
+        guild_id = member.guild.id
+        if not self.is_247(guild_id):
+            return
+
+        if after.channel is not None and before.channel != after.channel:
+            text_id = self.twenty_four_seven[guild_id].get("text_channel_id", 0)
+            await self.set_247(guild_id, after.channel.id, text_id)
+
+        elif before.channel is not None and after.channel is None:
+            await asyncio.sleep(5)
+            if self.is_247(guild_id) and member.guild.voice_client is None:
+                channel_id = self.twenty_four_seven[guild_id].get("channel_id")
+                channel = member.guild.get_channel(channel_id)
+                if channel and isinstance(channel, discord.VoiceChannel):
+                    try:
+                        await channel.connect(cls=wavelink.Player, self_deaf=True)
+                        print(f"[Music 24/7] Auto-reconnected to {channel.name} in {member.guild.name}")
+                    except Exception as e:
+                        print(f"[Music 24/7] Failed to reconnect to {channel.name}: {e}")

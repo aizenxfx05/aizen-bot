@@ -10,7 +10,7 @@
 # ║                                                                  ║
 # ║   discord  ──  https://discord.gg/M8qJ9W7vBb                    ║
 # ║   youtube  ──  https://youtube.com/@aizen_xfx                   ║
-# ║   github   ──  https://github.com/RayExo                        ║
+# ║   github   ──  https://github.com/aizenxfx05                    ║
 # ║                                                                  ║
 # ╚══════════════════════════════════════════════════════════════════╝
 

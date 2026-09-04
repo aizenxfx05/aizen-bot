@@ -25,7 +25,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-D4AF37?style=for-the-badge"/></a>
   <a href="https://discord.gg/M8qJ9W7vBb"><img src="https://img.shields.io/badge/Discord-Join_Server-5865F2?style=for-the-badge&logo=discord&logoColor=white"/></a>
   <a href="https://youtube.com/@aizen_xfx"><img src="https://img.shields.io/badge/YouTube-Aizen_XFX-FF0000?style=for-the-badge&logo=youtube&logoColor=white"/></a>
-  <a href="https://github.com/RayExo"><img src="https://img.shields.io/badge/GitHub-RayExo-181717?style=for-the-badge&logo=github&logoColor=white"/></a>
+  <a href="https://github.com/aizenxfx05"><img src="https://img.shields.io/badge/GitHub-aizenxfx05-181717?style=for-the-badge&logo=github&logoColor=white"/></a>
 </p>
 
 </div>
@@ -43,7 +43,7 @@ New in this release:
 - 🎨 **Premium Gold Theme** — Dark obsidian + royal gold dashboard UI
 
 ```
-Aizen-XFX-With-Dashboard/
+aizen-bot/
 ├── 🤖  bot/                   Python Discord bot + FastAPI backend
 │   ├── api/                   Dashboard REST API (FastAPI)
 │   ├── cogs/                  All bot features (commands, events, antinuke, automod…)
@@ -186,8 +186,8 @@ Aizen-XFX-With-Dashboard/
 **1 — Clone the repo**
 
 ```bash
-git clone https://github.com/RayExo/Aizen-XFX-With-Dashboard
-cd Aizen-XFX-With-Dashboard/bot
+git clone https://github.com/aizenxfx05/aizen-bot.git
+cd aizen-bot/bot
 ```
 
 **2 — Install dependencies**
@@ -504,7 +504,7 @@ Runs automatically on startup when `EMOJI_SYNC=true`:
 <p>
   <a href="https://discord.gg/M8qJ9W7vBb"><img src="https://img.shields.io/badge/Discord-Join_Server-5865F2?style=for-the-badge&logo=discord&logoColor=white"/></a>
   <a href="https://youtube.com/@aizen_xfx"><img src="https://img.shields.io/badge/YouTube-Aizen_XFX-FF0000?style=for-the-badge&logo=youtube&logoColor=white"/></a>
-  <a href="https://github.com/RayExo"><img src="https://img.shields.io/badge/GitHub-RayExo-181717?style=for-the-badge&logo=github&logoColor=white"/></a>
+  <a href="https://github.com/aizenxfx05"><img src="https://img.shields.io/badge/GitHub-aizenxfx05-181717?style=for-the-badge&logo=github&logoColor=white"/></a>
   <a href="https://nexiohost.in"><img src="https://img.shields.io/badge/⭐%20PREMIUM%20HOSTING-NexioHost-FFD700?style=for-the-badge&labelColor=1a1a2e&color=FFD700&logoColor=FFD700"/></a>
 </p>
 

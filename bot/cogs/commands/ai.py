@@ -509,7 +509,9 @@ class AI (commands .Cog ):
     async def _get_gemini_response (self ,message :str ,history :list ,user_id :int =None ,guild_id :int =None )->str :
         try :
             if not self .gemini_api_key :
-                return "Gemini API key not configured. Please set the GOOGLE_API_KEY environment variable."
+                if self .groq_api_key :
+                    return await self ._get_groq_response (message ,history )
+                return "AI key not configured. Please set the GROQ_API_KEY or GOOGLE_API_KEY environment variable."
 
             genai .configure (api_key =self .gemini_api_key )
             model =genai .GenerativeModel ("gemini-1.5-pro")
@@ -518,6 +520,11 @@ class AI (commands .Cog ):
             return response .text .strip ()
         except Exception as e :
             logger .error (f"Gemini AI error: {e}")
+            if self .groq_api_key :
+                try :
+                    return await self ._get_groq_response (message ,history )
+                except Exception :
+                    pass
             return f"Sorry, I encountered an error while processing your request: {str(e)}"
 
     async def _get_groq_response (self ,message :str ,context_messages :list )->str :

@@ -475,7 +475,7 @@ class AI (commands .Cog ):
                 return "AI key not configured. Please set the GROQ_API_KEY or GOOGLE_API_KEY environment variable."
 
             genai .configure (api_key =self .gemini_api_key )
-            model =genai .GenerativeModel ("gemini-1.5-pro")
+            model =genai .GenerativeModel ("gemini-flash-latest")
             chat =model .start_chat (history =history )
             response =await asyncio .to_thread (chat .send_message ,message )
             return response .text .strip ()
@@ -657,7 +657,7 @@ Support server: https://discord.gg/M8qJ9W7vBb"""
                 return CV2View("🖼️ Image Analysis", "Gemini API key not configured.")
 
             genai .configure (api_key =self .gemini_api_key )
-            model =genai .GenerativeModel ('gemini-1.5-pro')
+            model =genai .GenerativeModel ('gemini-flash-latest')
 
             async with aiohttp .ClientSession ()as session :
                 async with session .get (image_url )as resp :

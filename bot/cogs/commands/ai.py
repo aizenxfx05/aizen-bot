@@ -296,7 +296,6 @@ class AI (commands .Cog ):
         self .conversation_history ={}
         self .trivia_scores =TriviaScore (bot )
         self .active_games ={}
-        self .roleplay_channels ={}
         self .question_cache ={cat :[]for cat in categories }
 
 
@@ -456,6 +455,8 @@ class AI (commands .Cog ):
 
             async with message .channel .typing ():
                 response =await self ._get_response (content ,history ,guild_id ,user_id )
+                if not response :
+                    return 
                 await message .reply (
                 response ,
                 mention_author =True ,
@@ -465,55 +466,6 @@ class AI (commands .Cog ):
 
                 await self ._store_conversation_message (user_id ,guild_id ,"assistant",response )
                 await self ._save_chat_history (message .author .id ,guild_id ,content ,response )
-
-
-        if channel_id in self .roleplay_channels :
-            content_lower = message .content .lower ().strip ()
-            # If the user is disabling roleplay or running a bot command, do not intercept
-            if "roleplay-disable" in content_lower or content_lower .startswith (("ai ", ">", "!", "/", "$", ".")):
-                return 
-
-            roleplay_data =self .roleplay_channels [channel_id ]
-            if roleplay_data ["awaiting_character"]:
-
-                content =message .content .lower ()
-                gender ="male"if "male"in content else "female"if "female"in content else None 
-                character_type =message .content .split (gender ,1 )[1 ].strip ()if gender else message .content .strip ()
-
-                if gender and character_type :
-                    roleplay_data ["character_gender"]=gender 
-                    roleplay_data ["character_type"]=character_type 
-                    roleplay_data ["awaiting_character"]=False 
-                    self .roleplay_channels [channel_id ]=roleplay_data 
-                    await message .channel .send (f"Roleplay mode activated! I'll act as a {gender} {character_type}. Let's begin—what's your first move?")
-                else :
-                    await message .channel .send ("Please specify a gender (male/female) and a character type (e.g., teacher, astronaut, dragon).")
-            elif message .author .id ==roleplay_data ["user_id"]:
-
-                user_id =message .author .id 
-                if user_id not in self .conversation_history :
-                    self .conversation_history [user_id ]=[]
-                self .conversation_history [user_id ].append ({"role":"user","parts":[{"text":message .content }]})
-
-                if len (self .conversation_history [user_id ])>5 :
-                    self .conversation_history [user_id ]=self .conversation_history [user_id ][-5 :]
-
-                async with message .channel .typing ():
-                    history =self .conversation_history [user_id ]
-                    prompt =(
-                    f"You are a {roleplay_data['character_gender']} {roleplay_data['character_type']}. "
-                    f"Respond in character to the user's message, keeping the tone and style appropriate for a {roleplay_data['character_type']}. "
-                    f"User's message: {message.content}"
-                    )
-                    history .append ({"role":"user","parts":[{"text":prompt }]})
-                    response =await self ._get_gemini_response (prompt ,history )
-                    await self .split_and_send (
-                    message .channel ,
-                    f"<@{message.author.id}>​ {response}",
-                    reply_to =message ,
-                    allowed_mentions =discord .AllowedMentions (users =True )
-                    )
-                    self .conversation_history [user_id ].append ({"role":"assistant","parts":[{"text":response }]})
 
     async def _get_gemini_response (self ,message :str ,history :list ,user_id :int =None ,guild_id :int =None )->str :
         try :
@@ -541,7 +493,7 @@ class AI (commands .Cog ):
         try :
             groq_key = (self .groq_api_key or os .getenv ("GROQ_API_KEY") or GROQ_API_KEY or "").strip ().strip ("'\"")
             if not groq_key :
-                return "Groq API key not configured. Please set the GROQ_API_KEY environment variable in your Railway dashboard."
+                return ""
 
             url ="https://api.groq.com/openai/v1/chat/completions"
             headers ={
@@ -1600,67 +1552,6 @@ Support server: https://discord.gg/M8qJ9W7vBb"""
 
         view = CV2View("🏆 Trivia Leaderboard", leaderboard)
         await ctx .send (view=view)
-
-    async def enable_roleplay (self ,ctx ,character :str =None ):
-        """Enable roleplay mode in the current channel"""
-        channel_id =ctx .channel .id 
-        user_id =ctx .author .id 
-
-        if character :
-            content =character .lower ()
-            gender ="male"if "male"in content else "female"if "female"in content else "female"
-            character_type =character .split (gender ,1 )[1 ].strip ()if gender in content else character .strip ()
-            if not character_type :
-                character_type ="teacher"
-
-            self .roleplay_channels [channel_id ]={
-            "user_id":user_id ,
-            "character_gender":gender ,
-            "character_type":character_type ,
-            "awaiting_character":False ,
-            }
-            view = CV2View("🎭 Roleplay Mode", f"Roleplay mode activated! I'll act as a {gender} {character_type}. Let's begin—what's your first move?")
-            await ctx .send (view=view)
-            return
-
-        if channel_id in self .roleplay_channels :
-            self .roleplay_channels [channel_id ]["awaiting_character"]=True
-            view = CV2View("🎭 Roleplay Mode", "Roleplay mode is active! What character would you like me to be?\nSend `female teacher`, `male astronaut`, etc., or use `ai roleplay-disable` to turn it off.")
-            await ctx .send (view=view)
-            return 
-
-        self .roleplay_channels [channel_id ]={
-        "user_id":user_id ,
-        "character_gender":None ,
-        "character_type":None ,
-        "awaiting_character":True ,
-        }
-        view = CV2View("🎭 Roleplay Mode", "Roleplay mode activated! To start, tell me what kind of character you want me to be.\nFor example: `female teacher` or `male astronaut`.")
-        await ctx .send (view=view)
-
-    async def disable_roleplay (self ,ctx ):
-        """Disable roleplay mode in the current channel"""
-        channel_id =ctx .channel .id 
-        if channel_id not in self .roleplay_channels :
-            view = CV2View("🎭 Roleplay Mode", "Roleplay mode is not enabled in this channel! Use `/ai roleplay-enable` to turn it on.")
-            await ctx .send (view=view)
-            return 
-
-        del self .roleplay_channels [channel_id ]
-        view = CV2View("🎭 Roleplay Mode", "Roleplay mode disabled in this channel.")
-        await ctx .send (view=view)
-
-    @ai .command (name ="roleplay-enable",description ="Enable roleplay mode in the current channel")
-    async def ai_roleplay_enable (self ,ctx :commands .Context ,*,character :str =None ):
-        """Enable roleplay mode"""
-        await self .enable_roleplay (ctx ,character =character )
-
-    @ai .command (name ="roleplay-disable",description ="Disable roleplay mode in the current channel")
-    async def ai_roleplay_disable (self ,ctx :commands .Context ):
-        """Disable roleplay mode"""
-        await self .disable_roleplay (ctx )
-
-
 
 async def setup (bot):
     await bot.add_cog(AI(bot ))

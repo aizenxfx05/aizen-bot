@@ -439,6 +439,10 @@ class AI (commands .Cog ):
             if not content :
                 return 
 
+            # Do not treat commands as AI chat messages
+            if content .lower ().startswith (("ai ", ">", "!", "/", "$", ".")):
+                return 
+
             user_id =message .author .id 
 
 
@@ -464,6 +468,11 @@ class AI (commands .Cog ):
 
 
         if channel_id in self .roleplay_channels :
+            content_lower = message .content .lower ().strip ()
+            # If the user is disabling roleplay or running a bot command, do not intercept
+            if "roleplay-disable" in content_lower or content_lower .startswith (("ai ", ">", "!", "/", "$", ".")):
+                return 
+
             roleplay_data =self .roleplay_channels [channel_id ]
             if roleplay_data ["awaiting_character"]:
 
@@ -530,12 +539,13 @@ class AI (commands .Cog ):
     async def _get_groq_response (self ,message :str ,context_messages :list )->str :
         """Get a response from Groq AI with full context."""
         try :
-            if not self .groq_api_key :
-                return "Groq API key not configured. Please set the GROQ_API_KEY environment variable."
+            groq_key = (self .groq_api_key or os .getenv ("GROQ_API_KEY") or "").strip ().strip ("'\"")
+            if not groq_key :
+                return "Groq API key not configured. Please set the GROQ_API_KEY environment variable in your Railway dashboard."
 
             url ="https://api.groq.com/openai/v1/chat/completions"
             headers ={
-            "Authorization":f"Bearer {self.groq_api_key}",
+            "Authorization":f"Bearer {groq_key}",
             "Content-Type":"application/json"
             }
 

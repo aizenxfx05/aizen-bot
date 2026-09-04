@@ -34,13 +34,22 @@ class CV2(LayoutView):
 def read_db(filename):
     """Read the JSON database file."""
     if os.path.exists(filename):
-        with open(filename, 'r') as f:
-            return json.load(f)
+        try:
+            with open(filename, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read().strip()
+                if not content:
+                    return {}
+                return json.loads(content)
+        except Exception:
+            return {}
     return {}
 
 def write_db(filename, data):
     """Write data to the JSON database file."""
-    with open(filename, 'w') as f:
+    dir_name = os.path.dirname(filename)
+    if dir_name:
+        os.makedirs(dir_name, exist_ok=True)
+    with open(filename, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=4)
 
 class Birthdays(commands.Cog):

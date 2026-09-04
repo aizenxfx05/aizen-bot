@@ -396,13 +396,19 @@ class Music(commands.Cog):
         
         host = os.getenv("LAVALINK_HOST", "lava-v4.millohost.my.id").strip()
         password = os.getenv("LAVALINK_PASSWORD", "https://discord.gg/mjS5J2K3ep").strip()
-        secure = os.getenv("LAVALINK_SECURE", "true").strip().lower() == "true"
+        secure_env = os.getenv("LAVALINK_SECURE", "true").strip().lower()
         port = os.getenv("LAVALINK_PORT", "").strip()
 
-        if secure:
-            uri = f"https://{host}:{port}" if port and port != "443" else f"https://{host}"
+        # Sanitize: MilloHost node requires HTTPS on port 443 with SSL
+        if "millohost.my.id" in host:
+            uri = "https://lava-v4.millohost.my.id"
+            password = "https://discord.gg/mjS5J2K3ep"
         else:
-            uri = f"http://{host}:{port}" if port and port != "80" else f"http://{host}"
+            secure = secure_env in ("true", "1", "yes")
+            if secure:
+                uri = f"https://{host}:{port}" if port and port != "443" else f"https://{host}"
+            else:
+                uri = f"http://{host}:{port}" if port and port != "80" else f"http://{host}"
 
         primary_node = wavelink.Node(uri=uri, password=password)
         nodes = [primary_node]

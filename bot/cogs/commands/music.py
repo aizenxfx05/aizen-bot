@@ -162,8 +162,12 @@ class SearchResultView(LayoutView):
                 return
 
             track = self.results[index]
-            vc = self.ctx.voice_client or await self.ctx.author.voice.channel.connect(cls=wavelink.Player)
+            vc = self.ctx.voice_client or await self.ctx.author.voice.channel.connect(cls=wavelink.Player, self_deaf=True)
             vc.ctx = self.ctx
+            try:
+                await vc.set_volume(100)
+            except Exception:
+                pass
 
             if not vc.playing:
                 await vc.play(track)
@@ -394,29 +398,24 @@ class Music(commands.Cog):
     async def connect_nodes(self) -> None:
         await self.client.wait_until_ready()
         
-        host = os.getenv("LAVALINK_HOST", "lava-v4.millohost.my.id").strip()
-        password = os.getenv("LAVALINK_PASSWORD", "https://discord.gg/mjS5J2K3ep").strip()
-        secure_env = os.getenv("LAVALINK_SECURE", "true").strip().lower()
-        port = os.getenv("LAVALINK_PORT", "").strip()
+        host = os.getenv("LAVALINK_HOST", "lava2.kasawa.pro").strip()
+        password = os.getenv("LAVALINK_PASSWORD", "youshallnotpass").strip()
+        secure_env = os.getenv("LAVALINK_SECURE", "false").strip().lower()
+        port = os.getenv("LAVALINK_PORT", "2334").strip()
 
-        # Sanitize: MilloHost node requires HTTPS on port 443 with SSL
-        if "millohost.my.id" in host:
-            uri = "https://lava-v4.millohost.my.id"
-            password = "https://discord.gg/mjS5J2K3ep"
+        secure = secure_env in ("true", "1", "yes")
+        if secure:
+            uri = f"https://{host}:{port}" if port and port != "443" else f"https://{host}"
         else:
-            secure = secure_env in ("true", "1", "yes")
-            if secure:
-                uri = f"https://{host}:{port}" if port and port != "443" else f"https://{host}"
-            else:
-                uri = f"http://{host}:{port}" if port and port != "80" else f"http://{host}"
+            uri = f"http://{host}:{port}" if port and port != "80" else f"http://{host}"
 
-        primary_node = wavelink.Node(uri=uri, password=password)
+        primary_node = wavelink.Node(uri=uri, password=password, identifier="primary")
         nodes = [primary_node]
 
-        backup_uri = "https://lava-v4.millohost.my.id"
-        backup_pwd = "https://discord.gg/mjS5J2K3ep"
+        backup_uri = "http://lava2.kasawa.pro:2334"
+        backup_pwd = "youshallnotpass"
         if uri.rstrip("/") != backup_uri:
-            nodes.append(wavelink.Node(uri=backup_uri, password=backup_pwd))
+            nodes.append(wavelink.Node(uri=backup_uri, password=backup_pwd, identifier="backup"))
 
         try:
             await wavelink.Pool.connect(nodes=nodes, client=self.client, cache_capacity=None)
@@ -477,8 +476,12 @@ class Music(commands.Cog):
                 await ctx.send(view=CV2(f"{WARNING} Music service is connecting to audio nodes. Please try again in 5 seconds."))
                 return
 
-        vc = ctx.voice_client or await ctx.author.voice.channel.connect(cls=wavelink.Player)
+        vc = ctx.voice_client or await ctx.author.voice.channel.connect(cls=wavelink.Player, self_deaf=True)
         vc.ctx = ctx
+        try:
+            await vc.set_volume(100)
+        except Exception:
+            pass
         
         
         if vc.playing:
@@ -498,12 +501,17 @@ class Music(commands.Cog):
             
         try:
             tracks = await wavelink.Playable.search(query)
+            if not tracks and not query.startswith("http"):
+                tracks = await wavelink.Playable.search(f"ytsearch:{query}") or await wavelink.Playable.search(f"scsearch:{query}")
         except wavelink.InvalidNodeException:
             await ctx.send(view=CV2(f"{WARNING} Audio nodes are currently reconnecting. Please try again in a few moments."))
             return
         except Exception as e:
-            await ctx.send(view=CV2(f"{WARNING} Failed to search music: {str(e)[:120]}"))
-            return
+            try:
+                tracks = await wavelink.Playable.search(f"ytsearch:{query}") or await wavelink.Playable.search(f"scsearch:{query}")
+            except Exception:
+                await ctx.send(view=CV2(f"{WARNING} Failed to search music: {str(e)[:120]}"))
+                return
 
         if not tracks:
             await ctx.send(view=CV2("No results found."))
@@ -947,7 +955,7 @@ class Music(commands.Cog):
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def join(self, ctx: commands.Context):
         if ctx.author.voice:
-            await ctx.author.voice.channel.connect(cls=wavelink.Player)
+            await ctx.author.voice.channel.connect(cls=wavelink.Player, self_deaf=True)
             await ctx.send(view=CV2("Joined the voice channel."))
         else:
             await ctx.send(view=CV2("You need to join a voice channel first."))

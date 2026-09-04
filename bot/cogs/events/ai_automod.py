@@ -98,7 +98,8 @@ class AIAutoMod(Cog):
 
         headers = {
             "Authorization": f"Bearer {GROQ_API_KEY}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "User-Agent": "AizenBot/1.0"
         }
 
         try:

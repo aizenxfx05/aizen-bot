@@ -285,7 +285,7 @@ class TriviaAnswerView (discord .ui .View ):
 class AI (commands .Cog ):
     def __init__ (self ,bot ):
         self.bot = bot
-        self.gemini_api_key = os.getenv("GOOGLE_API_KEY")
+        self.gemini_api_key = os.getenv("GOOGLE_API_KEY") if GEMINI_AVAILABLE else None
         self.groq_api_key = (os.getenv("GROQ_API_KEY") or GROQ_API_KEY or "").strip().strip("'\"")
         if not self.gemini_api_key and not self.groq_api_key:
             logger.warning("Neither GOOGLE_API_KEY nor GROQ_API_KEY is set. AI features will not work.")
@@ -469,10 +469,10 @@ class AI (commands .Cog ):
 
     async def _get_gemini_response (self ,message :str ,history :list ,user_id :int =None ,guild_id :int =None )->str :
         try :
-            if not self .gemini_api_key :
+            if not self .gemini_api_key or not GEMINI_AVAILABLE or not genai :
                 if self .groq_api_key :
                     return await self ._get_groq_response (message ,history )
-                return "AI key not configured. Please set the GROQ_API_KEY or GOOGLE_API_KEY environment variable."
+                return ""
 
             genai .configure (api_key =self .gemini_api_key )
             model =genai .GenerativeModel ("gemini-flash-latest")
@@ -486,7 +486,7 @@ class AI (commands .Cog ):
                     return await self ._get_groq_response (message ,history )
                 except Exception :
                     pass
-            return f"Sorry, I encountered an error while processing your request: {str(e)}"
+            return ""
 
     async def _get_groq_response (self ,message :str ,context_messages :list )->str :
         """Get a response from Groq AI with full context."""
@@ -497,48 +497,56 @@ class AI (commands .Cog ):
 
             url ="https://api.groq.com/openai/v1/chat/completions"
             headers ={
-            "Authorization":f"Bearer {groq_key}",
-            "Content-Type":"application/json"
+                "Authorization":f"Bearer {groq_key}",
+                "Content-Type":"application/json",
+                "User-Agent":"AizenBot/1.0"
             }
-
 
             api_messages =[]
             for msg in context_messages :
-
                 if isinstance (msg ,dict ):
-                    if "content"in msg :
+                    if "content" in msg :
                         api_messages .append ({
-                        "role":msg ["role"],
-                        "content":msg ["content"]
+                            "role":msg ["role"],
+                            "content":msg ["content"]
                         })
-                    elif "parts"in msg and msg ["parts"]:
-
+                    elif "parts" in msg and msg ["parts"]:
                         content =msg ["parts"][0 ].get ("text","")if msg ["parts"]else ""
                         api_messages .append ({
-                        "role":msg ["role"],
-                        "content":content 
+                            "role":msg ["role"],
+                            "content":content 
                         })
 
             data ={
-            "model":"qwen/qwen3.8-27b",
-            "messages":api_messages ,
-            "temperature":0.8 ,
-            "max_tokens":1000 ,
-            "top_p":0.9 
+                "model":"qwen/qwen3.8-27b",
+                "messages":api_messages ,
+                "temperature":0.8 ,
+                "max_tokens":750 ,
+                "top_p":0.9 
             }
 
             async with aiohttp .ClientSession ()as session :
                 async with session .post (url ,headers =headers ,json =data )as response :
-                    if response .status ==200 :
+                    if response .status == 200 :
                         json_response =await response .json ()
                         return json_response ['choices'][0 ]['message']['content'].strip ()
+                    elif response .status == 429 :
+                        # Rate limit reached on qwen, fallback to openai/gpt-oss-20b
+                        data["model"] = "openai/gpt-oss-20b"
+                        async with session .post (url ,headers =headers ,json =data )as fb_response :
+                            if fb_response .status == 200 :
+                                json_fb = await fb_response .json ()
+                                return json_fb ['choices'][0 ]['message']['content'].strip ()
+                            error_message = await fb_response .text ()
+                            logger .error (f"Groq API fallback error: {fb_response.status} - {error_message}")
+                            return ""
                     else :
                         error_message =await response .text ()
                         logger .error (f"Groq API error: {response.status} - {error_message}")
-                        return f"Sorry, I encountered an error while processing your request: {response.status} - {error_message}"
+                        return ""
         except Exception as e :
             logger .error (f"Groq AI error: {e}")
-            return f"Sorry, I encountered an error while processing your request: {str(e)}"
+            return ""
 
     async def _get_response (self ,message :str ,history :list ,guild_id :int ,user_id :int =None )->str :
         try :
@@ -588,7 +596,7 @@ Support server: https://discord.gg/M8qJ9W7vBb"""
 
         except Exception as e :
             logger .error (f"Error in _get_response: {e}")
-            return "Sorry, I encountered an error while processing your request. Please try again!"
+            return ""
 
     @ai .command (name ="analyze",description ="Analyze an image or text and provide a description")
     @app_commands .describe (image ="Image to analyze (optional)",text ="Text to analyze (optional)")
@@ -690,6 +698,8 @@ Support server: https://discord.gg/M8qJ9W7vBb"""
         try :
             history =[{"role":"user","content":prompt }]
             code =await self ._get_groq_response (prompt ,history )
+            if not code :
+                return
 
 
             formatted_code =f"```{language.lower()}\n{code}\n```"
@@ -760,6 +770,8 @@ Support server: https://discord.gg/M8qJ9W7vBb"""
         try :
             history =[{"role":"user","content":prompt }]
             explanation =await self ._get_groq_response (prompt ,history )
+            if not explanation :
+                return
 
             view = CV2View(f"📚 Explanation: {topic}", explanation[:4000], f"**Level:** {level.capitalize()}")
             await ctx .send (view=view)
@@ -797,6 +809,8 @@ Support server: https://discord.gg/M8qJ9W7vBb"""
         try :
             history =[{"role":"user","parts":[{"text":prompt }]}]
             analysis =await self ._get_gemini_response (prompt ,history )
+            if not analysis :
+                return
 
             analyzed_text = text[:512] + "..." if len(text) > 512 else text
             view = CV2View("😊 Mood Analysis", analysis, f"**Analyzed Text:**\n{analyzed_text}")
@@ -944,6 +958,8 @@ Support server: https://discord.gg/M8qJ9W7vBb"""
         try :
             history =[{"role":"user","content":prompt }]
             summary =await self ._get_groq_response (prompt ,history )
+            if not summary :
+                return
 
             original_text = text[:512] + "..." if len(text) > 512 else text
             view = CV2View("📝 Text Summary", summary, f"**Original Text:**\n{original_text}")
@@ -960,6 +976,8 @@ Support server: https://discord.gg/M8qJ9W7vBb"""
         try :
             history =[{"role":"user","content":question }]
             answer =await self ._get_groq_response (question ,history )
+            if not answer :
+                return
 
             view = CV2View("🤖 AI Response", answer, f"**Your Question:**\n{question}")
             await ctx .send (view=view)

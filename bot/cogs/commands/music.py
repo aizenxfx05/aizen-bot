@@ -392,18 +392,31 @@ class Music(commands.Cog):
                     pass
 
     async def connect_nodes(self) -> None:
-        host = os.getenv("LAVALINK_HOST", "lava-v4.ajieblogs.eu.org")
-        password = os.getenv("LAVALINK_PASSWORD", "https://dsc.gg/ajidevserver")
+        await self.client.wait_until_ready()
+        
+        host = os.getenv("LAVALINK_HOST", "lava-v4.millohost.my.id").strip()
+        password = os.getenv("LAVALINK_PASSWORD", "https://discord.gg/mjS5J2K3ep").strip()
         secure = os.getenv("LAVALINK_SECURE", "true").strip().lower() == "true"
         port = os.getenv("LAVALINK_PORT", "").strip()
 
         if secure:
-            uri = f"https://{host}"
+            uri = f"https://{host}:{port}" if port and port != "443" else f"https://{host}"
         else:
-            uri = f"http://{host}:{port}" if port else f"http://{host}"
+            uri = f"http://{host}:{port}" if port and port != "80" else f"http://{host}"
 
-        nodes = [wavelink.Node(uri=uri, password=password)]
-        await wavelink.Pool.connect(nodes=nodes, client=self.client, cache_capacity=None)
+        primary_node = wavelink.Node(uri=uri, password=password)
+        nodes = [primary_node]
+
+        backup_uri = "https://lava-v4.millohost.my.id"
+        backup_pwd = "https://discord.gg/mjS5J2K3ep"
+        if uri.rstrip("/") != backup_uri:
+            nodes.append(wavelink.Node(uri=backup_uri, password=backup_pwd))
+
+        try:
+            await wavelink.Pool.connect(nodes=nodes, client=self.client, cache_capacity=None)
+            print(f"Music: Connected wavelink pool with {len(nodes)} nodes.")
+        except Exception as e:
+            print(f"Music: Error connecting wavelink nodes: {e}")
 
 
     async def display_player_embed(self, player, track, ctx, autoplay=False):
@@ -447,6 +460,17 @@ class Music(commands.Cog):
             await ctx.send(view=CV2(f"{WARNING} you need to be in a voice channel to use this command."))
             return
 
+        connected = [n for n in wavelink.Pool.nodes.values() if n.status == wavelink.NodeStatus.CONNECTED]
+        if not connected:
+            try:
+                await self.connect_nodes()
+            except Exception:
+                pass
+            connected = [n for n in wavelink.Pool.nodes.values() if n.status == wavelink.NodeStatus.CONNECTED]
+            if not connected:
+                await ctx.send(view=CV2(f"{WARNING} Music service is connecting to audio nodes. Please try again in 5 seconds."))
+                return
+
         vc = ctx.voice_client or await ctx.author.voice.channel.connect(cls=wavelink.Player)
         vc.ctx = ctx
         
@@ -466,7 +490,15 @@ class Music(commands.Cog):
         
             return"""
             
-        tracks = await wavelink.Playable.search(query)
+        try:
+            tracks = await wavelink.Playable.search(query)
+        except wavelink.InvalidNodeException:
+            await ctx.send(view=CV2(f"{WARNING} Audio nodes are currently reconnecting. Please try again in a few moments."))
+            return
+        except Exception as e:
+            await ctx.send(view=CV2(f"{WARNING} Failed to search music: {str(e)[:120]}"))
+            return
+
         if not tracks:
             await ctx.send(view=CV2("No results found."))
             return

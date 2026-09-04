@@ -288,7 +288,7 @@ class AI (commands .Cog ):
         self .gemini_api_key =os .getenv ("GOOGLE_API_KEY")
         if not self .gemini_api_key :
             logger .warning ("GOOGLE_API_KEY environment variable not set. Gemini AI will not work.")
-        self .groq_api_key =os .getenv ("GROQ_API_KEY")
+        self .groq_api_key =(os .getenv ("GROQ_API_KEY")or GROQ_API_KEY or "").strip ().strip ("'\"")
         if not self .groq_api_key :
             logger .warning ("GROQ_API_KEY environment variable not set. Groq AI will not work.")
         self .chatbot_enabled ={}
@@ -539,7 +539,7 @@ class AI (commands .Cog ):
     async def _get_groq_response (self ,message :str ,context_messages :list )->str :
         """Get a response from Groq AI with full context."""
         try :
-            groq_key = (self .groq_api_key or os .getenv ("GROQ_API_KEY") or "").strip ().strip ("'\"")
+            groq_key = (self .groq_api_key or os .getenv ("GROQ_API_KEY") or GROQ_API_KEY or "").strip ().strip ("'\"")
             if not groq_key :
                 return "Groq API key not configured. Please set the GROQ_API_KEY environment variable in your Railway dashboard."
 
@@ -1601,13 +1601,31 @@ Support server: https://discord.gg/M8qJ9W7vBb"""
         view = CV2View("🏆 Trivia Leaderboard", leaderboard)
         await ctx .send (view=view)
 
-    async def enable_roleplay (self ,ctx ):
+    async def enable_roleplay (self ,ctx ,character :str =None ):
         """Enable roleplay mode in the current channel"""
         channel_id =ctx .channel .id 
         user_id =ctx .author .id 
 
+        if character :
+            content =character .lower ()
+            gender ="male"if "male"in content else "female"if "female"in content else "female"
+            character_type =character .split (gender ,1 )[1 ].strip ()if gender in content else character .strip ()
+            if not character_type :
+                character_type ="teacher"
+
+            self .roleplay_channels [channel_id ]={
+            "user_id":user_id ,
+            "character_gender":gender ,
+            "character_type":character_type ,
+            "awaiting_character":False ,
+            }
+            view = CV2View("🎭 Roleplay Mode", f"Roleplay mode activated! I'll act as a {gender} {character_type}. Let's begin—what's your first move?")
+            await ctx .send (view=view)
+            return
+
         if channel_id in self .roleplay_channels :
-            view = CV2View("🎭 Roleplay Mode", "Roleplay mode is already enabled in this channel! Use `/ai roleplay-disable` to turn it off.")
+            self .roleplay_channels [channel_id ]["awaiting_character"]=True
+            view = CV2View("🎭 Roleplay Mode", "Roleplay mode is active! What character would you like me to be?\nSend `female teacher`, `male astronaut`, etc., or use `ai roleplay-disable` to turn it off.")
             await ctx .send (view=view)
             return 
 
@@ -1633,9 +1651,9 @@ Support server: https://discord.gg/M8qJ9W7vBb"""
         await ctx .send (view=view)
 
     @ai .command (name ="roleplay-enable",description ="Enable roleplay mode in the current channel")
-    async def ai_roleplay_enable (self ,ctx :commands .Context ):
+    async def ai_roleplay_enable (self ,ctx :commands .Context ,*,character :str =None ):
         """Enable roleplay mode"""
-        await self .enable_roleplay (ctx )
+        await self .enable_roleplay (ctx ,character =character )
 
     @ai .command (name ="roleplay-disable",description ="Disable roleplay mode in the current channel")
     async def ai_roleplay_disable (self ,ctx :commands .Context ):

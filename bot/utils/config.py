@@ -33,7 +33,7 @@ serverLink = "https://discord.gg/M8qJ9W7vBb"
 ch         = "https://discord.com/channels/699587669059174461/1271825678710476911"
 
 # AI / Groq config
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "").strip().strip("'\"")
 
 CMD_WEBHOOK_URL = os.getenv("CMD_WEBHOOK_URL")
 

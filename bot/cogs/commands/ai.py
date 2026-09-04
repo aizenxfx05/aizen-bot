@@ -520,7 +520,7 @@ class AI (commands .Cog ):
                         })
 
             data ={
-            "model":"llama-3.3-70b-versatile",
+            "model":"qwen/qwen3.8-27b",
             "messages":api_messages ,
             "temperature":0.8 ,
             "max_tokens":1000 ,

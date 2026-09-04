@@ -17,7 +17,7 @@ from utils.config import GROQ_API_KEY, BRAND_NAME
 
 # ── Config ────────────────────────────────────────────────────────────────────
 GROQ_API_URL     = "https://api.groq.com/openai/v1/chat/completions"
-AI_MODEL         = "llama3-8b-8192"
+AI_MODEL         = "qwen/qwen3.8-27b"
 MAX_HISTORY      = 8
 MAX_RESPONSE_LEN = 1800
 BOT_SYSTEM_PROMPT = (

@@ -79,7 +79,7 @@ class AIAutoMod(Cog):
 
         # Query Groq AI for fast classification
         payload = {
-            "model": "llama3-8b-8192",
+            "model": "qwen/qwen3.8-27b",
             "messages": [
                 {
                     "role": "system",

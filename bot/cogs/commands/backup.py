@@ -715,41 +715,55 @@ class Backup(Cog):
     @commands.has_permissions(administrator=True)
     async def autorestore_enable(self, ctx: Context):
         """Enable automatic server restore protection."""
-        progress_msg = await ctx.reply("🟣 *Enabling Automatic Server Restore and creating baseline master snapshot...*", mention_author=False)
+        progress_msg = None
+        try:
+            try:
+                progress_msg = await ctx.reply("🟣 *Enabling Automatic Server Restore and creating baseline master snapshot...*", mention_author=False)
+            except Exception:
+                progress_msg = await ctx.send("🟣 *Enabling Automatic Server Restore and creating baseline master snapshot...*")
 
-        # 1. Create fresh baseline snapshot
-        backup_id = await self._create_snapshot_data(ctx.guild, ctx.author.id)
+            # 1. Create fresh baseline snapshot
+            backup_id = await self._create_snapshot_data(ctx.guild, ctx.author.id)
 
-        # 2. Update config status = 1
-        now_str = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
-        async with aiosqlite.connect(DB_PATH) as db:
-            await db.execute(
-                """
-                INSERT INTO auto_restore_config (guild_id, status, latest_backup_id, last_snapshot)
-                VALUES (?, 1, ?, ?)
-                ON CONFLICT(guild_id) DO UPDATE SET
-                    status = 1,
-                    latest_backup_id = excluded.latest_backup_id,
-                    last_snapshot = excluded.last_snapshot
-                """,
-                (ctx.guild.id, backup_id, now_str)
+            # 2. Update config status = 1
+            now_str = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+            async with aiosqlite.connect(DB_PATH) as db:
+                await db.execute(
+                    """
+                    INSERT INTO auto_restore_config (guild_id, status, latest_backup_id, last_snapshot)
+                    VALUES (?, 1, ?, ?)
+                    ON CONFLICT(guild_id) DO UPDATE SET
+                        status = 1,
+                        latest_backup_id = excluded.latest_backup_id,
+                        last_snapshot = excluded.last_snapshot
+                    """,
+                    (ctx.guild.id, backup_id, now_str)
+                )
+                await db.commit()
+
+            embed = discord.Embed(
+                title="🛡️ Automatic Server Restore Enabled",
+                description=(
+                    "**Aizen XFX Automatic Disaster Recovery is now ACTIVE!**\n\n"
+                    f"• **Baseline Master Snapshot:** `{backup_id}`\n"
+                    "• **Auto-Recovery on Nuke:** Active (automatically restores missing channels & roles if mass deletions occur)\n"
+                    "• **12h Auto-Snapshot:** Active (automatically saves fresh daily backups)\n"
+                    f"• **1-Click Restore:** You can restore missing elements anytime using `{ctx.prefix}autorestore restore`."
+                ),
+                color=0x2ECC71,
+                timestamp=discord.utils.utcnow()
             )
-            await db.commit()
-
-        embed = discord.Embed(
-            title="🛡️ Automatic Server Restore Enabled",
-            description=(
-                "**Aizen XFX Automatic Disaster Recovery is now ACTIVE!**\n\n"
-                f"• **Baseline Master Snapshot:** `{backup_id}`\n"
-                "• **Auto-Recovery on Nuke:** Active (automatically restores missing channels & roles if mass deletions occur)\n"
-                "• **12h Auto-Snapshot:** Active (automatically saves fresh daily backups)\n"
-                f"• **1-Click Restore:** You can restore missing elements anytime using `{ctx.prefix}autorestore restore`."
-            ),
-            color=0x2ECC71,
-            timestamp=discord.utils.utcnow()
-        )
-        embed.set_footer(text="Aizen XFX Disaster Recovery Engine")
-        await progress_msg.edit(content=None, embed=embed)
+            embed.set_footer(text="Aizen XFX Disaster Recovery Engine")
+            if progress_msg:
+                try:
+                    await progress_msg.edit(content=None, embed=embed)
+                except Exception:
+                    await ctx.send(embed=embed)
+            else:
+                await ctx.send(embed=embed)
+        except Exception as err:
+            logger.error(f"[AutoRestore] Failed to enable: {err}", exc_info=True)
+            await ctx.send(f"❌ Failed to enable Automatic Server Restore: `{err}`")
 
     @autorestore_cmd.command(name="disable", aliases=["off"])
     @commands.has_permissions(administrator=True)
@@ -916,6 +930,58 @@ class Backup(Cog):
         """Server restore command under server namespace."""
         await self.autorestore_cmd(ctx, sub=sub)
 
+    # ── Auto root group (>auto restore ...) ───────────────────────────────────
+
+    @commands.group(
+        name="auto",
+        aliases=["automatic"],
+        invoke_without_command=True
+    )
+    @commands.has_permissions(administrator=True)
+    async def auto_cmd(self, ctx: Context, *, sub: str = None):
+        """Auto commands group."""
+        await self.autorestore_cmd(ctx, sub=sub)
+
+    @auto_cmd.group(name="restore", invoke_without_command=True)
+    @commands.has_permissions(administrator=True)
+    async def auto_restore_subgroup(self, ctx: Context, *, sub: str = None):
+        """Auto restore command under auto namespace."""
+        await self.autorestore_cmd(ctx, sub=sub)
+
+    @auto_restore_subgroup.command(name="enable", aliases=["on"])
+    @commands.has_permissions(administrator=True)
+    async def auto_restore_enable_sub(self, ctx: Context):
+        await self.autorestore_enable(ctx)
+
+    @auto_restore_subgroup.command(name="disable", aliases=["off"])
+    @commands.has_permissions(administrator=True)
+    async def auto_restore_disable_sub(self, ctx: Context):
+        await self.autorestore_disable(ctx)
+
+    @auto_restore_subgroup.command(name="status", aliases=["info", "check"])
+    @commands.has_permissions(manage_guild=True)
+    async def auto_restore_status_sub(self, ctx: Context):
+        await self.autorestore_status(ctx)
+
+    @auto_restore_subgroup.command(name="sync", aliases=["snapshot", "update"])
+    @commands.has_permissions(administrator=True)
+    async def auto_restore_sync_sub(self, ctx: Context):
+        await self.autorestore_sync(ctx)
+
+    @auto_restore_subgroup.command(name="run", aliases=["restore", "now", "trigger"])
+    @commands.has_permissions(administrator=True)
+    async def auto_restore_run_sub(self, ctx: Context):
+        await self.autorestore_run(ctx)
+
+    # ── Error Handlers ────────────────────────────────────────────────────────
+
+    async def cog_command_error(self, ctx: Context, error: Exception):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.reply("❌ You must have the **Administrator** permission to use backup and auto-restore commands.", mention_author=False)
+        else:
+            logger.error(f"[Backup/AutoRestore Command Error] {error}", exc_info=True)
+
 
 async def setup(bot):
     await bot.add_cog(Backup(bot))
+

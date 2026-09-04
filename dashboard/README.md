@@ -23,6 +23,7 @@
   <a href="https://discord.gg/M8qJ9W7vBb"><img src="https://img.shields.io/badge/Discord-Join_Server-5865F2?style=for-the-badge&logo=discord&logoColor=white"/></a>
   <a href="https://youtube.com/@aizen_xfx"><img src="https://img.shields.io/badge/YouTube-Aizen_XFX-FF0000?style=for-the-badge&logo=youtube&logoColor=white"/></a>
   <a href="https://github.com/aizenxfx05"><img src="https://img.shields.io/badge/GitHub-aizenxfx05-181717?style=for-the-badge&logo=github&logoColor=white"/></a>
+  <a href="https://railway.com"><img src="https://img.shields.io/badge/Railway-Deploy-0B0D0E?style=for-the-badge&logo=railway&logoColor=white"/></a>
 </p>
 
 </div>
@@ -125,6 +126,22 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ---
 
+## ✦ Deploy on Railway (railway.com)
+
+You can also host the Next.js Dashboard on [Railway](https://railway.com) as a companion web service:
+
+1. In your Railway project, click **+ Create** → **GitHub Repo** → `aizenxfx05/aizen-bot`.
+2. Set **Root Directory** to `/dashboard` in service settings.
+3. Add environment variables:
+   - `NEXT_PUBLIC_API_URL` — Your bot's FastAPI backend URL
+   - `NEXT_PUBLIC_DASHBOARD_API_KEY` — Shared secret key
+   - `NEXTAUTH_SECRET` — Random 32-character string
+   - `NEXTAUTH_URL` — Your Railway public service domain
+   - `DISCORD_CLIENT_ID` & `DISCORD_CLIENT_SECRET` — Discord OAuth credentials
+4. Railway will automatically build via `nixpacks.toml` and start Next.js!
+
+---
+
 ## ✦ Environment Reference
 
 | Variable | Description |
@@ -218,6 +235,7 @@ This URL is permanent — it never changes between restarts as long as the Cloud
   <a href="https://discord.gg/M8qJ9W7vBb"><img src="https://img.shields.io/badge/Discord-Join_Server-5865F2?style=for-the-badge&logo=discord&logoColor=white"/></a>
   <a href="https://youtube.com/@aizen_xfx"><img src="https://img.shields.io/badge/YouTube-Aizen_XFX-FF0000?style=for-the-badge&logo=youtube&logoColor=white"/></a>
   <a href="https://github.com/aizenxfx05"><img src="https://img.shields.io/badge/GitHub-aizenxfx05-181717?style=for-the-badge&logo=github&logoColor=white"/></a>
+  <a href="https://railway.com"><img src="https://img.shields.io/badge/Railway-Deploy-0B0D0E?style=for-the-badge&logo=railway&logoColor=white"/></a>
   <a href="https://nexiohost.in"><img src="https://img.shields.io/badge/⭐%20PREMIUM%20HOSTING-NexioHost-FFD700?style=for-the-badge&labelColor=1a1a2e&color=FFD700&logoColor=FFD700"/></a>
 </p>
 

@@ -23,6 +23,10 @@
   <a href="https://discord.gg/M8qJ9W7vBb"><img src="https://img.shields.io/badge/Discord-Join_Server-5865F2?style=for-the-badge&logo=discord&logoColor=white"/></a>
   <a href="https://youtube.com/@aizen_xfx"><img src="https://img.shields.io/badge/YouTube-Aizen_XFX-FF0000?style=for-the-badge&logo=youtube&logoColor=white"/></a>
   <a href="https://github.com/aizenxfx05"><img src="https://img.shields.io/badge/GitHub-aizenxfx05-181717?style=for-the-badge&logo=github&logoColor=white"/></a>
+  <a href="https://railway.com"><img src="https://img.shields.io/badge/Railway-Deploy-0B0D0E?style=for-the-badge&logo=railway&logoColor=white"/></a>
+</p>
+<p>
+  <a href="https://railway.com/new/template?template=https://github.com/aizenxfx05/aizen-bot"><img src="https://railway.com/button.svg" alt="Deploy on Railway"/></a>
 </p>
 
 </div>
@@ -215,6 +219,18 @@ python CodeX.py
 
 ---
 
+## ✦ Deploy on Railway (railway.com)
+
+1. Click **Deploy on Railway**:
+   
+   [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template?template=https://github.com/aizenxfx05/aizen-bot)
+
+2. Add your environment variables in Railway project settings:
+   - `TOKEN`, `OWNER_IDS`, `DASHBOARD_API_KEY`
+3. Railway automatically uses `nixpacks.toml` / `railway.json` to build with Python 3.11 & FFmpeg.
+
+---
+
 ## ✦ Environment Reference
 
 | Variable | Default | Description |
@@ -333,6 +349,7 @@ python CodeX.py
   <a href="https://discord.gg/M8qJ9W7vBb"><img src="https://img.shields.io/badge/Discord-Join_Server-5865F2?style=for-the-badge&logo=discord&logoColor=white"/></a>
   <a href="https://youtube.com/@aizen_xfx"><img src="https://img.shields.io/badge/YouTube-Aizen_XFX-FF0000?style=for-the-badge&logo=youtube&logoColor=white"/></a>
   <a href="https://github.com/aizenxfx05"><img src="https://img.shields.io/badge/GitHub-aizenxfx05-181717?style=for-the-badge&logo=github&logoColor=white"/></a>
+  <a href="https://railway.com"><img src="https://img.shields.io/badge/Railway-Deploy-0B0D0E?style=for-the-badge&logo=railway&logoColor=white"/></a>
   <a href="https://nexiohost.in"><img src="https://img.shields.io/badge/⭐%20PREMIUM%20HOSTING-NexioHost-FFD700?style=for-the-badge&labelColor=1a1a2e&color=FFD700&logoColor=FFD700"/></a>
 </p>
 

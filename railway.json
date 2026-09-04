@@ -5,6 +5,8 @@
   },
   "deploy": {
     "startCommand": "cd bot && python CodeX.py",
+    "healthcheckPath": "/health",
+    "healthcheckTimeout": 300,
     "restartPolicyType": "ALWAYS"
   }
 }

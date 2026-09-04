@@ -12,7 +12,10 @@
 <h3>Power. Elegance. Dominance.</h3>
 <h4>A feature-rich Discord bot with AI chat, channel restore, and a premium dark-gold dashboard</h4>
 
-<a href="https://nexiohost.in"><img src="https://img.shields.io/badge/⭐%20PREMIUM%20HOSTING-NexioHost-FFD700?style=for-the-badge&labelColor=1a1a2e&color=FFD700&logoColor=FFD700"/></a>
+<p>
+  <a href="https://nexiohost.in"><img src="https://img.shields.io/badge/⭐%20PREMIUM%20HOSTING-NexioHost-FFD700?style=for-the-badge&labelColor=1a1a2e&color=FFD700&logoColor=FFD700"/></a>
+  <a href="https://railway.com/new/template?template=https://github.com/aizenxfx05/aizen-bot"><img src="https://railway.com/button.svg" alt="Deploy on Railway"/></a>
+</p>
 
 <p>
   <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white"/></a>
@@ -26,6 +29,7 @@
   <a href="https://discord.gg/M8qJ9W7vBb"><img src="https://img.shields.io/badge/Discord-Join_Server-5865F2?style=for-the-badge&logo=discord&logoColor=white"/></a>
   <a href="https://youtube.com/@aizen_xfx"><img src="https://img.shields.io/badge/YouTube-Aizen_XFX-FF0000?style=for-the-badge&logo=youtube&logoColor=white"/></a>
   <a href="https://github.com/aizenxfx05"><img src="https://img.shields.io/badge/GitHub-aizenxfx05-181717?style=for-the-badge&logo=github&logoColor=white"/></a>
+  <a href="https://railway.com"><img src="https://img.shields.io/badge/Railway-Deploy-0B0D0E?style=for-the-badge&logo=railway&logoColor=white"/></a>
 </p>
 
 </div>
@@ -251,6 +255,35 @@ python CodeX.py
 ```
 
 The bot will print the Aizen XFX ASCII banner in gold on startup.
+
+---
+
+## ✦ Deploy on Railway (railway.com)
+
+Deploy **Aizen XFX** directly to [Railway](https://railway.com) for 24/7 cloud hosting with automated builds, restart policies, and health monitoring.
+
+<div align="center">
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template?template=https://github.com/aizenxfx05/aizen-bot)
+
+</div>
+
+### Option 1: 1-Click Template Deploy
+1. Click the **Deploy on Railway** button above (or open `https://railway.com/new/template?template=https://github.com/aizenxfx05/aizen-bot`).
+2. Log in with your GitHub account on [railway.com](https://railway.com).
+3. Fill in your environment variables:
+   - `TOKEN` — Discord Bot Token
+   - `OWNER_IDS` — Your Discord User ID
+   - `DASHBOARD_API_KEY` — Secret key for API authentication
+   - Optional: `GROQ_API_KEY`, `LAVALINK_HOST`, `LAVALINK_PASSWORD`
+4. Click **Deploy**. Railway will build the app via **Nixpacks** (Python 3.11 + FFmpeg) and run `python CodeX.py` with automatic restart on failure.
+
+### Option 2: Deploy Existing GitHub Repository
+1. Log in to your [railway.com](https://railway.com) dashboard.
+2. Click **+ New Project** → **Deploy from GitHub repo**.
+3. Select `aizenxfx05/aizen-bot`.
+4. Go to **Variables** and add your `.env` configuration.
+5. Railway detects `railway.json` / `railway.toml` automatically and runs the pre-configured health check at `/health`.
 
 ---
 
@@ -505,6 +538,7 @@ Runs automatically on startup when `EMOJI_SYNC=true`:
   <a href="https://discord.gg/M8qJ9W7vBb"><img src="https://img.shields.io/badge/Discord-Join_Server-5865F2?style=for-the-badge&logo=discord&logoColor=white"/></a>
   <a href="https://youtube.com/@aizen_xfx"><img src="https://img.shields.io/badge/YouTube-Aizen_XFX-FF0000?style=for-the-badge&logo=youtube&logoColor=white"/></a>
   <a href="https://github.com/aizenxfx05"><img src="https://img.shields.io/badge/GitHub-aizenxfx05-181717?style=for-the-badge&logo=github&logoColor=white"/></a>
+  <a href="https://railway.com"><img src="https://img.shields.io/badge/Railway-Deploy-0B0D0E?style=for-the-badge&logo=railway&logoColor=white"/></a>
   <a href="https://nexiohost.in"><img src="https://img.shields.io/badge/⭐%20PREMIUM%20HOSTING-NexioHost-FFD700?style=for-the-badge&labelColor=1a1a2e&color=FFD700&logoColor=FFD700"/></a>
 </p>
 

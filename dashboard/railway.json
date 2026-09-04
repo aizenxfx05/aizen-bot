@@ -4,8 +4,8 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "python CodeX.py",
-    "healthcheckPath": "/health",
+    "startCommand": "npm run start",
+    "healthcheckPath": "/",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ALWAYS"
   }

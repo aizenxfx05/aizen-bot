@@ -332,7 +332,7 @@ fastapi_app.state.bot = client
 set_bot(client)
 
 API_ENABLED = os.getenv("API_ENABLED", "true").strip().lower() == "true"
-API_PORT = int(os.getenv("API_PORT", "8000"))
+API_PORT = int(os.getenv("API_PORT", os.getenv("PORT", "8000")))
 
 def run_api():
     uvicorn.run(fastapi_app, host='0.0.0.0', port=API_PORT, log_level="warning")

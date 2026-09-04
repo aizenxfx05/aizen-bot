@@ -53,7 +53,7 @@ import subprocess
 TUNNEL_ENABLED = os.getenv("TUNNEL_ENABLED", "true").strip().lower() == "true"
 CF_TUNNEL_TOKEN = os.getenv("CF_TUNNEL_TOKEN", "").strip()   # token from Cloudflare dashboard
 CF_TUNNEL_URL   = os.getenv("CF_TUNNEL_URL", "").strip()     # e.g. https://api.yourdomain.com
-API_PORT        = int(os.getenv("API_PORT", "8000"))
+API_PORT        = int(os.getenv("API_PORT", os.getenv("PORT", "8000")))
 
 # ── colours ───────────────────────────────────────────────────────────────────
 _CYAN   = "\033[36m"

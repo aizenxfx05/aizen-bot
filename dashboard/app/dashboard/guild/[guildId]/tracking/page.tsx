@@ -34,24 +34,23 @@ export default function TrackingPage({ params }: { params: { guildId: string } }
     channel_id: null,
   });
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [configData, channelsData] = await Promise.all([
-        api.getTracking(params.guildId),
-        api.getChannels(params.guildId),
-      ]);
-      setConfig(configData);
-      setChannels(channelsData);
-    } catch (error) {
-      console.error("Failed to fetch tracking data:", error);
-      toast.error("Failed to load tracking configuration");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [configData, channelsData] = await Promise.all([
+          api.getTracking(params.guildId),
+          api.getChannels(params.guildId),
+        ]);
+        setConfig(configData);
+        setChannels(channelsData);
+      } catch (error) {
+        console.error("Failed to fetch tracking data:", error);
+        toast.error("Failed to load tracking configuration");
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchData();
   }, [params.guildId]);
 

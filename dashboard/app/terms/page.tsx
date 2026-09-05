@@ -32,6 +32,7 @@ export default function TermsPage() {
       <nav className="fixed top-0 w-full z-50 border-b border-white/[0.03] bg-[#07070D]/80 backdrop-blur-3xl px-6 h-20 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-4 group">
           <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#A855F7] to-[#7C3AED] flex items-center justify-center group-hover:rotate-12 transition-transform overflow-hidden relative">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
               src="/logo.png" 
               alt="Logo" 

@@ -16,7 +16,7 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { 
   Shield, Users, Server, Activity, Database, Cpu, Globe, Lock, Settings, RefreshCw
 } from "lucide-react";
@@ -33,7 +33,7 @@ export function AdminContent() {
   const [saving, setSaving] = useState(false);
   const [notification, setNotification] = useState("");
 
-  const fetchData = async (isRefresh = false) => {
+  const fetchData = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true);
     try {
       const [statsData, configData] = await Promise.all([
@@ -50,13 +50,13 @@ export function AdminContent() {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();
     const interval = setInterval(() => fetchData(true), 30000); // Auto refresh every 30s
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchData]);
 
   const handleToggleMaintenance = async () => {
     if (!config) return;

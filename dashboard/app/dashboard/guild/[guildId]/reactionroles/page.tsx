@@ -33,24 +33,25 @@ export default function ReactionRolesPage({ params }: { params: { guildId: strin
   const [roles, setRoles] = useState<any[]>([]);
   const [newRR, setNewRR] = useState({ message_id: "", emoji: "", role_id: "" });
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [configData, rolesData] = await Promise.all([
-        api.getRR(params.guildId),
-        api.getRoles(params.guildId),
-      ]);
-      setConfig(configData);
-      setRoles(rolesData);
-    } catch (error) {
-      console.error("Failed to load RR:", error);
-      toast.error("Failed to load reaction roles configuration");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { fetchData(); }, [params.guildId]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [configData, rolesData] = await Promise.all([
+          api.getRR(params.guildId),
+          api.getRoles(params.guildId),
+        ]);
+        setConfig(configData);
+        setRoles(rolesData);
+      } catch (error) {
+        console.error("Failed to load RR:", error);
+        toast.error("Failed to load reaction roles configuration");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [params.guildId]);
 
   const filteredRoles = roles.filter(r => r.name !== "@everyone");
 

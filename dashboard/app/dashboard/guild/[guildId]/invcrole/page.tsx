@@ -31,24 +31,25 @@ export default function InvcRolePage({ params }: { params: { guildId: string } }
   const [roles, setRoles] = useState<any[]>([]);
   const [config, setConfig] = useState<any>({ role_id: null, enabled: false });
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [configData, rolesData] = await Promise.all([
-        api.getInvcRole(params.guildId),
-        api.getRoles(params.guildId),
-      ]);
-      setConfig(configData);
-      setRoles(rolesData);
-    } catch (error) {
-      console.error("Failed to fetch InvcRole data:", error);
-      toast.error("Failed to load Voice Role configuration");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { fetchData(); }, [params.guildId]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [configData, rolesData] = await Promise.all([
+          api.getInvcRole(params.guildId),
+          api.getRoles(params.guildId),
+        ]);
+        setConfig(configData);
+        setRoles(rolesData);
+      } catch (error) {
+        console.error("Failed to fetch InvcRole data:", error);
+        toast.error("Failed to load Voice Role configuration");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [params.guildId]);
 
   const handleSave = async () => {
     setSaving(true);

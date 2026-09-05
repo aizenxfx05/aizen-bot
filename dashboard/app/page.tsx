@@ -85,6 +85,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4 group cursor-pointer">
             <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-[#A855F7] to-[#7C3AED] p-[2px] flex items-center justify-center shadow-lg shadow-[#A855F7]/30 border border-[#A855F7]/30 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 overflow-hidden relative">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
                 src="/logo.png" 
                 alt="Aizen XFX Logo" 

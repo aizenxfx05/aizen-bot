@@ -38,26 +38,27 @@ export default function VerificationPage({ params }: { params: { guildId: string
     enabled: true,
   });
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [configData, channelsData, rolesData] = await Promise.all([
-        api.getVerification(params.guildId),
-        api.getChannels(params.guildId),
-        api.getRoles(params.guildId),
-      ]);
-      setConfig(configData);
-      setChannels(channelsData);
-      setRoles(rolesData);
-    } catch (error) {
-      console.error("Failed to fetch verification data:", error);
-      toast.error("Failed to load verification configuration");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { fetchData(); }, [params.guildId]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [configData, channelsData, rolesData] = await Promise.all([
+          api.getVerification(params.guildId),
+          api.getChannels(params.guildId),
+          api.getRoles(params.guildId),
+        ]);
+        setConfig(configData);
+        setChannels(channelsData);
+        setRoles(rolesData);
+      } catch (error) {
+        console.error("Failed to fetch verification data:", error);
+        toast.error("Failed to load verification configuration");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [params.guildId]);
 
   const handleSave = async () => {
     setSaving(true);

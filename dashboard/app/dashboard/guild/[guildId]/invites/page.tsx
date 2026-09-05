@@ -16,7 +16,7 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { TrendingUp, RefreshCcw, Medal, User, LogOut, UserMinus, UserPlus, Info } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
@@ -26,7 +26,7 @@ export default function InvitesPage({ params }: { params: { guildId: string } })
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any[]>([]);
 
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = useCallback(async () => {
     try {
       setLoading(true);
       const res = await api.getInvites(params.guildId);
@@ -38,9 +38,11 @@ export default function InvitesPage({ params }: { params: { guildId: string } })
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.guildId]);
 
-  useEffect(() => { fetchLeaderboard(); }, [params.guildId]);
+  useEffect(() => {
+    fetchLeaderboard();
+  }, [fetchLeaderboard]);
 
   if (loading) {
     return (

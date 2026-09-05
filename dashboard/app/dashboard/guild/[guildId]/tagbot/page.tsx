@@ -44,47 +44,46 @@ export default function TagBotPage({ params }: { params: { guildId: string } }) 
     alert_enabled: false,
   });
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [configData, channelsData] = await Promise.all([
-        api.getTagBot(params.guildId).catch((err) => {
-          console.warn("Using fallback TagBot config:", err);
-          return {
-            guild_id: params.guildId,
-            enabled: true,
-            trigger_type: "single" as const,
-            response_type: "default" as const,
-            custom_message: null,
-            custom_title: null,
-            custom_color: "#A855F7",
-            custom_image: null,
-            custom_thumbnail: null,
-            show_invite: true,
-            show_support: true,
-            show_dashboard: true,
-            auto_delete: 0,
-            alert_channel_id: null,
-            alert_enabled: false,
-          };
-        }),
-        api.getChannels(params.guildId).catch((err) => {
-          console.warn("Failed to fetch channels for TagBot:", err);
-          return [];
-        }),
-      ]);
-
-      setConfig(configData);
-      setChannels(channelsData);
-    } catch (error) {
-      console.error("Failed to fetch TagBot data:", error);
-      toast.error("Failed to load Tag Bot configuration");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [configData, channelsData] = await Promise.all([
+          api.getTagBot(params.guildId).catch((err) => {
+            console.warn("Using fallback TagBot config:", err);
+            return {
+              guild_id: params.guildId,
+              enabled: true,
+              trigger_type: "single" as const,
+              response_type: "default" as const,
+              custom_message: null,
+              custom_title: null,
+              custom_color: "#A855F7",
+              custom_image: null,
+              custom_thumbnail: null,
+              show_invite: true,
+              show_support: true,
+              show_dashboard: true,
+              auto_delete: 0,
+              alert_channel_id: null,
+              alert_enabled: false,
+            };
+          }),
+          api.getChannels(params.guildId).catch((err) => {
+            console.warn("Failed to fetch channels for TagBot:", err);
+            return [];
+          }),
+        ]);
+
+        setConfig(configData);
+        setChannels(channelsData);
+      } catch (error) {
+        console.error("Failed to fetch TagBot data:", error);
+        toast.error("Failed to load Tag Bot configuration");
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchData();
   }, [params.guildId]);
 

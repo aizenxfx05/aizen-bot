@@ -18,6 +18,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Server, ShieldCheck, Ticket, BarChart4, FileText, Settings,
@@ -203,6 +204,7 @@ export default function DashboardLayout({
           <div className="flex items-center gap-3 group">
             <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-[#A855F7] to-[#7C3AED] p-[2px] flex items-center justify-center shadow-lg shadow-[#A855F7]/30 group-hover:scale-105 transition-all border border-[#A855F7]/30 overflow-hidden relative">
               {/* Custom Logo Image (falls back to Bot icon if not provided) */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
                 src="/logo.png" 
                 alt="Aizen XFX Logo" 
@@ -338,9 +340,11 @@ export default function DashboardLayout({
           <div className="flex items-center gap-3 p-2 bg-white/[0.02] rounded-2xl border border-[#A855F7]/[0.08]">
             <div className="h-10 w-10 rounded-full bg-[#A855F7]/10 flex items-center justify-center ring-1 ring-white/10 overflow-hidden border border-[#A855F7]/20">
               {session?.user?.image ? (
-                <img
+                <Image
                   src={session.user.image}
                   alt="User Avatar"
+                  width={40}
+                  height={40}
                   className="h-full w-full object-cover opacity-80"
                 />
               ) : (
@@ -435,7 +439,7 @@ export default function DashboardLayout({
               >
                 <div className="h-9 w-9 rounded-full bg-[#A855F7]/10 flex items-center justify-center overflow-hidden border border-[#A855F7]/20 ring-2 ring-transparent group-hover:ring-[#A855F7]/30 transition-all">
                   {session?.user?.image ? (
-                    <img src={session.user.image} alt="User Avatar" className="h-full w-full object-cover opacity-80" />
+                    <Image src={session.user.image} alt="User Avatar" width={36} height={36} className="h-full w-full object-cover opacity-80" />
                   ) : (
                     <User className="h-5 w-5 text-[#C084FC]/70" />
                   )}

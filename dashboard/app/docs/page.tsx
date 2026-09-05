@@ -78,6 +78,7 @@ export default function DocsPage() {
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-4 group">
             <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#A855F7] to-[#7C3AED] flex items-center justify-center mr-3 overflow-hidden relative">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
                 src="/logo.png" 
                 alt="Logo" 

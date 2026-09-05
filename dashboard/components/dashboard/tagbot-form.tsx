@@ -693,6 +693,7 @@ export function TagBotForm({ initialConfig, channels, guildId }: TagBotFormProps
                             </p>
                           </div>
                           {config.custom_thumbnail && (
+                            /* eslint-disable-next-line @next/next/no-img-element */
                             <img
                               src={config.custom_thumbnail}
                               alt="Thumbnail"
@@ -702,6 +703,7 @@ export function TagBotForm({ initialConfig, channels, guildId }: TagBotFormProps
                         </div>
 
                         {config.custom_image && (
+                          /* eslint-disable-next-line @next/next/no-img-element */
                           <img
                             src={config.custom_image}
                             alt="Banner"

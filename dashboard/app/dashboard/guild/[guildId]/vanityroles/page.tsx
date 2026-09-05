@@ -16,7 +16,7 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link2, RefreshCcw, Plus, Trash2, Info, Save } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "@/lib/api";
@@ -33,7 +33,7 @@ export default function VanityRolesPage({ params }: { params: { guildId: string 
   const [setups, setSetups] = useState<any[]>([]);
   const [newSetup, setNewSetup] = useState({ vanity: "", role_id: "", log_channel_id: "" });
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const [setupsData, rolesData, channelsData] = await Promise.all([
@@ -50,9 +50,11 @@ export default function VanityRolesPage({ params }: { params: { guildId: string 
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.guildId]);
 
-  useEffect(() => { fetchData(); }, [params.guildId]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const textChannels = channels.filter(c => c.type === "0" || c.type === 0);
   const filteredRoles = roles.filter(r => r.name !== "@everyone");

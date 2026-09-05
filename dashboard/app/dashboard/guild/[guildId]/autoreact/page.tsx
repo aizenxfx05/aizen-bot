@@ -29,20 +29,21 @@ export default function AutoReactPage({ params }: { params: { guildId: string } 
   const [saving, setSaving] = useState(false);
   const [config, setConfig] = useState<any>({ triggers: [] });
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const configData = await api.getAutoReact(params.guildId);
-      setConfig(configData);
-    } catch (error) {
-      console.error("Failed to fetch auto react data:", error);
-      toast.error("Failed to load auto react configuration");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { fetchData(); }, [params.guildId]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const configData = await api.getAutoReact(params.guildId);
+        setConfig(configData);
+      } catch (error) {
+        console.error("Failed to fetch auto react data:", error);
+        toast.error("Failed to load auto react configuration");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [params.guildId]);
 
   const handleSave = async () => {
     setSaving(true);

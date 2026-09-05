@@ -16,7 +16,7 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { 
   ShieldAlert, 
   Megaphone, 
@@ -86,7 +86,7 @@ export function ServerControlForm({ guildId }: ServerControlFormProps) {
   const [roleAction, setRoleAction] = useState<"add" | "remove">("add");
   const [roleLoading, setRoleLoading] = useState(false);
 
-  const loadServerData = async () => {
+  const loadServerData = useCallback(async () => {
     setLoading(true);
     try {
       const [sData, cData, rData] = await Promise.all([
@@ -113,11 +113,11 @@ export function ServerControlForm({ guildId }: ServerControlFormProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [guildId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     loadServerData();
-  }, [guildId]);
+  }, [guildId, loadServerData]);
 
   // Handlers
   const handleLockdown = async (targetLocked: boolean) => {

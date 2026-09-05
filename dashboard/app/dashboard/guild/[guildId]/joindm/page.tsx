@@ -32,20 +32,19 @@ export default function JoinDMPage({ params }: { params: { guildId: string } }) 
     message: "",
   });
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const configData = await api.getJoinDM(params.guildId);
-      setConfig(configData);
-    } catch (error) {
-      console.error("Failed to fetch JoinDM data:", error);
-      toast.error("Failed to load Join DM configuration");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const configData = await api.getJoinDM(params.guildId);
+        setConfig(configData);
+      } catch (error) {
+        console.error("Failed to fetch JoinDM data:", error);
+        toast.error("Failed to load Join DM configuration");
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchData();
   }, [params.guildId]);
 

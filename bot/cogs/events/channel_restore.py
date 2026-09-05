@@ -129,6 +129,39 @@ class ChannelRestore(commands.Cog):
             logger.warning(f"[ChannelRestore] Audit log check failed: {e}")
         return None
 
+    async def _is_antinuke_active(self, guild_id: int) -> bool:
+        """Check if antinuke is enabled for the guild."""
+        try:
+            async with aiosqlite.connect(DB_PATH) as db:
+                async with db.execute("SELECT status FROM antinuke WHERE guild_id = ?", (guild_id,)) as cur:
+                    row = await cur.fetchone()
+                return bool(row and row[0])
+        except Exception:
+            return False
+
+    async def _is_whitelisted_or_owner(self, guild: discord.Guild, user_id: int) -> bool:
+        """Check if a user is guild owner, extra owner, or whitelisted for channel deletion."""
+        if user_id == guild.owner_id:
+            return True
+        try:
+            async with aiosqlite.connect(DB_PATH) as db:
+                async with db.execute(
+                    "SELECT owner_id FROM extraowners WHERE guild_id = ? AND owner_id = ?",
+                    (guild.id, user_id),
+                ) as cur:
+                    if await cur.fetchone():
+                        return True
+                async with db.execute(
+                    "SELECT chdl FROM whitelisted_users WHERE guild_id = ? AND user_id = ?",
+                    (guild.id, user_id),
+                ) as cur:
+                    row = await cur.fetchone()
+                    if row and row[0]:
+                        return True
+        except Exception:
+            pass
+        return False
+
     # ── Core restore logic ─────────────────────────────────────────────────────
 
     async def _restore_channel(self, channel: discord.abc.GuildChannel, executor):
@@ -146,6 +179,12 @@ class ChannelRestore(commands.Cog):
         cat = None
         if getattr(channel, "category_id", None):
             cat = guild.get_channel(channel.category_id)
+            if not cat:
+                # If category was deleted, clear category_id so clone() doesn't send invalid parent_id
+                try:
+                    channel.category_id = None
+                except Exception:
+                    pass
 
         # Attempt 1: Standard clone with category safeguard
         try:
@@ -159,31 +198,62 @@ class ChannelRestore(commands.Cog):
 
         # Attempt 2: Fallback manual channel creation if clone failed
         if not new_channel:
+            overwrites = getattr(channel, "overwrites", None)
             try:
                 if isinstance(channel, discord.TextChannel):
-                    new_channel = await guild.create_text_channel(
-                        name=channel.name,
-                        category=cat,
-                        topic=channel.topic,
-                        slowmode_delay=channel.slowmode_delay,
-                        nsfw=channel.nsfw,
-                        reason=reason
-                    )
+                    try:
+                        new_channel = await guild.create_text_channel(
+                            name=channel.name,
+                            category=cat,
+                            topic=channel.topic,
+                            slowmode_delay=channel.slowmode_delay,
+                            nsfw=channel.nsfw,
+                            overwrites=overwrites,
+                            reason=reason
+                        )
+                    except Exception:
+                        new_channel = await guild.create_text_channel(
+                            name=channel.name,
+                            category=cat,
+                            topic=channel.topic,
+                            slowmode_delay=channel.slowmode_delay,
+                            nsfw=channel.nsfw,
+                            reason=reason
+                        )
                 elif isinstance(channel, discord.VoiceChannel):
-                    new_channel = await guild.create_voice_channel(
-                        name=channel.name,
-                        category=cat,
-                        bitrate=min(channel.bitrate, guild.bitrate_limit),
-                        user_limit=channel.user_limit,
-                        reason=reason
-                    )
+                    try:
+                        new_channel = await guild.create_voice_channel(
+                            name=channel.name,
+                            category=cat,
+                            bitrate=min(channel.bitrate, guild.bitrate_limit),
+                            user_limit=channel.user_limit,
+                            overwrites=overwrites,
+                            reason=reason
+                        )
+                    except Exception:
+                        new_channel = await guild.create_voice_channel(
+                            name=channel.name,
+                            category=cat,
+                            bitrate=min(channel.bitrate, guild.bitrate_limit),
+                            user_limit=channel.user_limit,
+                            reason=reason
+                        )
                 elif isinstance(channel, discord.StageChannel):
-                    new_channel = await guild.create_stage_channel(
-                        name=channel.name,
-                        category=cat,
-                        topic=channel.topic,
-                        reason=reason
-                    )
+                    try:
+                        new_channel = await guild.create_stage_channel(
+                            name=channel.name,
+                            category=cat,
+                            topic=channel.topic,
+                            overwrites=overwrites,
+                            reason=reason
+                        )
+                    except Exception:
+                        new_channel = await guild.create_stage_channel(
+                            name=channel.name,
+                            category=cat,
+                            topic=channel.topic,
+                            reason=reason
+                        )
             except Exception as e2:
                 logger.error(f"[ChannelRestore] Fallback creation failed: {e2}")
                 return None
@@ -225,7 +295,9 @@ class ChannelRestore(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel: discord.abc.GuildChannel):
-        guild = channel.guild
+        guild = getattr(channel, "guild", None)
+        if not guild:
+            return
 
         # Only handle text, voice, and stage channels
         if not isinstance(channel, (discord.TextChannel, discord.VoiceChannel, discord.StageChannel)):
@@ -237,31 +309,22 @@ class ChannelRestore(commands.Cog):
 
         # Prevent duplicate recreation if channel was already restored
         now = datetime.datetime.now()
-        channel_name = getattr(channel, "name", "").strip().lower()
-        name_key = (guild.id, channel_name)
         global_restored = getattr(self.bot, "_restored_channel_ids", {})
         if channel.id in global_restored and (now - global_restored[channel.id]).total_seconds() < 30:
             return
-        if name_key in global_restored and (now - global_restored[name_key]).total_seconds() < 30:
-            return
-
-        # Check if Antinuke is active on this server - if so, Antinuke handles unwhitelisted channel deletion
-        try:
-            async with aiosqlite.connect(DB_PATH) as db:
-                async with db.execute("SELECT status FROM antinuke WHERE guild_id = ?", (guild.id,)) as cursor:
-                    anti_row = await cursor.fetchone()
-                if anti_row and anti_row[0]:
-                    return
-        except Exception:
-            pass
 
         # Rate-limit guard
         if not self._within_rate_limit(guild.id):
             logger.warning(f"[ChannelRestore] Rate limit reached for guild {guild.id}.")
             return
 
-        # Wait briefly for Discord audit log propagation
+        # Wait briefly for Discord audit log propagation and allow Antinuke to handle nuke attacks first
         await asyncio.sleep(1.0)
+
+        # Check again if Antinuke or another listener already restored this channel
+        global_restored = getattr(self.bot, "_restored_channel_ids", {})
+        if channel.id in global_restored and (now - global_restored[channel.id]).total_seconds() < 30:
+            return
 
         # Get executor from audit log
         executor = await self._get_executor(guild, channel.id)
@@ -270,10 +333,19 @@ class ChannelRestore(commands.Cog):
         if executor and executor.id == self.bot.user.id:
             return
 
+        # If Antinuke is active AND executor is an unwhitelisted attacker:
+        # Antinuke (antichdl) is responsible for banning and restoring.
+        # But if executor is owner, extra-owner, whitelisted, or Antinuke is disabled,
+        # Antinuke does NOT restore the channel, so ChannelRestore MUST restore it!
+        if executor and await self._is_antinuke_active(guild.id):
+            is_authorized = await self._is_whitelisted_or_owner(guild, executor.id)
+            if not is_authorized:
+                return
+
+        # Mark channel ID as restored to prevent duplicate concurrent executions
         if not hasattr(self.bot, "_restored_channel_ids"):
             self.bot._restored_channel_ids = {}
         self.bot._restored_channel_ids[channel.id] = now
-        self.bot._restored_channel_ids[name_key] = now
 
         # Restore the channel
         new_channel = await self._restore_channel(channel, executor)

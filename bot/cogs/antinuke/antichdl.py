@@ -24,48 +24,83 @@ class AntiChannelDelete(commands.Cog):
         self.bot = bot
         self.event_limits = {}
         self.cooldowns = {}
-        self._restoring_channels = set()
-        self._restored_channels = {}
 
-        if not hasattr(self.bot, "_restored_channel_ids"):
-            self.bot._restored_channel_ids = {}
+        if not hasattr(self.bot, "_channel_restore_in_progress"):
+            self.bot._channel_restore_in_progress = set()
+        if not hasattr(self.bot, "_channel_restored_recently"):
+            self.bot._channel_restored_recently = {}
 
-    def _is_recently_restored(self, channel: discord.abc.GuildChannel) -> bool:
+    def _is_channel_in_progress_or_restored(self, channel: discord.abc.GuildChannel) -> bool:
+        guild = getattr(channel, "guild", None)
+        if not guild:
+            return True
+
         now = datetime.datetime.now()
         channel_id = channel.id
-        name_key = (channel.guild.id, getattr(channel, "name", "").strip().lower())
+        raw_name = getattr(channel, "name", "").strip().lower()
+        name_key = (guild.id, raw_name) if raw_name else None
 
-        # Clean records older than 30s
-        self._restored_channels = {
-            k: ts for k, ts in self._restored_channels.items()
-            if (now - ts).total_seconds() < 30
+        if not hasattr(self.bot, "_channel_restore_in_progress"):
+            self.bot._channel_restore_in_progress = set()
+        if not hasattr(self.bot, "_channel_restored_recently"):
+            self.bot._channel_restored_recently = {}
+
+        # Clean entries older than 60s
+        self.bot._channel_restored_recently = {
+            k: ts for k, ts in self.bot._channel_restored_recently.items()
+            if (now - ts).total_seconds() < 60
         }
-        global_restored = getattr(self.bot, "_restored_channel_ids", {})
 
-        if channel_id in self._restoring_channels or name_key in self._restoring_channels:
+        # 1. Check in-progress lock across all cogs
+        if channel_id in self.bot._channel_restore_in_progress:
+            return True
+        if name_key and name_key in self.bot._channel_restore_in_progress:
             return True
 
-        if channel_id in self._restored_channels or name_key in self._restored_channels:
+        # 2. Check recently restored cache across all cogs
+        if channel_id in self.bot._channel_restored_recently:
+            return True
+        if name_key and name_key in self.bot._channel_restored_recently:
             return True
 
-        if channel_id in global_restored and (now - global_restored[channel_id]).total_seconds() < 30:
-            return True
-
-        if name_key in global_restored and (now - global_restored[name_key]).total_seconds() < 30:
-            return True
+        # 3. Check if guild ALREADY has a channel of this type and name created in last 45s
+        now_utc = discord.utils.utcnow()
+        for existing in guild.channels:
+            if isinstance(existing, type(channel)) and existing.name.strip().lower() == raw_name:
+                if (now_utc - existing.created_at).total_seconds() < 45:
+                    return True
 
         return False
 
-    def _mark_restored(self, channel: discord.abc.GuildChannel):
+    def _acquire_restore_lock(self, channel: discord.abc.GuildChannel):
+        guild = getattr(channel, "guild", None)
+        if not guild:
+            return
         now = datetime.datetime.now()
         channel_id = channel.id
-        name_key = (channel.guild.id, getattr(channel, "name", "").strip().lower())
-        self._restored_channels[channel_id] = now
-        self._restored_channels[name_key] = now
-        if not hasattr(self.bot, "_restored_channel_ids"):
-            self.bot._restored_channel_ids = {}
-        self.bot._restored_channel_ids[channel_id] = now
-        self.bot._restored_channel_ids[name_key] = now
+        raw_name = getattr(channel, "name", "").strip().lower()
+        name_key = (guild.id, raw_name) if raw_name else None
+
+        if not hasattr(self.bot, "_channel_restore_in_progress"):
+            self.bot._channel_restore_in_progress = set()
+        if not hasattr(self.bot, "_channel_restored_recently"):
+            self.bot._channel_restored_recently = {}
+
+        self.bot._channel_restore_in_progress.add(channel_id)
+        self.bot._channel_restored_recently[channel_id] = now
+        if name_key:
+            self.bot._channel_restore_in_progress.add(name_key)
+            self.bot._channel_restored_recently[name_key] = now
+
+    def _release_restore_lock(self, channel: discord.abc.GuildChannel):
+        channel_id = channel.id
+        raw_name = getattr(channel, "name", "").strip().lower()
+        name_key = (channel.guild.id, raw_name) if getattr(channel, "guild", None) and raw_name else None
+
+        if hasattr(self.bot, "_channel_restore_in_progress"):
+            self.bot._channel_restore_in_progress.discard(channel_id)
+            if name_key:
+                self.bot._channel_restore_in_progress.discard(name_key)
 
     def can_fetch_audit(self, guild_id, event_name, max_requests=5, interval=10, cooldown_duration=300):
         now = datetime.datetime.now()
@@ -90,7 +125,7 @@ class AntiChannelDelete(commands.Cog):
             return None
         try:
             async for entry in guild.audit_logs(action=action, limit=5):
-                if entry.target.id == target_id:
+                if entry.target and entry.target.id == target_id:
                     now = datetime.datetime.now(pytz.utc)
                     if (now - entry.created_at).total_seconds() * 1000 >= 3600000:
                         return None
@@ -105,18 +140,12 @@ class AntiChannelDelete(commands.Cog):
         if not guild:
             return
 
-        # Prevent duplicate handling if channel or channel name is already being restored or was recently restored
-        if self._is_recently_restored(channel):
+        # Check in-progress lock, recently restored cache, and guild sibling channels
+        if self._is_channel_in_progress_or_restored(channel):
             return
 
-        channel_id = channel.id
-        raw_name = getattr(channel, "name", "").strip().lower()
-        name_key = (guild.id, raw_name) if raw_name else None
-
-        # Acquire lock immediately to block concurrent event races during audit log fetch
-        self._restoring_channels.add(channel_id)
-        if name_key:
-            self._restoring_channels.add(name_key)
+        # Acquire lock immediately so concurrent events or cogs cannot double-restore
+        self._acquire_restore_lock(channel)
 
         try:
             async with aiosqlite.connect('db/anti.db') as db:
@@ -146,32 +175,75 @@ class AntiChannelDelete(commands.Cog):
                     return
 
                 await self.recreate_channel_and_ban(channel, executor)
-                self._mark_restored(channel)
         finally:
-            self._restoring_channels.discard(channel_id)
-            if name_key:
-                self._restoring_channels.discard(name_key)
+            self._release_restore_lock(channel)
 
-            await asyncio.sleep(3)
+    async def recreate_channel_and_ban(self, channel, executor):
+        guild = channel.guild
 
-    async def recreate_channel_and_ban(self, channel, executor, retries=3):
-        # 1. Clone the channel EXACTLY ONCE (do not loop clone on position edit rate limits)
+        # Category safeguard: If category was deleted, clear category_id so Discord API doesn't error
+        cat = None
+        if getattr(channel, "category_id", None):
+            cat = guild.get_channel(channel.category_id)
+            if not cat:
+                try:
+                    channel.category_id = None
+                except Exception:
+                    pass
+
+        # Check once more if channel with same name and type was already created in last 45s
+        now_utc = discord.utils.utcnow()
+        raw_name = getattr(channel, "name", "").strip().lower()
+        for existing in guild.channels:
+            if isinstance(existing, type(channel)) and existing.name.strip().lower() == raw_name:
+                if (now_utc - existing.created_at).total_seconds() < 45:
+                    return
+
+        # 1. Clone the channel EXACTLY ONCE (with fallback if clone fails)
         new_channel = None
-        while retries > 0 and not new_channel:
+        try:
+            new_channel = await channel.clone(
+                name=channel.name,
+                category=cat,
+                reason="Channel Delete | Unwhitelisted User"
+            )
+        except Exception:
+            pass
+
+        # Fallback creation if clone was rejected
+        if not new_channel:
+            overwrites = getattr(channel, "overwrites", None)
+            reason = "Channel Delete | Unwhitelisted User"
             try:
-                new_channel = await channel.clone(reason="Channel Delete | Unwhitelisted User")
-                break
-            except discord.Forbidden:
-                return
-            except discord.HTTPException as e:
-                if e.status == 429:
-                    retry_after = float(e.response.headers.get('Retry-After', 1.0))
-                    await asyncio.sleep(retry_after)
-                    retries -= 1
-                else:
-                    break
+                if isinstance(channel, discord.TextChannel):
+                    new_channel = await guild.create_text_channel(
+                        name=channel.name,
+                        category=cat,
+                        topic=getattr(channel, "topic", None),
+                        slowmode_delay=getattr(channel, "slowmode_delay", 0),
+                        nsfw=getattr(channel, "nsfw", False),
+                        overwrites=overwrites,
+                        reason=reason
+                    )
+                elif isinstance(channel, discord.VoiceChannel):
+                    new_channel = await guild.create_voice_channel(
+                        name=channel.name,
+                        category=cat,
+                        bitrate=min(channel.bitrate, guild.bitrate_limit),
+                        user_limit=getattr(channel, "user_limit", 0),
+                        overwrites=overwrites,
+                        reason=reason
+                    )
+                elif isinstance(channel, discord.StageChannel):
+                    new_channel = await guild.create_stage_channel(
+                        name=channel.name,
+                        category=cat,
+                        topic=getattr(channel, "topic", None),
+                        overwrites=overwrites,
+                        reason=reason
+                    )
             except Exception:
-                return
+                pass
 
         # 2. Position restore in an isolated block (never re-clones channel if position edit is 429'd)
         if new_channel and hasattr(channel, "position"):
@@ -180,11 +252,11 @@ class AntiChannelDelete(commands.Cog):
             except Exception:
                 pass
 
-        # 3. Ban executor
+        # 3. Ban executor (single try / rate limit retry without touching channel)
         ban_retries = 3
         while ban_retries > 0:
             try:
-                await channel.guild.ban(executor, reason="Channel Delete | Unwhitelisted User")
+                await guild.ban(executor, reason="Channel Delete | Unwhitelisted User")
                 return
             except discord.Forbidden:
                 return

@@ -25,14 +25,23 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || "Aizen XFX";
+const siteUrl = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://aizenxfx.in";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: `${brandName} — Ultimate Discord Security Bot`,
   description: `${brandName} — Advanced Discord community management, AI chat, and military-grade server security.`,
   icons: {
     icon: "/logo.png",
     shortcut: "/logo.png",
     apple: "/logo.png",
+  },
+  openGraph: {
+    title: `${brandName} — Ultimate Discord Security Bot`,
+    description: `${brandName} — Advanced Discord community management, AI chat, and military-grade server security.`,
+    url: siteUrl,
+    siteName: brandName,
+    type: "website",
   },
 };
 

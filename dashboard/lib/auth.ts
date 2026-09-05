@@ -17,12 +17,16 @@
 import DiscordProvider from "next-auth/providers/discord";
 import { AuthOptions } from "next-auth";
 
+const NEXTAUTH_SECRET = (process.env.NEXTAUTH_SECRET || "aizen_xfx_nextauth_secret_string_2026_super_secure").trim();
+const DISCORD_CLIENT_ID = (process.env.DISCORD_CLIENT_ID || "1545041086450507856").trim();
+const DISCORD_CLIENT_SECRET = (process.env.DISCORD_CLIENT_SECRET || "iK4Q9S-gDaDCQbagzJoa1wDLO6GVNhzu").trim();
+
 export const authOptions: AuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET || "aizen_xfx_nextauth_secret_string_2026_super_secure",
+  secret: NEXTAUTH_SECRET,
   providers: [
     DiscordProvider({
-      clientId: process.env.DISCORD_CLIENT_ID || "1545041086450507856",
-      clientSecret: process.env.DISCORD_CLIENT_SECRET || "iK4Q9S-gDaDCQbagzJoa1wDLO6GVNhzu",
+      clientId: DISCORD_CLIENT_ID,
+      clientSecret: DISCORD_CLIENT_SECRET,
       authorization: { params: { scope: "identify guilds" } },
     }),
   ],

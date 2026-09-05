@@ -31,6 +31,7 @@ EMBED_COLOR = 0xA855F7
 server     = "https://discord.gg/M8qJ9W7vBb"
 serverLink = "https://discord.gg/M8qJ9W7vBb"
 ch         = "https://discord.com/channels/699587669059174461/1271825678710476911"
+DASHBOARD_URL = os.environ.get("DASHBOARD_URL", "https://aizenxfx.in")
 
 # AI / Groq config
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "").strip().strip("'\"")

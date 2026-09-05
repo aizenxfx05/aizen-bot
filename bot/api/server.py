@@ -108,6 +108,10 @@ def create_app() -> FastAPI:
     _allowed_origins = list(dict.fromkeys([
         "http://localhost:3000",
         "https://localhost:3000",
+        "https://aizenxfx.in",
+        "https://www.aizenxfx.in",
+        "http://aizenxfx.in",
+        "http://www.aizenxfx.in",
         "https://your-vercel-url-here.vercel.app",
         *_extra_origins,
     ]))

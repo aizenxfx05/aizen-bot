@@ -13,7 +13,7 @@
 # ╚══════════════════════════════════════════════════════════════════╝
 
 from utils import getConfig
-from utils.config import BotName
+from utils.config import BotName, DASHBOARD_URL
 import discord
 from utils.emoji import ARROWRED, CODEBASE, HEART3, INDEX, AIZEN_LINKS
 from discord.ui import LayoutView, TextDisplay, Separator, Container, ActionRow, Select
@@ -88,6 +88,7 @@ class MentionSelectView(LayoutView):
         elif selected == "Links":
             bot_id = interaction.client.user.id if interaction.client.user else "1545041086450507856"
             content = (
+                f"**[Dashboard]({DASHBOARD_URL})**\n"
                 f"**[Invite {BotName}](https://discord.com/oauth2/authorize?client_id={bot_id}&permissions=8&integration_type=0&scope=bot+applications.commands)**\n"
                 "**[Join Support Server](https://discord.gg/M8qJ9W7vBb)**"
             )
@@ -300,6 +301,12 @@ class Mention(commands.Cog):
                     label="Support",
                     style=discord.ButtonStyle.link,
                     url="https://discord.gg/M8qJ9W7vBb"
+                ))
+            if config.get("show_dashboard", 1):
+                view.add_item(Button(
+                    label="Dashboard",
+                    style=discord.ButtonStyle.link,
+                    url=DASHBOARD_URL
                 ))
 
             sent_msg = await message.channel.send(embed=embed, view=view if len(view.children) > 0 else None)

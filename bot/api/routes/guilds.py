@@ -1153,32 +1153,6 @@ async def get_guild_roles(guild_id: int, bot: "AizenBot" = Depends(get_bot)):
 
 # ========== INVC ROLE (Voice Role) ==========
 
-
-
-# ========== AUTO REACT ==========
-
-@router.get("/{guild_id}/autoreact", response_model=AutoReactConfig, summary="Get AutoReact config")
-async def get_guild_autoreact(guild_id: int):
-    import aiosqlite
-    async with aiosqlite.connect("db/autoreact.db") as db:
-        await db.execute("""
-            CREATE TABLE IF NOT EXISTS autoreact (
-                guild_id INTEGER,
-                trigger TEXT,
-                emojis TEXT
-            )
-        """)
-        await db.commit()
-
-        async with db.execute("SELECT trigger, emojis FROM autoreact WHERE guild_id = ?", (guild_id,)) as cursor:
-            rows = await cursor.fetchall()
-
-    triggers = [AutoReactTrigger(trigger=row[0], emojis=row[1]) for row in rows]
-    return AutoReactConfig(guild_id=str(guild_id), triggers=triggers)
-
-
-# ========== INVC ROLE (Voice Role) ==========
-
 @router.get("/{guild_id}/invcrole", response_model=InvcConfig, summary="Get Invc Role config")
 async def get_guild_invcrole(guild_id: int):
     db = await db_manager.get_connection('db/invc.db')

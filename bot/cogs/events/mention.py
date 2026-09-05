@@ -418,6 +418,6 @@ class Mention(commands.Cog):
         await ctx.send("🔄 Tag Bot settings have been reset to default.")
 
 
-def setup(bot):
-    bot.add_cog(Mention(bot))
+async def setup(bot):
+    await bot.add_cog(Mention(bot))
 

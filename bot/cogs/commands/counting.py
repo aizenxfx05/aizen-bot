@@ -204,5 +204,5 @@ class Counting(commands.Cog):
         self.save_data()
         await message.add_reaction(TICK)
 
-def setup(bot):
-    bot.add_cog(Counting(bot))
+async def setup(bot):
+    await bot.add_cog(Counting(bot))

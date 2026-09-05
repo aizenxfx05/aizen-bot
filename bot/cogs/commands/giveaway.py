@@ -120,8 +120,11 @@ class Giveaway(commands.Cog):
                             else:
                                 raise
 
-                    users = [i.id async for i in message.reactions[0].users()]
-                    if self.bot.user.id in users:
+                    if not message.reactions:
+                        users = []
+                    else:
+                        users = [i.id async for i in message.reactions[0].users()]
+                    if self.bot.user and self.bot.user.id in users:
                         users.remove(self.bot.user.id)
 
                     if len(users) < 1:
@@ -130,7 +133,7 @@ class Giveaway(commands.Cog):
                         await self.connection.commit()
                         return
 
-                    winners_count = min(len(users), int(giveaway[4]))
+                    winners_count = min(len(users), max(1, int(giveaway[4])))
                     winner = ', '.join(f'<@!{i}>' for i in random.sample(users, k=winners_count))
 
                     desc = f"Ended at <t:{int(current_time)}:R>\nHosted by <@{int(giveaway[3])}>\nWinner(s): {winner}"
@@ -283,8 +286,12 @@ class Giveaway(commands.Cog):
             ch = self.bot.get_channel(int(re[6]))
             message = await ch.fetch_message(int(message_id))
 
-            users = [i.id async for i in message.reactions[0].users()]
-            users.remove(self.bot.user.id)
+            if not message.reactions:
+                users = []
+            else:
+                users = [i.id async for i in message.reactions[0].users()]
+            if self.bot.user and self.bot.user.id in users:
+                users.remove(self.bot.user.id)
 
             if len(users) < 1:
                 await ctx.send(f"{TICK} Successfully Ended the giveaway in <#{int(re[6])}>")
@@ -292,7 +299,8 @@ class Giveaway(commands.Cog):
                 await self.cursor.execute("DELETE FROM Giveaway WHERE message_id = ? AND guild_id = ?", (message.id, message.guild.id))
                 return
 
-            winner = ', '.join(f'<@!{i}>' for i in random.sample(users, k=int(re[4])))
+            winners_count = min(len(users), max(1, int(re[4])))
+            winner = ', '.join(f'<@!{i}>' for i in random.sample(users, k=winners_count))
 
             desc = f"Ended at <t:{int(current_time)}:R>\nHosted by <@{int(re[3])}>\nWinner(s): {winner}"
             view = CV2(f"🎁 {re[5]}", desc)
@@ -316,16 +324,21 @@ class Giveaway(commands.Cog):
 
             message = await ctx.fetch_message(ctx.message.reference.message_id)
 
-            users = [i.id async for i in message.reactions[0].users()]
-            try: users.remove(self.bot.user.id)
-            except: pass
+            if not message.reactions:
+                users = []
+            else:
+                users = [i.id async for i in message.reactions[0].users()]
+            if self.bot.user and self.bot.user.id in users:
+                try: users.remove(self.bot.user.id)
+                except: pass
 
             if len(users) < 1:
                 await message.reply(f"No one won the **{re[5]}** giveaway, due to not enough participants.")
                 await self.cursor.execute("DELETE FROM Giveaway WHERE message_id = ? AND guild_id = ?", (message.id, message.guild.id))
                 return
 
-            winner = ', '.join(f'<@!{i}>' for i in random.sample(users, k=int(re[4])))
+            winners_count = min(len(users), max(1, int(re[4])))
+            winner = ', '.join(f'<@!{i}>' for i in random.sample(users, k=winners_count))
 
             desc = f"Ended <t:{int(current_time)}:R>\nHosted by <@{int(re[3])}>\nWinner(s): {winner}"
             view = CV2(f"🎁 {re[5]}", desc)
@@ -363,7 +376,7 @@ class Giveaway(commands.Cog):
             return
 
 
-        await self.cursor.execute(f"SELECT message_id FROM Giveaway WHERE message_id = ?", (message.id,))
+        await self.cursor.execute("SELECT message_id FROM Giveaway WHERE message_id = ?", (message.id,))
         re = await self.cursor.fetchone()
 
         if re is not None:
@@ -372,11 +385,16 @@ class Giveaway(commands.Cog):
             await msg.delete()
             return
 
+        if not message.reactions:
+            await ctx.send(view=CV2("⚠️ Error", "No reactions found on that giveaway message."))
+            return
+
         users = [i.id async for i in message.reactions[0].users()]
-        users.remove(self.bot.user.id)
+        if self.bot.user and self.bot.user.id in users:
+            users.remove(self.bot.user.id)
 
         if len(users) < 1:
-            await message.reply(f"No one won the **{re[5]}** giveaway, due to not enough participants.")
+            await message.reply("No one won the giveaway due to not enough participants.")
             return
 
         winners = random.sample(users, k=1)

@@ -45,6 +45,14 @@ class Tracking(commands.Cog):
                     channel_id INTEGER
                 )
             ''')
+            await db.execute('''
+                CREATE TABLE IF NOT EXISTS member_inviter (
+                    guild_id INTEGER,
+                    member_id INTEGER,
+                    inviter_id INTEGER,
+                    PRIMARY KEY (guild_id, member_id)
+                )
+            ''')
             await db.commit()
 
     @commands.Cog.listener()
@@ -78,27 +86,29 @@ class Tracking(commands.Cog):
     async def on_member_join(self, member):
         guild = member.guild
         await self.ensure_tables(guild.id)
-
         invites_before = self.invites.get(guild.id, [])
         try:
             invites_after = await guild.invites()
-        except discord.Forbidden:
+        except Exception:
             invites_after = []
 
         inviter = None
-
-        for invite in invites_after:
-            for old_invite in invites_before:
-                if invite.code == old_invite.code and invite.uses > old_invite.uses:
-                    inviter = invite.inviter
-                    break
-            if inviter:
+        for invite in invites_before:
+            matching = [b for b in invites_after if b.code == invite.code]
+            if matching and matching[0].uses > invite.uses:
+                inviter = invite.inviter
                 break
 
         self.invites[guild.id] = invites_after
 
         async with aiosqlite.connect(INVITE_DB) as db:
             if inviter:
+                # Record inviter for this member
+                await db.execute(
+                    "INSERT OR REPLACE INTO member_inviter (guild_id, member_id, inviter_id) VALUES (?, ?, ?)",
+                    (guild.id, member.id, inviter.id)
+                )
+
                 # Check if user has been in DB before (Rejoin)
                 async with db.execute(f"SELECT user_id FROM invites_{guild.id} WHERE user_id = ?", (member.id,)) as cursor:
                     user_row = await cursor.fetchone()
@@ -127,8 +137,17 @@ class Tracking(commands.Cog):
         guild = member.guild
         await self.ensure_tables(guild.id)
         async with aiosqlite.connect(INVITE_DB) as db:
-            await db.execute(f"UPDATE invites_{guild.id} SET left = left + 1 WHERE user_id = ?", (member.id,))
-            await db.commit()
+            # Find who invited this member
+            async with db.execute(
+                "SELECT inviter_id FROM member_inviter WHERE guild_id = ? AND member_id = ?",
+                (guild.id, member.id)
+            ) as cursor:
+                row = await cursor.fetchone()
+
+            if row and row[0]:
+                inviter_id = row[0]
+                await db.execute(f"UPDATE invites_{guild.id} SET left = left + 1 WHERE user_id = ?", (inviter_id,))
+                await db.commit()
 
     async def get_total_invites(self, guild_id, user_id):
         async with aiosqlite.connect(INVITE_DB) as db:

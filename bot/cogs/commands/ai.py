@@ -13,12 +13,29 @@
 # ╚══════════════════════════════════════════════════════════════════╝
 
 import os 
+import json
+import ast
 import discord 
 import aiosqlite 
 from discord .ext import commands ,tasks 
 from discord.ui import LayoutView, TextDisplay, Separator, Container
 from utils.cv2 import CV2, build_container
 from utils.emoji import CROSS, TICK, ENABLE, DISABLE, MENTION, SEED, TIME
+
+def _safe_load_trivia_history(history_raw):
+    if not history_raw:
+        return []
+    if isinstance(history_raw, list):
+        return history_raw
+    try:
+        return json.loads(history_raw)
+    except Exception:
+        try:
+            val = ast.literal_eval(history_raw)
+            return val if isinstance(val, list) else []
+        except Exception:
+            return []
+
 try :
     import google .generativeai as genai 
     GEMINI_AVAILABLE =True 
@@ -116,7 +133,7 @@ class TriviaScore :
 
         if result :
             current_score ,games_played ,history_str =result 
-            history =eval (history_str )if history_str else []
+            history =_safe_load_trivia_history(history_str)
             new_score =current_score +score_inc 
             new_games_played =games_played +games_played_inc 
             history .append (history_entry )
@@ -130,7 +147,7 @@ class TriviaScore :
             INSERT OR REPLACE INTO trivia_scores (user_id, username, score, games_played, history)
             VALUES (?, ?, ?, ?, ?)
             """,
-        (user_id ,username ,new_score ,new_games_played ,str (history ))
+        (user_id ,username ,new_score ,new_games_played ,json.dumps(history))
         )
         await self .bot .db .commit ()
         return {"score":new_score ,"gamesPlayed":new_games_played ,"history":history }
@@ -146,7 +163,7 @@ class TriviaScore :
             "username":row [1 ],
             "score":row [2 ],
             "gamesPlayed":row [3 ],
-            "history":eval (row [4 ])if row [4 ]else [],
+            "history":_safe_load_trivia_history(row [4 ]),
             }
             for row in rows 
             ]
@@ -164,7 +181,7 @@ class TriviaScore :
                 "username":row [1 ],
                 "score":row [2 ],
                 "gamesPlayed":row [3 ],
-                "history":eval (row [4 ])if row [4 ]else [],
+                "history":_safe_load_trivia_history(row [4 ]),
                 }
             return None 
 

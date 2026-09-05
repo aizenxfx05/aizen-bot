@@ -59,12 +59,18 @@ class Jail(commands.Cog):
         self.jail_check_loop.cancel()
         self.conn.close()
 
+    VALID_SETTINGS = {"jail_role", "jail_channel", "log_channel"}
+
     def get_setting(self, guild_id, field):
+        if field not in self.VALID_SETTINGS:
+            return None
         cursor = self.conn.execute(f"SELECT {field} FROM jail_settings WHERE guild_id = ?", (str(guild_id),))
         row = cursor.fetchone()
         return row[0] if row else None
 
     def set_setting(self, guild_id, field, value):
+        if field not in self.VALID_SETTINGS:
+            return
         self.conn.execute(f"""
             INSERT INTO jail_settings (guild_id, {field})
             VALUES (?, ?)

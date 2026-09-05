@@ -47,57 +47,54 @@ class Guild(Cog):
                 for inv in await guild.invites()
                 if inv.max_age == 0 and inv.max_uses == 0
             ]
-            ch = 1396794297386532978
+            ch = getattr(self.client, "LOG_CHANNEL_ID", 1396794297386532978)
             me = self.client.get_channel(ch)
-            if me is None:
-                logging.error(f"Channel with ID {ch} not found.")
-                return
+            if me is not None:
+                channels = len(set(self.client.get_all_channels()))
+                embed = discord.Embed(title=f"{guild.name}'s Information", color=0xA855F7)
 
-            channels = len(set(self.client.get_all_channels()))
-            embed = discord.Embed(title=f"{guild.name}'s Information", color=0xA855F7)
+                embed.set_author(name="Guild Joined")
+                embed.set_footer(text=f"Added in {guild.name}")
 
-            embed.set_author(name="Guild Joined")
-            embed.set_footer(text=f"Added in {guild.name}")
-
-            embed.add_field(
-                name="**__About__**",
-                value=f"**Name : ** {guild.name}\n**ID :** {guild.id}\n**Owner {KING}  :** {guild.owner} (<@{guild.owner_id}>)\n**Created At : **{guild.created_at.month}/{guild.created_at.day}/{guild.created_at.year}\n**Members :** {len(guild.members)}",
-                inline=False,
-            )
-            embed.add_field(
-                name="**__Description__**",
-                value=f"""{guild.description}""",
-                inline=False,
-            )
-            embed.add_field(
-                name="**__Members__**",
-                value=f"""{ZROCKET} Members : {len(guild.members)}\n {ZHUMAN} Humans : {len(list(filter(lambda m: not m.bot, guild.members)))}\n {ZBOT} Bots : {len(list(filter(lambda m: m.bot, guild.members)))}
-                """,
-                inline=False,
-            )
-            embed.add_field(
-                name="**__Channels__**",
-                value=f"""
+                embed.add_field(
+                    name="**__About__**",
+                    value=f"**Name : ** {guild.name}\n**ID :** {guild.id}\n**Owner {KING}  :** {guild.owner} (<@{guild.owner_id}>)\n**Created At : **{guild.created_at.month}/{guild.created_at.day}/{guild.created_at.year}\n**Members :** {len(guild.members)}",
+                    inline=False,
+                )
+                embed.add_field(
+                    name="**__Description__**",
+                    value=f"""{guild.description}""",
+                    inline=False,
+                )
+                embed.add_field(
+                    name="**__Members__**",
+                    value=f"""{ZROCKET} Members : {len(guild.members)}\n {ZHUMAN} Humans : {len(list(filter(lambda m: not m.bot, guild.members)))}\n {ZBOT} Bots : {len(list(filter(lambda m: m.bot, guild.members)))}
+                    """,
+                    inline=False,
+                )
+                embed.add_field(
+                    name="**__Channels__**",
+                    value=f"""
 Categories : {len(guild.categories)}
 Text Channels : {len(guild.text_channels)}
 Voice Channels : {len(guild.voice_channels)}
 Threads : {len(guild.threads)}
-                """,
-                inline=False,
-            )
-            embed.add_field(
-                name="__Bot Stats:__",
-                value=f"Servers: `{len(self.client.guilds)}`\nUsers: `{len(self.client.users)}`\nChannels: `{channels}`",
-                inline=False,
-            )
+                    """,
+                    inline=False,
+                )
+                embed.add_field(
+                    name="__Bot Stats:__",
+                    value=f"Servers: `{len(self.client.guilds)}`\nUsers: `{len(self.client.users)}`\nChannels: `{channels}`",
+                    inline=False,
+                )
 
-            if guild.icon is not None:
-                embed.set_thumbnail(url=guild.icon.url)
+                if guild.icon is not None:
+                    embed.set_thumbnail(url=guild.icon.url)
 
-            embed.timestamp = discord.utils.utcnow()
-            await me.send(
-                f"{rope[0]}" if rope else "No Pre-Made Invite Found", embed=embed
-            )
+                embed.timestamp = discord.utils.utcnow()
+                await me.send(
+                    f"{rope[0]}" if rope else "No Pre-Made Invite Found", embed=embed
+                )
 
             if not guild.chunked:
                 await guild.chunk()

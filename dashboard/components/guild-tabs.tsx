@@ -44,7 +44,10 @@ import {
   Mic,
   Mail,
   SlidersHorizontal,
-  AtSign
+  AtSign,
+  Music4,
+  Gift,
+  Archive
 } from "lucide-react";
 
 interface Tab {
@@ -85,6 +88,9 @@ export function GuildTabs({ guildId }: { guildId: string }) {
     { name: "Custom Roles", href: `/dashboard/guild/${guildId}/customroles`, icon: Sparkles },
     { name: "Join DM", href: `/dashboard/guild/${guildId}/joindm`, icon: Mail },
     { name: "Tag Bot / Alert", href: `/dashboard/guild/${guildId}/tagbot`, icon: AtSign },
+    { name: "Music 24/7", href: `/dashboard/guild/${guildId}/music`, icon: Music4 },
+    { name: "Giveaways", href: `/dashboard/guild/${guildId}/giveaway`, icon: Gift },
+    { name: "Backup", href: `/dashboard/guild/${guildId}/backup`, icon: Archive },
     { name: "Leveling", href: `/dashboard/guild/${guildId}/leveling`, icon: BarChart4 },
     { name: "Logging", href: `/dashboard/guild/${guildId}/logging`, icon: FileText },
     { name: "Settings", href: `/dashboard/guild/${guildId}/settings`, icon: Settings },

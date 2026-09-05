@@ -15,6 +15,7 @@
 from discord.ext import commands
 from discord.ui import View, Button, button
 import discord
+import re
 
 
 class CalculatorView(View):
@@ -89,7 +90,11 @@ class CalculatorView(View):
             )
         try:
             expression = self.value.strip().replace("\n", "")
-            result = str(eval(expression))
+            if not expression or not re.match(r'^[0-9+\-*/.() ]+$', expression):
+                raise ValueError("Invalid characters")
+            if len(expression) > 40:
+                raise ValueError("Expression too long")
+            result = str(eval(expression, {"__builtins__": {}}, {}))
             await self.update_embed(interaction, result)
             self.value = result  # Store the result for possible further calculations
         except:
@@ -130,7 +135,6 @@ class calculator(commands.Cog):
         # We store the message so we know what to edit and update later
         view.message = await ctx.send(content="**Calculator**\n```\n \n```", view=view)
 
-# Add the cog to the bot
-def setup(bot):
-    bot.add_cog(calculator(bot))
+async def setup(bot):
+    await bot.add_cog(calculator(bot))
 

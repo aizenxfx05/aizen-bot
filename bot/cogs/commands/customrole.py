@@ -70,17 +70,20 @@ class Customrole(commands.Cog):
 
     async def add_role2(self, *, role: int, member: discord.Member):
         if member.guild.me.guild_permissions.manage_roles:
-            role = discord.Object(id=int(role))
-            await member.add_roles(role, reason=f"{BRAND_NAME} Customrole | Role Added ")
+            role_obj = discord.Object(id=int(role))
+            await member.add_roles(role_obj, reason=f"{BRAND_NAME} Customrole | Role Added")
 
     async def remove_role2(self, *, role: int, member: discord.Member):
         if member.guild.me.guild_permissions.manage_roles:
-            role = discord.Object(id=int(role))
-            await member.remove_roles(role, reason=f"{BRAND_NAME} Customrole| Role Removed")
+            role_obj = discord.Object(id=int(role))
+            await member.remove_roles(role_obj, reason=f"{BRAND_NAME} Customrole | Role Removed")
 
-    
+    VALID_ROLE_COLUMNS = {"staff", "girl", "vip", "guest", "frnd", "reqrole"}
 
     async def handle_role_command(self, context: Context, member: discord.Member, role_type: str):
+        if role_type not in self.VALID_ROLE_COLUMNS:
+            await context.reply(view=CV2(f"{CROSS} Error", "Invalid role type."))
+            return
         async with aiosqlite.connect('db/customrole.db') as db:
             async with db.execute(f"SELECT reqrole, {role_type} FROM roles WHERE guild_id = ?", (context.guild.id,)) as cursor:
                 data = await cursor.fetchone()
@@ -108,6 +111,7 @@ class Customrole(commands.Cog):
                     await context.reply(view=CV2(f"{CROSS} Error", f"Roles configuration is not set up in {context.guild.name}"))
 
     
+
 
 
     async def create_tables(self):
@@ -155,6 +159,9 @@ class Customrole(commands.Cog):
 
 
     async def update_role_data(self, guild_id, column, value):
+        if column not in self.VALID_ROLE_COLUMNS:
+            print(f"Invalid column passed to update_role_data: {column}")
+            return
         try:
             async with aiosqlite.connect(DATABASE_PATH) as db:
                 await db.execute(f"INSERT OR REPLACE INTO roles (guild_id, {column}) VALUES (?, ?) ON CONFLICT(guild_id) DO UPDATE SET {column} = ?",

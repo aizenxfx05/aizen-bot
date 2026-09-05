@@ -118,16 +118,20 @@ def restart_program():
 def blacklist_check():
 
   async def predicate(ctx):
-    async with aiosqlite.connect('db/block.db') as db:
-      cursor = await db.execute("SELECT 1 FROM user_blacklist WHERE user_id = ?", (str(ctx.author.id),))
-      user_blacklisted = await cursor.fetchone()
-      if user_blacklisted:
-        return False
+    try:
+      async with aiosqlite.connect('db/block.db') as db:
+        cursor = await db.execute("SELECT 1 FROM user_blacklist WHERE user_id = ? OR user_id = ?", (ctx.author.id, str(ctx.author.id)))
+        user_blacklisted = await cursor.fetchone()
+        if user_blacklisted:
+          return False
 
-      cursor = await db.execute("SELECT 1 FROM guild_blacklist WHERE guild_id = ?", (str(ctx.guild.id),))
-      guild_blacklisted = await cursor.fetchone()
-      if guild_blacklisted:
-        return False
+        if ctx.guild:
+          cursor = await db.execute("SELECT 1 FROM guild_blacklist WHERE guild_id = ? OR guild_id = ?", (ctx.guild.id, str(ctx.guild.id)))
+          guild_blacklisted = await cursor.fetchone()
+          if guild_blacklisted:
+            return False
+    except Exception:
+      pass
 
     return True
 
@@ -163,6 +167,8 @@ async def get_ignore_data(guild_id: int) -> dict:
 
 def ignore_check():
     async def predicate(ctx):
+        if not ctx.guild:
+            return True
         data = await get_ignore_data(ctx.guild.id)
         ch = data["channel"]
         iuser = data["user"]

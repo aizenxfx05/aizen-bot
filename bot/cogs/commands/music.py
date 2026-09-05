@@ -84,7 +84,9 @@ class SpotifyAPI:
     async def get_playlist(self, playlist_id):
         return await self.get(f"playlists/{playlist_id}")
 
-spotify_api = SpotifyAPI(client_id="ac2b614ca5ce46a18dfd1d3475fd6fd9", client_secret="df7bec95ae88438e8286db597bac8621")
+SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID", "ac2b614ca5ce46a18dfd1d3475fd6fd9")
+SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET", "df7bec95ae88438e8286db597bac8621")
+spotify_api = SpotifyAPI(client_id=SPOTIFY_CLIENT_ID, client_secret=SPOTIFY_CLIENT_SECRET)
 
 class PlatformSelectView(LayoutView):
     def __init__(self, ctx, query):

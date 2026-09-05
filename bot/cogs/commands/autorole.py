@@ -17,6 +17,7 @@ import discord
 from utils.emoji import CROSS, ICONS_WARNING, TICK
 import aiosqlite
 import logging
+import ast
 from discord.ext import commands
 from typing import List, Dict
 from discord.ui import LayoutView, TextDisplay, Separator, Container
@@ -232,7 +233,12 @@ class AutoRole(commands.Cog):
                 data = await cursor.fetchone()
         
         if data:
-            humans = eval(data[0])
+            try:
+                humans = ast.literal_eval(data[0])
+                if not isinstance(humans, list):
+                    humans = []
+            except Exception:
+                humans = []
             if role.id in humans:
                 view = CV2(f"{ICONS_WARNING} Access Denied", f"{role.mention} is already in human autoroles.")
             elif len(humans) >= 10:
@@ -265,7 +271,12 @@ class AutoRole(commands.Cog):
                 data = await cursor.fetchone()
 
         if data:
-            humans = eval(data[0])
+            try:
+                humans = ast.literal_eval(data[0])
+                if not isinstance(humans, list):
+                    humans = []
+            except Exception:
+                humans = []
             if role.id not in humans:
                 view = CV2(f"{CROSS} Error", f"{role.mention} is not in human autoroles.")
             else:
@@ -303,7 +314,12 @@ class AutoRole(commands.Cog):
                 data = await cursor.fetchone()
         
         if data:
-            bots = eval(data[0])
+            try:
+                bots = ast.literal_eval(data[0])
+                if not isinstance(bots, list):
+                    bots = []
+            except Exception:
+                bots = []
             if role.id in bots:
                 view = CV2(f"{ICONS_WARNING} Access Denied", f"{role.mention} is already in bot autoroles.")
             elif len(bots) >= 10:
@@ -336,7 +352,12 @@ class AutoRole(commands.Cog):
                 data = await cursor.fetchone()
 
         if data:
-            bots = eval(data[0])
+            try:
+                bots = ast.literal_eval(data[0])
+                if not isinstance(bots, list):
+                    bots = []
+            except Exception:
+                bots = []
             if role.id not in bots:
                 view = CV2(f"{CROSS} Error", f"{role.mention} is not in bot autoroles.")
             else:

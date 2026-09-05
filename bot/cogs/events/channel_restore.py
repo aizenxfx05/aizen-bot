@@ -237,10 +237,13 @@ class ChannelRestore(commands.Cog):
 
         # Prevent duplicate recreation if channel was already restored
         now = datetime.datetime.now()
+        channel_name = getattr(channel, "name", "").strip().lower()
+        name_key = (guild.id, channel_name)
         global_restored = getattr(self.bot, "_restored_channel_ids", {})
-        if channel.id in global_restored:
-            if (now - global_restored[channel.id]).total_seconds() < 30:
-                return
+        if channel.id in global_restored and (now - global_restored[channel.id]).total_seconds() < 30:
+            return
+        if name_key in global_restored and (now - global_restored[name_key]).total_seconds() < 30:
+            return
 
         # Check if Antinuke is active on this server - if so, Antinuke handles unwhitelisted channel deletion
         try:
@@ -270,6 +273,7 @@ class ChannelRestore(commands.Cog):
         if not hasattr(self.bot, "_restored_channel_ids"):
             self.bot._restored_channel_ids = {}
         self.bot._restored_channel_ids[channel.id] = now
+        self.bot._restored_channel_ids[name_key] = now
 
         # Restore the channel
         new_channel = await self._restore_channel(channel, executor)

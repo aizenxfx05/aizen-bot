@@ -17,7 +17,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Users, ShieldCheck, ChevronRight, Hash } from "lucide-react";
+import { Users, ShieldCheck, ChevronRight, Hash, Plus, ExternalLink, Sparkles } from "lucide-react";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 
@@ -35,6 +35,9 @@ export default async function GuildsPage() {
   if (!session || !session.accessToken) {
     redirect("/");
   }
+
+  const clientId = process.env.DISCORD_CLIENT_ID || "1545041086450507856";
+  const defaultInviteUrl = `https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=8&integration_type=0&scope=bot+applications.commands`;
 
   let botGuilds: GuildSummary[] = [];
   let userGuilds: any[] = [];
@@ -67,7 +70,6 @@ export default async function GuildsPage() {
   }
 
   // Filter out guilds that the user is an admin of (permission flag 0x8 or MANAGE_GUILD 0x20)
-  // Manage Server is 0x20, Admin is 0x8
   const MANAGE_GUILD = BigInt(0x20);
   const ADMINISTRATOR = BigInt(0x8);
   const adminUserGuilds = userGuilds.filter(g => {
@@ -82,122 +84,203 @@ export default async function GuildsPage() {
   });
 
   const adminGuildIds = new Set(adminUserGuilds.map(g => String(g.id)));
+  const botGuildIds = new Set(botGuilds.map(g => String(g.id)));
   
-  // The intersecting guilds we can manage
-  const guilds = botGuilds.filter(g => adminGuildIds.has(String(g.id)));
+  // The active guilds (bot is in server & user can manage)
+  const activeGuilds = botGuilds.filter(g => adminGuildIds.has(String(g.id)));
+  
+  // Uninvited guilds (user is admin but bot is not in server yet)
+  const uninvitedGuilds = adminUserGuilds.filter(g => !botGuildIds.has(String(g.id)));
+
   const error = botError || userDiscordError;
 
-
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-end">
+    <div className="space-y-10 pb-12">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white">Your Servers</h1>
-          <p className="text-slate-400 mt-2">
-            Select a server to manage its unique configuration and modules.
+          <h1 className="text-3xl font-bold text-white font-outfit">Your Servers</h1>
+          <p className="text-[#948BA3] mt-2">
+            Select an active server to configure or invite {process.env.NEXT_PUBLIC_BRAND_NAME || "Aizen XFX"} to new servers.
           </p>
         </div>
-        <div className="text-sm font-medium px-4 py-2 bg-slate-800 rounded-xl border border-slate-700 text-slate-300">
-          Showing <span className="text-white">{guilds.length}</span> active guilds
+        <div className="flex items-center gap-3">
+          <Button 
+            className="bg-gradient-to-r from-[#A855F7] to-[#7C3AED] text-white font-bold rounded-xl shadow-lg shadow-[#A855F7]/25 hover:opacity-90 gap-2"
+            asChild
+          >
+            <a href={defaultInviteUrl} target="_blank" rel="noopener noreferrer">
+              <Plus className="h-4 w-4" />
+              Invite Bot to Server
+            </a>
+          </Button>
         </div>
       </div>
 
       {error ? (
         <div className="bg-red-500/10 border border-red-500/20 p-8 rounded-2xl text-center">
           <ShieldCheck className="h-12 w-12 text-red-500 mx-auto mb-4 opacity-50" />
-          <h3 className="text-white font-bold text-lg">Connection Error</h3>
+          <h3 className="text-white font-bold text-lg">Connection Notice</h3>
           <p className="text-slate-400 mt-2">{error}</p>
-          <Button variant="outline" className="mt-6">Retry Connection</Button>
         </div>
-      ) : guilds.length === 0 ? (
-        <div className="bg-slate-800/30 border border-slate-800 border-dashed p-16 rounded-3xl text-center">
-          <div className="h-16 w-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Users className="h-8 w-8 text-slate-600" />
-          </div>
-          <h3 className="text-white font-bold text-xl">No Servers Found</h3>
-          <p className="text-slate-400 mt-2 max-w-sm mx-auto">
-            The bot hasn&apos;t joined any servers yet, or you don&apos;t have permission.
-          </p>
-          <div className="mt-8 bg-slate-900/50 p-4 rounded-xl text-left font-mono text-sm text-slate-300 max-w-2xl mx-auto overflow-auto max-h-48 whitespace-pre">
-            <p className="font-bold text-red-400 mb-2">Diagnostic Data:</p>
-            <p>1. Bot&apos;s Cache Total Servers: {botGuilds.length}</p>
-            <p>2. Your Discord Profile Total Servers: {userGuilds.length}</p>
-            <p>3. Your Discord Profile Admin/Manage Servers: {adminUserGuilds.length}</p>
-            {botGuilds.length > 0 && adminUserGuilds.length > 0 && (
-               <div className="mt-4 pt-4 border-t border-white/10">
-                 <p className="text-emerald-400 mb-1">Bot First Server ID: {botGuilds[0].id} (Type: {typeof botGuilds[0].id})</p>
-                 <p className="text-blue-400">Your First Admin Server ID: {adminUserGuilds[0].id} (Type: {typeof adminUserGuilds[0].id})</p>
-               </div>
-            )}
-            <hr className="my-2 border-white/10" />
-            <p>Intersection Mappings found: {guilds.length}</p>
-            {userDiscordError && <p className="text-red-400">User Error: {userDiscordError}</p>}
-            {botError && <p className="text-red-400">Bot Error: {botError}</p>}
-          </div>
-          <Button className="mt-8">Invite to Discord</Button>
+      ) : null}
+
+      {/* Section 1: Active Bot Servers */}
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <h2 className="text-lg font-bold text-white font-outfit">Active Servers</h2>
+          <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#A855F7]/10 text-[#C084FC] border border-[#A855F7]/20">
+            {activeGuilds.length}
+          </span>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {guilds.map((guild) => (
-            <div 
-              key={guild.id} 
-              className="bg-[#141B2D] border border-slate-800 rounded-3xl group hover:border-primary/50 hover:bg-[#202c3f] transition-all duration-300 overflow-hidden shadow-sm hover:shadow-primary/5 shadow-black/20"
-            >
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-6">
-                  <div className="relative">
-                    {guild.icon_url ? (
-                      <Image 
-                        src={guild.icon_url} 
-                        alt={guild.name}
-                        width={64}
-                        height={64}
-                        className="rounded-2xl border-2 border-slate-800 shadow-xl group-hover:scale-105 transition-transform"
-                      />
-                    ) : (
-                      <div className="h-16 w-16 bg-primary/20 rounded-2xl flex items-center justify-center border-2 border-slate-800 text-primary font-bold text-2xl shadow-xl group-hover:scale-105 transition-transform">
-                        {guild.name.charAt(0)}
-                      </div>
-                    )}
-                    <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-500 border-2 border-[#141B2D]" title="Bot Online" />
-                  </div>
-                  
-                  <div className="flex flex-col items-end text-right">
-                    <span className="text-[10px] uppercase font-bold text-slate-500 tracking-widest mb-1">Guild ID</span>
-                    <span className="text-xs font-mono text-slate-400 bg-black/20 px-2 py-1 rounded-lg border border-white/5 truncate max-w-[120px]">
-                      {guild.id}
-                    </span>
-                  </div>
-                </div>
 
-                <div>
-                  <h3 className="text-xl font-bold text-white truncate group-hover:text-primary transition-colors">
-                    {guild.name}
-                  </h3>
-                  <div className="flex items-center gap-4 mt-4 text-slate-400">
-                    <div className="flex items-center gap-1.5 bg-slate-800/50 px-3 py-1.5 rounded-xl border border-white/5">
-                      <Users className="h-4 w-4 text-slate-500" />
-                      <span className="text-sm font-semibold text-slate-300">{guild.member_count.toLocaleString()}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 bg-slate-800/50 px-3 py-1.5 rounded-xl border border-white/5">
-                      <Hash className="h-4 w-4 text-slate-500" />
-                      <span className="text-sm font-semibold text-slate-300">Active</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="px-6 py-4 bg-slate-800/20 border-t border-slate-800/80 group-hover:bg-primary/5 transition-colors">
-                <Button className="w-full justify-between group/btn py-6" variant="secondary" asChild>
-                  <Link href={`/dashboard/guild/${guild.id}`}>
-                    <span>Manage Server</span>
-                    <ChevronRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </Link>
-                </Button>
-              </div>
-
+        {activeGuilds.length === 0 ? (
+          <div className="glass border border-white/5 rounded-3xl p-12 text-center">
+            <div className="h-14 w-14 bg-[#A855F7]/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-[#A855F7]/20 text-[#A855F7]">
+              <Users className="h-7 w-7" />
             </div>
-          ))}
+            <h3 className="text-white font-bold text-lg font-outfit">No Active Servers Found</h3>
+            <p className="text-[#948BA3] text-sm mt-1 max-w-md mx-auto">
+              {process.env.NEXT_PUBLIC_BRAND_NAME || "Aizen XFX"} has not joined your servers yet. Click below to add the bot to your server!
+            </p>
+            <Button 
+              className="mt-6 bg-gradient-to-r from-[#A855F7] to-[#7C3AED] text-white font-bold rounded-xl shadow-lg shadow-[#A855F7]/25 hover:opacity-90 gap-2"
+              asChild
+            >
+              <a href={defaultInviteUrl} target="_blank" rel="noopener noreferrer">
+                <Plus className="h-4 w-4" />
+                Add Bot to Discord
+              </a>
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {activeGuilds.map((guild) => (
+              <div 
+                key={guild.id} 
+                className="glass border border-white/5 rounded-3xl group hover:border-[#A855F7]/40 transition-all duration-300 overflow-hidden shadow-xl shadow-black/20 flex flex-col justify-between"
+              >
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="relative">
+                      {guild.icon_url ? (
+                        <Image 
+                          src={guild.icon_url} 
+                          alt={guild.name}
+                          width={60}
+                          height={60}
+                          className="rounded-2xl border border-white/10 shadow-lg group-hover:scale-105 transition-transform"
+                        />
+                      ) : (
+                        <div className="h-14 w-14 bg-[#A855F7]/20 rounded-2xl flex items-center justify-center border border-[#A855F7]/30 text-[#C084FC] font-bold text-xl shadow-lg group-hover:scale-105 transition-transform">
+                          {guild.name.charAt(0)}
+                        </div>
+                      )}
+                      <div className="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full bg-emerald-500 border-2 border-[#07070D]" title="Bot Online" />
+                    </div>
+                    
+                    <div className="flex flex-col items-end text-right">
+                      <span className="text-[9px] uppercase font-black text-[#948BA3] tracking-widest mb-1">Guild ID</span>
+                      <span className="text-[11px] font-mono text-slate-300 bg-white/5 px-2 py-0.5 rounded-lg border border-white/5 truncate max-w-[120px]">
+                        {guild.id}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-bold text-white truncate group-hover:text-[#C084FC] transition-colors font-outfit">
+                      {guild.name}
+                    </h3>
+                    <div className="flex items-center gap-3 mt-4 text-[#948BA3]">
+                      <div className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-xl border border-white/5">
+                        <Users className="h-3.5 w-3.5 text-[#A855F7]" />
+                        <span className="text-xs font-semibold text-slate-200">{guild.member_count.toLocaleString()}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1 rounded-xl border border-white/5">
+                        <Hash className="h-3.5 w-3.5 text-emerald-400" />
+                        <span className="text-xs font-semibold text-emerald-400">Connected</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="px-6 py-4 bg-white/[0.02] border-t border-white/5 group-hover:bg-[#A855F7]/[0.03] transition-colors">
+                  <Button className="w-full justify-between group/btn py-5 bg-white/5 hover:bg-[#A855F7]/20 text-white border border-white/10 hover:border-[#A855F7]/40 rounded-xl" asChild>
+                    <Link href={`/dashboard/guild/${guild.id}`}>
+                      <span>Manage Server</span>
+                      <ChevronRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform text-[#C084FC]" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Section 2: Other Admin Servers (Bot Not Added) */}
+      {uninvitedGuilds.length > 0 && (
+        <div className="pt-4 border-t border-white/5">
+          <div className="flex items-center gap-2 mb-4">
+            <h2 className="text-lg font-bold text-white font-outfit">Available to Add</h2>
+            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-white/5 text-slate-400 border border-white/10">
+              {uninvitedGuilds.length}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {uninvitedGuilds.map((guild: any) => {
+              const iconUrl = guild.icon
+                ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=128`
+                : null;
+              const serverInviteUrl = `https://discord.com/oauth2/authorize?client_id=${clientId}&permissions=8&integration_type=0&scope=bot+applications.commands&guild_id=${guild.id}`;
+
+              return (
+                <div 
+                  key={guild.id} 
+                  className="glass border border-white/5 rounded-3xl opacity-80 hover:opacity-100 hover:border-white/20 transition-all duration-300 overflow-hidden shadow-xl flex flex-col justify-between"
+                >
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      {iconUrl ? (
+                        <Image 
+                          src={iconUrl} 
+                          alt={guild.name}
+                          width={56}
+                          height={56}
+                          className="rounded-2xl border border-white/10 grayscale group-hover:grayscale-0 transition-all"
+                        />
+                      ) : (
+                        <div className="h-14 w-14 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 text-slate-400 font-bold text-xl">
+                          {guild.name.charAt(0)}
+                        </div>
+                      )}
+                      <span className="text-[10px] uppercase font-bold text-slate-500 bg-white/5 px-2 py-0.5 rounded-lg">
+                        Admin
+                      </span>
+                    </div>
+
+                    <h3 className="text-base font-bold text-white truncate font-outfit">
+                      {guild.name}
+                    </h3>
+                    <p className="text-xs text-[#948BA3] mt-1">Bot is not currently in this server.</p>
+                  </div>
+
+                  <div className="px-6 py-4 bg-white/[0.02] border-t border-white/5">
+                    <Button 
+                      className="w-full justify-center gap-2 bg-[#A855F7]/20 hover:bg-[#A855F7] text-white hover:text-white border border-[#A855F7]/30 rounded-xl transition-all"
+                      asChild
+                    >
+                      <a href={serverInviteUrl} target="_blank" rel="noopener noreferrer">
+                        <Plus className="h-4 w-4" />
+                        <span>Invite Bot</span>
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

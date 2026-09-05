@@ -389,10 +389,11 @@ class General(commands.Cog):
   @ignore_check()
   @commands.cooldown(1, 3, commands.BucketType.user)
   async def invite(self, ctx: commands.Context):
+      bot_id = self.client.user.id if self.client.user else "1545041086450507856"
       invite_text = (
           "```Empower your server with blazing-fast features and 24/7 support!```\n"
           f"{AIZEN_LINKS} **Quick Actions**\n"
-          f">>> **[Invite {BotName}](https://discord.com/oauth2/authorize?client_id=1396114795102470196&permissions=8&integration_type=0&scope=bot+applications.commands)**\n"
+          f">>> **[Invite {BotName}](https://discord.com/oauth2/authorize?client_id={bot_id}&permissions=8&integration_type=0&scope=bot+applications.commands)**\n"
           "**[Support Server](https://discord.gg/M8qJ9W7vBb)**"
       )
       await ctx.send(view=CV2(f"{AIZEN_CONNECTION} {BotName} Integration Hub!", invite_text))

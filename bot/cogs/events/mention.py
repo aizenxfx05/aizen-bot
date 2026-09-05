@@ -86,8 +86,9 @@ class MentionSelectView(LayoutView):
                 "**[01]. [Ray](https://discord.com/users/870179991462236170)**\n**[02]. [runxking](https://discord.com/users/767979794411028491)**"
             )
         elif selected == "Links":
+            bot_id = interaction.client.user.id if interaction.client.user else "1545041086450507856"
             content = (
-                f"**[Invite {BotName}](https://discord.com/oauth2/authorize?client_id=1396114795102470196)**\n"
+                f"**[Invite {BotName}](https://discord.com/oauth2/authorize?client_id={bot_id}&permissions=8&integration_type=0&scope=bot+applications.commands)**\n"
                 "**[Join Support Server](https://discord.gg/M8qJ9W7vBb)**"
             )
 

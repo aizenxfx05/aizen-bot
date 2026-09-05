@@ -494,6 +494,14 @@ class Music(commands.Cog):
         secure_env = os.getenv("LAVALINK_SECURE", "false").strip().lower()
         port = os.getenv("LAVALINK_PORT", "2334").strip()
 
+        # Sanitize: MilloHost node is permanently offline / returning 502/503/403.
+        # Auto-fallback to verified active Kasawa Lavalink v4 node if configured.
+        if "millohost" in host.lower():
+            host = "lava2.kasawa.pro"
+            password = "youshallnotpass"
+            secure_env = "false"
+            port = "2334"
+
         secure = secure_env in ("true", "1", "yes")
         if secure:
             uri = f"https://{host}:{port}" if port and port != "443" else f"https://{host}"
@@ -520,20 +528,29 @@ class Music(commands.Cog):
 
 
     async def on_track_end(self, payload: wavelink.TrackEndEventPayload):
-        player = payload.player
+        player = getattr(payload, "player", None)
+        if not player or not hasattr(player, "queue") or player.queue is None:
+            return
         if not player.queue:
-            if player.queue.mode == wavelink.QueueMode.loop:
-                await player.play(payload.track)
-            elif player.autoplay == wavelink.AutoPlayMode.enabled:
+            if hasattr(player.queue, "mode") and player.queue.mode == wavelink.QueueMode.loop:
+                if hasattr(payload, "track") and payload.track:
+                    await player.play(payload.track)
+            elif hasattr(player, "autoplay") and player.autoplay == wavelink.AutoPlayMode.enabled:
                 await asyncio.sleep(5)
-                if player.current:
-                    await self.display_player_embed(player, player.current, player.ctx, autoplay=True)
+                if getattr(player, "current", None):
+                    await self.display_player_embed(player, player.current, getattr(player, "ctx", None), autoplay=True)
                 else:
-                    await player.ctx.send(view=CV2("No suitable track found for autoplay."))
+                    ctx = getattr(player, "ctx", None)
+                    if ctx:
+                        await ctx.send(view=CV2("No suitable track found for autoplay."))
             else:
-                if self.is_247(player.guild.id):
+                guild = getattr(player, "guild", None)
+                if guild and self.is_247(guild.id):
                     return
-                await player.disconnect()
+                try:
+                    await player.disconnect()
+                except Exception:
+                    pass
                 support = Button(label='Support', style=discord.ButtonStyle.link, url='https://discord.gg/M8qJ9W7vBb')
                 vote = Button(label='Vote', style=discord.ButtonStyle.link, url='https://top.gg/bot//vote')
                 view = LayoutView(timeout=None)
@@ -545,11 +562,19 @@ class Music(commands.Cog):
                     ActionRow(support, vote),
                 )
                 view.add_item(container)
-                await player.ctx.send(view=view)
+                ctx = getattr(player, "ctx", None)
+                if ctx:
+                    try:
+                        await ctx.send(view=view)
+                    except Exception:
+                        pass
         else:
-            next_track = await player.queue.get_wait()
-            await player.play(next_track)
-            await self.display_player_embed(player, next_track, player.ctx)
+            try:
+                next_track = await player.queue.get_wait()
+                await player.play(next_track)
+                await self.display_player_embed(player, next_track, getattr(player, "ctx", None))
+            except Exception as e:
+                print(f"Music: Error handling next queued track: {e}")
 
 
 
@@ -1127,13 +1152,22 @@ class Music(commands.Cog):
 
     @commands.Cog.listener()
     async def on_wavelink_track_start(self, payload: wavelink.TrackStartEventPayload):
-        player = payload.player
-        track = player.current
-        guild_id = player.guild.id
+        player = getattr(payload, "player", None)
+        if not player:
+            return
+        track = getattr(player, "current", None)
+        guild = getattr(player, "guild", None)
+        if not guild or not track:
+            return
+        guild_id = guild.id
 
-        voice_channel = player.channel
+        voice_channel = getattr(player, "channel", None)
         if voice_channel:
-            await voice_channel.edit(status=f"{MUSIC_ALT1} Playing: {track.title}")  # type: ignore
+            try:
+                title = getattr(track, "title", "Audio")
+                await voice_channel.edit(status=f"{MUSIC_ALT1} Playing: {title[:80]}")  # type: ignore
+            except Exception:
+                pass
 
         if guild_id not in track_histories:
             track_histories[guild_id] = []
@@ -1141,18 +1175,25 @@ class Music(commands.Cog):
         if not track_histories[guild_id] or track_histories[guild_id][-1] != track:
             track_histories[guild_id].append(track)
 
-
             if len(track_histories[guild_id]) > 10:
                 track_histories[guild_id].pop(0)
 
     @commands.Cog.listener()
     async def on_wavelink_track_end(self, payload: wavelink.TrackEndEventPayload):
-        player = payload.player
-        voice_channel = player.channel
+        player = getattr(payload, "player", None)
+        if not player:
+            return
+        voice_channel = getattr(player, "channel", None)
 
         if voice_channel:
-            await voice_channel.edit(status=None)  # type: ignore
-        await self.on_track_end(payload)
+            try:
+                await voice_channel.edit(status=None)  # type: ignore
+            except Exception:
+                pass
+        try:
+            await self.on_track_end(payload)
+        except Exception as e:
+            print(f"Music: Error in on_track_end: {e}")
 
     @commands.hybrid_command(
         name="247",

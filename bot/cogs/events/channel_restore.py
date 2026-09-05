@@ -235,6 +235,23 @@ class ChannelRestore(commands.Cog):
         if not await self._is_enabled(guild.id):
             return
 
+        # Prevent duplicate recreation if channel was already restored
+        now = datetime.datetime.now()
+        global_restored = getattr(self.bot, "_restored_channel_ids", {})
+        if channel.id in global_restored:
+            if (now - global_restored[channel.id]).total_seconds() < 30:
+                return
+
+        # Check if Antinuke is active on this server - if so, Antinuke handles unwhitelisted channel deletion
+        try:
+            async with aiosqlite.connect(DB_PATH) as db:
+                async with db.execute("SELECT status FROM antinuke WHERE guild_id = ?", (guild.id,)) as cursor:
+                    anti_row = await cursor.fetchone()
+                if anti_row and anti_row[0]:
+                    return
+        except Exception:
+            pass
+
         # Rate-limit guard
         if not self._within_rate_limit(guild.id):
             logger.warning(f"[ChannelRestore] Rate limit reached for guild {guild.id}.")
@@ -249,6 +266,10 @@ class ChannelRestore(commands.Cog):
         # Only skip if the bot itself deleted the channel to avoid infinite recreation loops
         if executor and executor.id == self.bot.user.id:
             return
+
+        if not hasattr(self.bot, "_restored_channel_ids"):
+            self.bot._restored_channel_ids = {}
+        self.bot._restored_channel_ids[channel.id] = now
 
         # Restore the channel
         new_channel = await self._restore_channel(channel, executor)

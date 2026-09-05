@@ -24,6 +24,31 @@ class AntiChannelDelete(commands.Cog):
         self.bot = bot
         self.event_limits = {}
         self.cooldowns = {}
+        self._restoring_channels = set()
+        self._restored_channels = {}
+
+        if not hasattr(self.bot, "_restored_channel_ids"):
+            self.bot._restored_channel_ids = {}
+
+    def _is_recently_restored(self, channel_id: int) -> bool:
+        now = datetime.datetime.now()
+        # Clean records older than 30s
+        self._restored_channels = {
+            cid: ts for cid, ts in self._restored_channels.items()
+            if (now - ts).total_seconds() < 30
+        }
+        global_restored = getattr(self.bot, "_restored_channel_ids", {})
+        if channel_id in global_restored:
+            if (now - global_restored[channel_id]).total_seconds() < 30:
+                return True
+        return channel_id in self._restoring_channels or channel_id in self._restored_channels
+
+    def _mark_restored(self, channel_id: int):
+        now = datetime.datetime.now()
+        self._restored_channels[channel_id] = now
+        if not hasattr(self.bot, "_restored_channel_ids"):
+            self.bot._restored_channel_ids = {}
+        self.bot._restored_channel_ids[channel_id] = now
 
     def can_fetch_audit(self, guild_id, event_name, max_requests=5, interval=10, cooldown_duration=300):
         now = datetime.datetime.now()
@@ -60,6 +85,11 @@ class AntiChannelDelete(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel):
         guild = channel.guild
+
+        # Prevent duplicate handling if channel is already being restored or was recently restored
+        if self._is_recently_restored(channel.id):
+            return
+
         async with aiosqlite.connect('db/anti.db') as db:
             async with db.execute("SELECT status FROM antinuke WHERE guild_id = ?", (guild.id,)) as cursor:
                 antinuke_status = await cursor.fetchone()
@@ -86,45 +116,55 @@ class AntiChannelDelete(commands.Cog):
             if whitelist_status and whitelist_status[0]:
                 return
 
-            await self.recreate_channel_and_ban(channel, executor)
+            self._restoring_channels.add(channel.id)
+            try:
+                await self.recreate_channel_and_ban(channel, executor)
+                self._mark_restored(channel.id)
+            finally:
+                self._restoring_channels.discard(channel.id)
+
             await asyncio.sleep(3)
 
     async def recreate_channel_and_ban(self, channel, executor, retries=3):
-        while retries > 0:
+        # 1. Clone the channel EXACTLY ONCE (do not loop clone on position edit rate limits)
+        new_channel = None
+        while retries > 0 and not new_channel:
             try:
                 new_channel = await channel.clone(reason="Channel Delete | Unwhitelisted User")
-                await new_channel.edit(position=channel.position)
                 break
             except discord.Forbidden:
                 return
             except discord.HTTPException as e:
                 if e.status == 429:
-                    retry_after = e.response.headers.get('Retry-After')
-                    if retry_after:
-                        await asyncio.sleep(float(retry_after))
-                        retries -= 1
-                    else:
-                        break
+                    retry_after = float(e.response.headers.get('Retry-After', 1.0))
+                    await asyncio.sleep(retry_after)
+                    retries -= 1
+                else:
+                    break
             except Exception:
                 return
 
-        if retries == 0:
-            return
+        # 2. Position restore in an isolated block (never re-clones channel if position edit is 429'd)
+        if new_channel and hasattr(channel, "position"):
+            try:
+                await new_channel.edit(position=channel.position)
+            except Exception:
+                pass
 
-        retries = 3  
-        while retries > 0:
+        # 3. Ban executor
+        ban_retries = 3
+        while ban_retries > 0:
             try:
                 await channel.guild.ban(executor, reason="Channel Delete | Unwhitelisted User")
-                return  
+                return
             except discord.Forbidden:
                 return
             except discord.HTTPException as e:
                 if e.status == 429:
-                    retry_after = e.response.headers.get('Retry-After')
-                    if retry_after:
-                        await asyncio.sleep(float(retry_after))
-                        retries -= 1
-                    else:
-                        break
+                    retry_after = float(e.response.headers.get('Retry-After', 1.0))
+                    await asyncio.sleep(retry_after)
+                    ban_retries -= 1
+                else:
+                    break
             except Exception:
                 return

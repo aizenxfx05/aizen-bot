@@ -21,8 +21,8 @@ export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET || "aizen_xfx_nextauth_secret_string_2026_super_secure",
   providers: [
     DiscordProvider({
-      clientId: process.env.DISCORD_CLIENT_ID || "",
-      clientSecret: process.env.DISCORD_CLIENT_SECRET || "",
+      clientId: process.env.DISCORD_CLIENT_ID || "1545041086450507856",
+      clientSecret: process.env.DISCORD_CLIENT_SECRET || "iK4Q9S-gDaDCQbagzJoa1wDLO6GVNhzu",
       authorization: { params: { scope: "identify guilds" } },
     }),
   ],

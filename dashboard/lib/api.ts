@@ -43,8 +43,8 @@ import {
   TagBotUpdate
 } from "@/types/api";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
-const API_KEY = process.env.NEXT_PUBLIC_DASHBOARD_API_KEY;
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://aizen-bot-production-a30e.up.railway.app/api/v1";
+const API_KEY = process.env.NEXT_PUBLIC_DASHBOARD_API_KEY || "aizen_1fc095bec9a2f3823a40938a58752d17f846c22d7b81bea1";
 
 class ApiError extends Error {
   constructor(public status: number, message: string) {

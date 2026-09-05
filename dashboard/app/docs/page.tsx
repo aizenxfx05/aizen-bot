@@ -67,28 +67,36 @@ export default function DocsPage() {
   const [activeTab, setActiveTab] = useState("Introduction");
 
   return (
-    <div className="min-h-screen bg-[#050508] text-[#FAFAF9] font-sans">
+    <div className="min-h-screen bg-[#07070D] text-[#F3E8FF] font-sans">
       {/* Background Decor */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#EAB308]/[0.02] blur-[150px] rounded-full" />
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-[#A855F7]/[0.02] blur-[150px] rounded-full" />
       </div>
 
       {/* Nav */}
-      <nav className="fixed top-0 w-full z-50 border-b border-white/[0.03] bg-[#050508]/80 backdrop-blur-3xl px-6 h-20 flex items-center justify-between">
+      <nav className="fixed top-0 w-full z-50 border-b border-white/[0.03] bg-[#07070D]/80 backdrop-blur-3xl px-6 h-20 flex items-center justify-between">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-4 group">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#EAB308] to-[#92400E] flex items-center justify-center mr-3">
-              <Bot className="h-5 w-5 text-[#050508]" />
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#A855F7] to-[#7C3AED] flex items-center justify-center mr-3 overflow-hidden relative">
+              <img 
+                src="/logo.png" 
+                alt="Logo" 
+                className="h-full w-full object-cover relative z-10" 
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }} 
+              />
+              <Bot className="h-5 w-5 text-white absolute z-0" />
             </div>
             <span className="text-xl font-bold text-white font-outfit uppercase tracking-tighter hidden md:block">{process.env.NEXT_PUBLIC_BRAND_NAME || "Aizen XFX"} Docs</span>
           </Link>
           
           <div className="hidden lg:flex items-center w-80 relative group">
-            <SearchIcon className="absolute left-4 h-4 w-4 text-[#57534E] group-focus-within:text-[#EAB308] transition-colors" />
+            <SearchIcon className="absolute left-4 h-4 w-4 text-[#57534E] group-focus-within:text-[#A855F7] transition-colors" />
             <input
               type="text"
               placeholder="Search documentation..."
-              className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-2.5 pl-12 pr-4 text-xs font-bold text-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[#EAB308]/30 focus:bg-white/[0.05] transition-all"
+              className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-2.5 pl-12 pr-4 text-xs font-bold text-[#F3E8FF] focus:outline-none focus:ring-1 focus:ring-[#A855F7]/30 focus:bg-white/[0.05] transition-all"
             />
           </div>
         </div>
@@ -111,7 +119,7 @@ export default function DocsPage() {
       <div className="max-w-7xl mx-auto flex pt-20">
         {/* Sidebar */}
         <aside className={cn(
-          "fixed inset-y-0 left-0 z-40 w-80 bg-[#050508] border-r border-[#EAB308]/[0.06] pt-20 transition-transform lg:translate-x-0 lg:static lg:bg-transparent",
+          "fixed inset-y-0 left-0 z-40 w-80 bg-[#07070D] border-r border-[#A855F7]/[0.06] pt-20 transition-transform lg:translate-x-0 lg:static lg:bg-transparent",
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}>
           <div className="h-full p-8 overflow-y-auto no-scrollbar">
@@ -129,11 +137,11 @@ export default function DocsPage() {
                       className={cn(
                         "w-full flex flex-col items-start gap-1 p-4 rounded-2xl transition-all text-left",
                         activeTab === item.name
-                          ? "bg-[#EAB308]/[0.08] border border-[#EAB308]/20 shadow-[0_0_20px_rgba(234,179,8,0.05)]"
+                          ? "bg-[#A855F7]/[0.08] border border-[#A855F7]/20 shadow-[0_0_20px_rgba(168,85,247,0.05)]"
                           : "hover:bg-white/[0.02] border border-transparent"
                       )}
                     >
-                      <span className={cn("text-sm font-bold", activeTab === item.name ? "text-[#EAB308]" : "text-[#FAFAF9]")}>{item.name}</span>
+                      <span className={cn("text-sm font-bold", activeTab === item.name ? "text-[#A855F7]" : "text-[#F3E8FF]")}>{item.name}</span>
                       <span className="text-[10px] text-slate-600 font-bold uppercase tracking-tight">{item.description}</span>
                     </button>
                   ))}
@@ -145,23 +153,23 @@ export default function DocsPage() {
 
         {/* Content */}
         <main className="flex-1 p-8 lg:p-16 relative z-10 max-w-4xl">
-           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EAB308]/10 border border-[#EAB308]/20 text-[#EAB308] text-[10px] font-black uppercase tracking-widest mb-8">
+           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#A855F7]/10 border border-[#A855F7]/20 text-[#A855F7] text-[10px] font-black uppercase tracking-widest mb-8">
             <BookOpen className="h-3 w-3" />
             V2.4 Runtime Environment
           </div>
 
           <h1 className="text-6xl font-bold text-white font-outfit tracking-tighter uppercase mb-8 italic">
-            {activeTab}<span className="text-amber-gradient not-italic">.</span>
+            {activeTab}<span className="text-purple-gradient not-italic">.</span>
           </h1>
 
           <div className="prose prose-invert max-w-none">
-             <p className="text-lg text-[#78716C] mb-12 leading-relaxed">
+             <p className="text-lg text-[#948BA3] mb-12 leading-relaxed">
                Welcome to the {activeTab} section of the {process.env.NEXT_PUBLIC_BRAND_NAME || "Aizen XFX"} documentation. Our bot is designed for communities that demand absolute performance and elite management tools.
              </p>
 
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="p-8 rounded-[32px] glass border-white/5 space-y-4">
-                   <Zap className="h-6 w-6 text-[#EAB308]" />
+                   <Zap className="h-6 w-6 text-[#A855F7]" />
                    <h3 className="text-xl font-bold text-white font-outfit uppercase">Fast Dispatch</h3>
                    <p className="text-sm text-slate-500 font-bold uppercase tracking-tight">Commands are dispatched via our global edge network in under 12ms.</p>
                 </div>
@@ -172,16 +180,16 @@ export default function DocsPage() {
                 </div>
              </div>
 
-              <div className="p-8 rounded-[40px] bg-[#EAB308]/[0.02] border border-[#EAB308]/10 relative overflow-hidden">
+              <div className="p-8 rounded-[40px] bg-[#A855F7]/[0.02] border border-[#A855F7]/10 relative overflow-hidden">
                  <div className="absolute top-0 right-0 p-8 opacity-10">
-                    <Layers className="h-32 w-32 text-[#EAB308]" />
+                    <Layers className="h-32 w-32 text-[#A855F7]" />
                  </div>
                 <h2 className="text-2xl font-bold text-white font-outfit uppercase tracking-tight mb-4">Neural Architecture</h2>
                   <h3 className="text-white font-bold">Protocol Overview</h3>
-                 <p className="text-[#78716C] font-bold leading-relaxed mb-8">
+                 <p className="text-[#948BA3] font-bold leading-relaxed mb-8">
                    {process.env.NEXT_PUBLIC_BRAND_NAME || "Aizen XFX"} utilizes a decentralized event stream processing model. When a Discord event is received, it is instantly routed to the nearest edge cluster.
                  </p>
-                 <div className="bg-black/40 p-6 rounded-2xl border border-white/5 font-mono text-sm text-[#EAB308] mb-8">
+                 <div className="bg-black/40 p-6 rounded-2xl border border-white/5 font-mono text-sm text-[#A855F7] mb-8">
                    $ aizen initialize --cluster-shard [neural_07] --mode enterprise
                  </div>
              </div>
@@ -193,8 +201,8 @@ export default function DocsPage() {
                 <p className="text-sm font-bold text-slate-400">DOC-ID: CX_7749_B</p>
              </div>
              <div className="flex items-center gap-2">
-                 <div className="h-2 w-2 rounded-full bg-[#EAB308] animate-pulse" />
-                 <span className="text-[10px] font-black uppercase text-[#EAB308] tracking-[0.2em]">Live Stream Active</span>
+                 <div className="h-2 w-2 rounded-full bg-[#A855F7] animate-pulse" />
+                 <span className="text-[10px] font-black uppercase text-[#A855F7] tracking-[0.2em]">Live Stream Active</span>
               </div>
           </div>
         </main>

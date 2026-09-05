@@ -85,12 +85,12 @@ export default function DashboardLayout({
 
   if (status === "loading" || status === "unauthenticated") {
     return (
-      <div className="min-h-screen bg-[#050508] flex items-center justify-center">
+      <div className="min-h-screen bg-[#07070D] flex items-center justify-center">
         <div className="animate-pulse flex flex-col items-center gap-4">
-          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-[#EAB308] to-[#92400E] flex items-center justify-center shadow-lg shadow-[#EAB308]/20">
-            <span className="font-black text-[#050508] italic text-xl">AX</span>
+          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-[#A855F7] to-[#7C3AED] flex items-center justify-center shadow-lg shadow-[#A855F7]/30">
+            <span className="font-black text-white italic text-xl">AX</span>
           </div>
-          <p className="text-[#78716C] font-bold tracking-widest uppercase text-xs">
+          <p className="text-[#948BA3] font-bold tracking-widest uppercase text-xs">
             Authenticating...
           </p>
         </div>
@@ -176,11 +176,11 @@ export default function DashboardLayout({
   const BackLinkIcon = backLinkItem?.icon || Server;
 
   return (
-    <div className="min-h-screen bg-[#050508] text-[#FAFAF9]">
-      {/* Amber Background Glow Elements */}
+    <div className="min-h-screen bg-[#07070D] text-[#F3E8FF]">
+      {/* Purple Background Glow Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#EAB308]/[0.04] blur-[120px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[10%] left-[-5%] w-[30%] h-[30%] bg-[#A16207]/[0.03] blur-[100px] rounded-full animate-pulse [animation-delay:2s]" />
+        <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#A855F7]/[0.05] blur-[120px] rounded-full animate-pulse" />
+        <div className="absolute bottom-[10%] left-[-5%] w-[30%] h-[30%] bg-[#7C3AED]/[0.03] blur-[100px] rounded-full animate-pulse [animation-delay:2s]" />
       </div>
 
       {/* Mobile Sidebar Overlay */}
@@ -194,21 +194,30 @@ export default function DashboardLayout({
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-4 top-4 bottom-4 z-50 w-64 transform transition-all duration-500 ease-in-out lg:translate-x-0 glass border border-[#EAB308]/[0.08] rounded-[2.5rem] shadow-2xl shadow-black/40 overflow-hidden flex flex-col",
+          "fixed left-4 top-4 bottom-4 z-50 w-64 transform transition-all duration-500 ease-in-out lg:translate-x-0 glass border border-[#A855F7]/[0.10] rounded-[2.5rem] shadow-2xl shadow-black/40 overflow-hidden flex flex-col",
           isSidebarOpen ? "translate-x-0" : "-translate-x-[110%]"
         )}
       >
         {/* Header */}
         <div className="flex h-16 items-center px-6 mt-4 flex-shrink-0">
           <div className="flex items-center gap-3 group">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-[#EAB308] to-[#92400E] flex items-center justify-center shadow-lg shadow-[#EAB308]/20 group-hover:scale-110 transition-transform border border-white/10">
-              <Bot className="h-5 w-5 text-[#050508]" />
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-[#A855F7] to-[#7C3AED] flex items-center justify-center shadow-lg shadow-[#A855F7]/30 group-hover:scale-110 transition-transform border border-white/10 overflow-hidden relative">
+              {/* Custom Logo Image (falls back to Bot icon if not provided) */}
+              <img 
+                src="/logo.png" 
+                alt="Logo" 
+                className="h-full w-full object-cover relative z-10" 
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }} 
+              />
+              <Bot className="h-5 w-5 text-white absolute z-0" />
             </div>
             <div className="flex flex-col">
               <h1 className="text-lg font-bold tracking-tight text-white font-outfit leading-none">
                 {process.env.NEXT_PUBLIC_BRAND_NAME || "Aizen XFX"}
               </h1>
-              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#EAB308]/80 mt-1">
+              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#C084FC] mt-1">
                 Dashboard
               </span>
             </div>
@@ -240,7 +249,7 @@ export default function DashboardLayout({
                           className={cn(
                             "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group text-[13px] font-bold",
                             isActive
-                              ? "bg-[#EAB308]/[0.08] text-[#EAB308] border border-[#EAB308]/20 shadow-[0_0_20px_rgba(234,179,8,0.08)]"
+                              ? "bg-[#A855F7]/[0.10] text-[#C084FC] border border-[#A855F7]/25 shadow-[0_0_20px_rgba(168,85,247,0.12)]"
                               : "text-slate-400 hover:bg-white/[0.03] hover:text-slate-200"
                           )}
                         >
@@ -248,13 +257,13 @@ export default function DashboardLayout({
                             className={cn(
                               "h-4 w-4 transition-all duration-300",
                               isActive
-                                ? "text-[#EAB308] scale-110"
+                                ? "text-[#C084FC] scale-110"
                                 : "text-slate-600 group-hover:text-slate-400"
                             )}
                           />
                           {subItem.name}
                           {isActive && (
-                            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#EAB308] animate-pulse shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
+                            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#A855F7] animate-pulse shadow-[0_0_10px_rgba(168,85,247,0.6)]" />
                           )}
                         </Link>
                       );
@@ -272,19 +281,19 @@ export default function DashboardLayout({
                 className={cn(
                   "flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group text-[14px] font-bold",
                   isActive
-                    ? "bg-[#EAB308]/[0.08] text-[#EAB308] border border-[#EAB308]/20 shadow-[0_0_20px_rgba(234,179,8,0.08)]"
-                    : "text-[#78716C] hover:bg-white/[0.03] hover:text-[#FAFAF9]"
+                    ? "bg-[#A855F7]/[0.10] text-[#C084FC] border border-[#A855F7]/25 shadow-[0_0_20px_rgba(168,85,247,0.12)]"
+                    : "text-slate-400 hover:bg-white/[0.03] hover:text-white"
                 )}
               >
                 <item.icon
                   className={cn(
                     "h-5 w-5 transition-all duration-300",
-                    isActive ? "text-[#EAB308] scale-110" : "text-[#57534E] group-hover:text-[#78716C]"
+                    isActive ? "text-[#C084FC] scale-110" : "text-slate-600 group-hover:text-slate-400"
                   )}
                 />
                 {item.name}
                 {isActive ? (
-                  <ChevronRight className="ml-auto h-4 w-4 text-[#EAB308]" />
+                  <ChevronRight className="ml-auto h-4 w-4 text-[#C084FC]" />
                 ) : (
                   <ChevronRight className="ml-auto h-4 w-4 opacity-0 group-hover:opacity-30 transition-opacity" />
                 )}
@@ -325,9 +334,9 @@ export default function DashboardLayout({
         )}
 
         {/* User Profile */}
-        <div className="flex-shrink-0 p-4 border-t border-[#EAB308]/[0.06] glass-amber bg-[#EAB308]/[0.01]">
-          <div className="flex items-center gap-3 p-2 bg-white/[0.02] rounded-2xl border border-[#EAB308]/[0.08]">
-            <div className="h-10 w-10 rounded-full bg-[#EAB308]/10 flex items-center justify-center ring-1 ring-white/10 overflow-hidden border border-[#EAB308]/20">
+        <div className="flex-shrink-0 p-4 border-t border-[#A855F7]/[0.06] glass-purple bg-[#A855F7]/[0.01]">
+          <div className="flex items-center gap-3 p-2 bg-white/[0.02] rounded-2xl border border-[#A855F7]/[0.08]">
+            <div className="h-10 w-10 rounded-full bg-[#A855F7]/10 flex items-center justify-center ring-1 ring-white/10 overflow-hidden border border-[#A855F7]/20">
               {session?.user?.image ? (
                 <img
                   src={session.user.image}
@@ -335,14 +344,14 @@ export default function DashboardLayout({
                   className="h-full w-full object-cover opacity-80"
                 />
               ) : (
-                <User className="h-6 w-6 text-[#EAB308]/50" />
+                <User className="h-6 w-6 text-[#A855F7]/50" />
               )}
             </div>
             <div className="overflow-hidden">
               <p className="text-sm font-bold text-white truncate font-outfit">
                 {session?.user?.name || "Administrator"}
               </p>
-              <p className="text-[10px] font-black uppercase text-[#EAB308]/60 truncate tracking-widest">
+              <p className="text-[10px] font-black uppercase text-[#A855F7]/60 truncate tracking-widest">
                 User
               </p>
             </div>
@@ -378,12 +387,12 @@ export default function DashboardLayout({
               >
                 <Bell className="h-5 w-5" />
               {globalNotification && (
-                <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-[#EAB308] border-2 border-[#050508] shadow-[0_0_10px_rgba(234,179,8,0.5)]"></span>
+                <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-[#A855F7] border-2 border-[#07070D] shadow-[0_0_10px_rgba(168,85,247,0.5)]"></span>
                 )}
               </button>
 
               {isNotificationsOpen && (
-                <div className="absolute right-0 mt-3 w-80 bg-[#0C0B0F]/95 backdrop-blur-3xl border border-white/5 rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-4 z-20 animate-in fade-in zoom-in-95 duration-300 origin-top-right">
+                <div className="absolute right-0 mt-3 w-80 bg-[#0D0B18]/95 backdrop-blur-3xl border border-white/5 rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-4 z-20 animate-in fade-in zoom-in-95 duration-300 origin-top-right">
                     <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
                       <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Broadcast Metrics</p>
                       <button 
@@ -397,8 +406,8 @@ export default function DashboardLayout({
                     {globalNotification ? (
                       <div className="bg-red-500/5 border border-red-500/10 rounded-2xl p-4">
                         <div className="flex items-center gap-2 mb-2">
-                          <Sparkles className="h-3 w-3 text-[#EAB308]" />
-                          <span className="text-[10px] font-black uppercase text-[#EAB308] tracking-widest">System Broadcast</span>
+                          <Sparkles className="h-3 w-3 text-[#C084FC]" />
+                          <span className="text-[10px] font-black uppercase text-[#C084FC] tracking-widest">System Broadcast</span>
                         </div>
                         <p className="text-xs font-medium text-slate-300 leading-relaxed">
                           {globalNotification}
@@ -406,8 +415,8 @@ export default function DashboardLayout({
                       </div>
                     ) : (
                       <div className="py-8 flex flex-col items-center justify-center text-center">
-                        <div className="h-10 w-10 rounded-full bg-[#1A1500] flex items-center justify-center mb-3">
-                          <Bell className="h-5 w-5 text-[#57534E]" />
+                        <div className="h-10 w-10 rounded-full bg-[#18142A] flex items-center justify-center mb-3">
+                          <Bell className="h-5 w-5 text-slate-500" />
                         </div>
                         <p className="text-xs font-bold text-slate-500">No active broadcasts</p>
                         <p className="text-[10px] font-medium text-slate-600 mt-1 uppercase tracking-widest">Everything is operating normally</p>
@@ -424,18 +433,18 @@ export default function DashboardLayout({
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="flex items-center gap-3.5 p-1.5 rounded-2xl hover:bg-white/5 transition-all group border border-transparent hover:border-white/10"
               >
-                <div className="h-9 w-9 rounded-full bg-[#EAB308]/10 flex items-center justify-center overflow-hidden border border-[#EAB308]/20 ring-2 ring-transparent group-hover:ring-[#EAB308]/30 transition-all">
+                <div className="h-9 w-9 rounded-full bg-[#A855F7]/10 flex items-center justify-center overflow-hidden border border-[#A855F7]/20 ring-2 ring-transparent group-hover:ring-[#A855F7]/30 transition-all">
                   {session?.user?.image ? (
                     <img src={session.user.image} alt="User Avatar" className="h-full w-full object-cover opacity-80" />
                   ) : (
-                    <User className="h-5 w-5 text-[#EAB308]/50" />
+                    <User className="h-5 w-5 text-[#C084FC]/70" />
                   )}
                 </div>
                 <div className="hidden sm:flex flex-col items-start leading-none gap-1">
                   <span className="text-xs font-bold text-slate-200 group-hover:text-white transition-colors">
                     {session?.user?.name?.split(' ')[0] || "Admin"}
                   </span>
-                  <span className="text-[9px] font-black uppercase text-[#EAB308]/60 tracking-widest">Active</span>
+                  <span className="text-[9px] font-black uppercase text-[#C084FC] tracking-widest">Active</span>
                 </div>
                 <ChevronDown
                   className={cn("h-4 w-4 text-slate-600 transition-transform hidden sm:block", isProfileOpen && "rotate-180")}
@@ -443,7 +452,7 @@ export default function DashboardLayout({
               </button>
 
               {isProfileOpen && (
-                <div className="absolute right-0 mt-3 w-56 bg-[#0C0B0F]/95 backdrop-blur-3xl border border-white/5 rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-2 z-20 animate-in fade-in zoom-in-95 duration-300 origin-top-right">
+                <div className="absolute right-0 mt-3 w-56 bg-[#0D0B18]/95 backdrop-blur-3xl border border-white/5 rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-2 z-20 animate-in fade-in zoom-in-95 duration-300 origin-top-right">
                     <div className="px-4 py-3 border-b border-white/5 mb-2">
                       <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1">Authenticated As</p>
                       <p className="text-sm font-bold text-white truncate">{session?.user?.name || "Administrator"}</p>

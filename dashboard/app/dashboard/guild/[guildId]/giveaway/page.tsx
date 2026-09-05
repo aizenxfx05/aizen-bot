@@ -44,10 +44,10 @@ export default async function GiveawayPage({ params }: { params: { guildId: stri
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h2 className="text-2xl font-black text-white flex items-center gap-3 tracking-tight font-outfit uppercase">
-            <Gift className="h-7 w-7 text-[#EAB308]" />
+            <Gift className="h-7 w-7 text-[#A855F7]" />
             Giveaways &amp; Rewards
           </h2>
-          <p className="text-[#78716C] mt-1 font-medium text-sm">
+          <p className="text-[#948BA3] mt-1 font-medium text-sm">
             Monitor and manage active server giveaways, winner counts, and schedules.
           </p>
         </div>

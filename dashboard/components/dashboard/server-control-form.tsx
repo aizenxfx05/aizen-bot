@@ -301,7 +301,7 @@ export function ServerControlForm({ guildId }: ServerControlFormProps) {
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-5 rounded-2xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl shadow-2xl">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-xl bg-[#EAB308]/10 border border-[#EAB308]/20 text-[#EAB308]">
+            <div className="p-3 rounded-xl bg-[#A855F7]/10 border border-[#A855F7]/20 text-[#A855F7]">
               <Users className="h-5 w-5" />
             </div>
             <div>
@@ -396,10 +396,10 @@ export function ServerControlForm({ guildId }: ServerControlFormProps) {
         </div>
 
         {/* 2. Bulk Message Purge */}
-        <div className="p-6 rounded-3xl bg-slate-900/60 border border-[#EAB308]/20 backdrop-blur-xl shadow-2xl flex flex-col justify-between">
+        <div className="p-6 rounded-3xl bg-slate-900/60 border border-[#A855F7]/20 backdrop-blur-xl shadow-2xl flex flex-col justify-between">
           <form onSubmit={handlePurge} className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="p-3 rounded-2xl bg-[#EAB308]/10 border border-[#EAB308]/20 text-[#EAB308]">
+              <div className="p-3 rounded-2xl bg-[#A855F7]/10 border border-[#A855F7]/20 text-[#A855F7]">
                 <Trash2 className="h-6 w-6" />
               </div>
               <div>
@@ -446,7 +446,7 @@ export function ServerControlForm({ guildId }: ServerControlFormProps) {
                     onClick={() => setPurgeAmount(preset)}
                     className={`px-3 py-1 text-xs rounded-lg font-bold transition-all ${
                       purgeAmount === preset
-                        ? "bg-[#EAB308] text-black font-bold"
+                        ? "bg-[#A855F7] text-black font-bold"
                         : "bg-slate-800/80 text-slate-400 hover:bg-slate-700"
                     }`}
                   >
@@ -459,7 +459,7 @@ export function ServerControlForm({ guildId }: ServerControlFormProps) {
             <Button
               type="submit"
               disabled={purgeLoading}
-              className="w-full bg-[#EAB308] hover:bg-[#F59E0B] text-black font-bold"
+              className="w-full bg-[#A855F7] hover:bg-[#C084FC] text-black font-bold"
             >
               {purgeLoading ? <RefreshCw className="h-4 w-4 animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
               Purge Messages
@@ -672,7 +672,7 @@ export function ServerControlForm({ guildId }: ServerControlFormProps) {
         <div className="p-6 rounded-3xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl shadow-2xl flex flex-col justify-between">
           <form onSubmit={handleRoleManage} className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="p-3 rounded-2xl bg-[#EAB308]/10 border border-[#EAB308]/20 text-[#EAB308]">
+              <div className="p-3 rounded-2xl bg-[#A855F7]/10 border border-[#A855F7]/20 text-[#A855F7]">
                 <UserCheck className="h-6 w-6" />
               </div>
               <div>
@@ -708,7 +708,7 @@ export function ServerControlForm({ guildId }: ServerControlFormProps) {
                   onClick={() => setRoleAction("add")}
                   className={`py-2 rounded-xl text-xs font-bold border transition-all ${
                     roleAction === "add"
-                      ? "bg-[#EAB308] text-black font-bold border-[#EAB308]"
+                      ? "bg-[#A855F7] text-black font-bold border-[#A855F7]"
                       : "bg-slate-950/60 border-slate-800 text-slate-400 hover:bg-slate-800"
                   }`}
                 >
@@ -731,7 +731,7 @@ export function ServerControlForm({ guildId }: ServerControlFormProps) {
             <Button
               type="submit"
               disabled={roleLoading}
-              className="w-full bg-[#EAB308] hover:bg-[#F59E0B] text-black font-bold mt-2"
+              className="w-full bg-[#A855F7] hover:bg-[#C084FC] text-black font-bold mt-2"
             >
               {roleLoading ? <RefreshCw className="h-4 w-4 animate-spin mr-2" /> : <UserCheck className="h-4 w-4 mr-2" />}
               {roleAction === "add" ? "Assign Role to User" : "Remove Role from User"}

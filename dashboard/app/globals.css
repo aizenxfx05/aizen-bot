@@ -3,33 +3,32 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════════
-   Aizen XFX — Amber Gold × Void Black Theme
+   Aizen XFX — Electric Royal Purple × Void Black Theme
    "Power. Elegance. Dominance."
-   Palette: Deep Void Obsidian (#050508) + Glowing Amber Gold (#EAB308)
+   Palette: Deep Void Obsidian (#07070D) + Glowing Royal Purple (#A855F7)
 ═══════════════════════════════════════════════════════════════ */
-
 
 :root {
   /* Core backgrounds */
-  --background:          #050508;
-  --bg-secondary:        #0C0A09;
-  --bg-tertiary:         #111014;
+  --background:          #07070D;
+  --bg-secondary:        #0D0B18;
+  --bg-tertiary:         #131024;
 
-  /* Amber gold accent palette */
-  --primary:             #EAB308;        /* Amber gold — the eye */
-  --primary-dark:        #A16207;        /* Deep amber */
-  --primary-light:       #F59E0B;        /* Bright amber */
-  --primary-glow:        rgba(234, 179, 8, 0.28);
-  --primary-glow-soft:   rgba(234, 179, 8, 0.08);
+  /* Purple accent palette */
+  --primary:             #A855F7;        /* Electric royal purple */
+  --primary-dark:        #7C3AED;        /* Deep violet */
+  --primary-light:       #C084FC;        /* Luminous lilac */
+  --primary-glow:        rgba(168, 85, 247, 0.28);
+  --primary-glow-soft:   rgba(168, 85, 247, 0.08);
 
   /* Text */
-  --foreground:          #FAFAF9;        /* Warm crisp white */
-  --foreground-muted:    #78716C;        /* Muted stone */
+  --foreground:          #F3E8FF;        /* Soft ethereal lavender */
+  --foreground-muted:    #948BA3;        /* Muted slate violet */
 
   /* Borders & Glass */
-  --glass-bg:            rgba(5, 5, 8, 0.80);
+  --glass-bg:            rgba(13, 11, 24, 0.70);
   --glass-border:        rgba(255, 255, 255, 0.04);
-  --glass-amber-border:  rgba(234, 179, 8, 0.22);
+  --glass-purple-border: rgba(168, 85, 247, 0.22);
 
   /* Status colors */
   --success:             #4ADE80;
@@ -39,8 +38,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #050508;
-    --foreground: #FAFAF9;
+    --background: #07070D;
+    --foreground: #F3E8FF;
   }
 }
 
@@ -57,13 +56,13 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #050508;
+  background: #07070D;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1C1917;
+  background: #18142A;
   border-radius: 10px;
-  border: 2px solid #050508;
+  border: 2px solid #07070D;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -74,7 +73,7 @@ body {
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #1C1917 #050508;
+  scrollbar-color: #18142A #07070D;
 }
 
 /* ── Utility Classes ─────────────────────────────────────────── */
@@ -96,18 +95,23 @@ body {
     @apply backdrop-blur-xl bg-white/[0.02] border border-white/[0.04];
   }
 
-  /* Amber-accented glass card */
-  .glass-amber {
+  /* Purple-accented glass card */
+  .glass-purple {
     backdrop-filter: blur(20px);
-    background: rgba(234, 179, 8, 0.025);
-    border: 1px solid rgba(234, 179, 8, 0.16);
+    background: rgba(168, 85, 247, 0.025);
+    border: 1px solid rgba(168, 85, 247, 0.16);
   }
 
-  /* Legacy red alias */
+  .glass-purple {
+    backdrop-filter: blur(20px);
+    background: rgba(168, 85, 247, 0.025);
+    border: 1px solid rgba(168, 85, 247, 0.16);
+  }
+
   .glass-red {
     backdrop-filter: blur(20px);
-    background: rgba(234, 179, 8, 0.025);
-    border: 1px solid rgba(234, 179, 8, 0.14);
+    background: rgba(168, 85, 247, 0.025);
+    border: 1px solid rgba(168, 85, 247, 0.14);
   }
 
   /* Liquid glass with depth */
@@ -118,67 +122,67 @@ body {
       rgba(255, 255, 255, 0.00) 100%
     );
     backdrop-filter: blur(24px);
-    border: 1px solid rgba(234, 179, 8, 0.14);
+    border: 1px solid rgba(168, 85, 247, 0.14);
     box-shadow: 0 8px 40px 0 rgba(0, 0, 0, 0.6),
-                inset 0 1px 0 rgba(234, 179, 8, 0.10);
+                inset 0 1px 0 rgba(168, 85, 247, 0.10);
   }
 
-  /* Amber glow text */
-  .text-amber-acc {
+  /* Purple glow text */
+  .text-purple-acc {
     color: var(--primary);
   }
 
-  /* Amber gradient text */
-  .text-amber-gradient {
-    background: linear-gradient(135deg, #FAFAF9 0%, #F59E0B 30%, #EAB308 70%, #A16207 100%);
+  /* Purple gradient text */
+  .text-purple-gradient {
+    background: linear-gradient(135deg, #F3E8FF 0%, #C084FC 30%, #A855F7 70%, #7C3AED 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  /* Pulsing amber dot */
-  .amber-dot {
+  /* Pulsing purple dot */
+  .purple-dot {
     @apply inline-block h-2 w-2 rounded-full;
     background: var(--primary);
     box-shadow: 0 0 10px var(--primary-glow);
   }
 
   /* Active sidebar item */
-  .nav-active-amber {
-    background: rgba(234, 179, 8, 0.10);
-    border: 1px solid rgba(234, 179, 8, 0.28);
-    box-shadow: 0 0 24px rgba(234, 179, 8, 0.12);
+  .nav-active-purple {
+    background: rgba(168, 85, 247, 0.10);
+    border: 1px solid rgba(168, 85, 247, 0.28);
+    box-shadow: 0 0 24px rgba(168, 85, 247, 0.12);
     color: var(--primary);
   }
 }
 
-/* ── Amber shimmer animation ─────────────────────────────────── */
-@keyframes amber-shimmer {
+/* ── Purple shimmer animation ────────────────────────────────── */
+@keyframes purple-shimmer {
   0%   { background-position: -200% center; }
   100% { background-position:  200% center; }
 }
 
-.amber-shimmer {
+.purple-shimmer {
   background: linear-gradient(
     90deg,
-    #A16207 0%,
-    #F59E0B 40%,
-    #EAB308 60%,
-    #A16207 100%
+    #7C3AED 0%,
+    #C084FC 40%,
+    #A855F7 60%,
+    #7C3AED 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: amber-shimmer 4s linear infinite;
+  animation: purple-shimmer 4s linear infinite;
 }
 
-/* ── Subtle amber pulse for active nodes ────────────────────── */
-@keyframes amber-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.45); }
-  50%       { box-shadow: 0 0 0 8px rgba(234, 179, 8, 0.0); }
+/* ── Subtle purple pulse for active nodes ────────────────────── */
+@keyframes purple-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.45); }
+  50%       { box-shadow: 0 0 0 8px rgba(168, 85, 247, 0.0); }
 }
 
-.animate-amber-pulse {
-  animation: amber-pulse 2s ease-in-out infinite;
+.animate-purple-pulse {
+  animation: purple-pulse 2s ease-in-out infinite;
 }

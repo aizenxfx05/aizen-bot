@@ -73,49 +73,49 @@ export function GiveawayForm({ initialGiveaways, channels, guildId }: GiveawayFo
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* Overview Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="p-6 rounded-3xl bg-[#0C0B0F]/90 border border-white/5 backdrop-blur-2xl shadow-xl flex items-center gap-4">
-          <div className="p-3 rounded-2xl bg-[#EAB308]/10 border border-[#EAB308]/20 text-[#EAB308]">
+        <div className="p-6 rounded-3xl bg-[#0D0B18]/90 border border-white/5 backdrop-blur-2xl shadow-xl flex items-center gap-4">
+          <div className="p-3 rounded-2xl bg-[#A855F7]/10 border border-[#A855F7]/20 text-[#A855F7]">
             <Gift className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-wider text-[#78716C]">Active Giveaways</p>
+            <p className="text-[10px] font-black uppercase tracking-wider text-[#948BA3]">Active Giveaways</p>
             <p className="text-2xl font-black text-white font-outfit">{giveaways.length}</p>
           </div>
         </div>
 
-        <div className="p-6 rounded-3xl bg-[#0C0B0F]/90 border border-white/5 backdrop-blur-2xl shadow-xl flex items-center gap-4">
+        <div className="p-6 rounded-3xl bg-[#0D0B18]/90 border border-white/5 backdrop-blur-2xl shadow-xl flex items-center gap-4">
           <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
             <Trophy className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-wider text-[#78716C]">Total Winners</p>
+            <p className="text-[10px] font-black uppercase tracking-wider text-[#948BA3]">Total Winners</p>
             <p className="text-2xl font-black text-white font-outfit">
               {giveaways.reduce((acc, g) => acc + (g.winners || 1), 0)}
             </p>
           </div>
         </div>
 
-        <div className="p-6 rounded-3xl bg-[#0C0B0F]/90 border border-white/5 backdrop-blur-2xl shadow-xl flex items-center gap-4">
+        <div className="p-6 rounded-3xl bg-[#0D0B18]/90 border border-white/5 backdrop-blur-2xl shadow-xl flex items-center gap-4">
           <div className="p-3 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400">
             <Sparkles className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-wider text-[#78716C]">Verification Engine</p>
+            <p className="text-[10px] font-black uppercase tracking-wider text-[#948BA3]">Verification Engine</p>
             <p className="text-sm font-bold text-white">Bot-Protected</p>
           </div>
         </div>
       </div>
 
       {/* Giveaways List */}
-      <div className="p-8 rounded-3xl bg-[#0C0B0F]/90 border border-white/5 backdrop-blur-2xl shadow-2xl relative overflow-hidden space-y-6">
+      <div className="p-8 rounded-3xl bg-[#0D0B18]/90 border border-white/5 backdrop-blur-2xl shadow-2xl relative overflow-hidden space-y-6">
         <div className="flex items-center justify-between pb-6 border-b border-white/5">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-[#EAB308]/10 text-[#EAB308]">
+            <div className="p-2.5 rounded-xl bg-[#A855F7]/10 text-[#A855F7]">
               <Gift className="h-5 w-5" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-white">Live Giveaways</h3>
-              <p className="text-xs text-[#78716C]">Manage ongoing community prize draws.</p>
+              <p className="text-xs text-[#948BA3]">Manage ongoing community prize draws.</p>
             </div>
           </div>
         </div>
@@ -125,12 +125,12 @@ export function GiveawayForm({ initialGiveaways, channels, guildId }: GiveawayFo
             {giveaways.map((g) => (
               <div 
                 key={g.message_id}
-                className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-[#EAB308]/20 transition-all space-y-4 group"
+                className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-[#A855F7]/20 transition-all space-y-4 group"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <h4 className="text-base font-bold text-white tracking-tight">{g.prize}</h4>
-                    <p className="text-xs text-[#EAB308] mt-0.5 flex items-center gap-1.5">
+                    <p className="text-xs text-[#A855F7] mt-0.5 flex items-center gap-1.5">
                       <Hash className="h-3.5 w-3.5" />
                       {getChannelName(g.channel_id)}
                     </p>
@@ -151,11 +151,11 @@ export function GiveawayForm({ initialGiveaways, channels, guildId }: GiveawayFo
 
                 <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/5 text-xs">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-[#78716C] tracking-wider block">Winners</span>
+                    <span className="text-[10px] uppercase font-bold text-[#948BA3] tracking-wider block">Winners</span>
                     <span className="font-bold text-white">{g.winners} {g.winners === 1 ? 'member' : 'members'}</span>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-[#78716C] tracking-wider block">Ends At</span>
+                    <span className="text-[10px] uppercase font-bold text-[#948BA3] tracking-wider block">Ends At</span>
                     <span className="font-bold text-slate-300">{formatTimestamp(g.ends_at)}</span>
                   </div>
                 </div>
@@ -168,7 +168,7 @@ export function GiveawayForm({ initialGiveaways, channels, guildId }: GiveawayFo
               <Gift className="h-6 w-6" />
             </div>
             <p className="text-sm font-bold text-slate-300">No active giveaways</p>
-            <p className="text-xs text-[#78716C] max-w-sm">
+            <p className="text-xs text-[#948BA3] max-w-sm">
               Use Discord commands to host a giveaway. They will automatically appear and synchronize here in real-time.
             </p>
           </div>
@@ -176,29 +176,29 @@ export function GiveawayForm({ initialGiveaways, channels, guildId }: GiveawayFo
       </div>
 
       {/* Command Guide */}
-      <div className="p-8 rounded-3xl bg-[#0C0B0F]/90 border border-white/5 backdrop-blur-2xl shadow-xl space-y-4">
+      <div className="p-8 rounded-3xl bg-[#0D0B18]/90 border border-white/5 backdrop-blur-2xl shadow-xl space-y-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-[#EAB308]/10 text-[#EAB308]">
+          <div className="p-2.5 rounded-xl bg-[#A855F7]/10 text-[#A855F7]">
             <Terminal className="h-5 w-5" />
           </div>
           <div>
             <h4 className="text-base font-bold text-white">Giveaway Command Cheatsheet</h4>
-            <p className="text-xs text-[#78716C]">Quick commands to launch or manage giveaways directly in Discord.</p>
+            <p className="text-xs text-[#948BA3]">Quick commands to launch or manage giveaways directly in Discord.</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
           <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1">
-            <code className="text-xs font-mono font-bold text-[#EAB308]">&gt;gstart 10m 1 Nitro</code>
-            <p className="text-[11px] text-[#78716C]">Starts a 10-minute giveaway with 1 winner for Discord Nitro.</p>
+            <code className="text-xs font-mono font-bold text-[#A855F7]">&gt;gstart 10m 1 Nitro</code>
+            <p className="text-[11px] text-[#948BA3]">Starts a 10-minute giveaway with 1 winner for Discord Nitro.</p>
           </div>
           <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1">
-            <code className="text-xs font-mono font-bold text-[#EAB308]">&gt;greroll &lt;msg_id&gt;</code>
-            <p className="text-[11px] text-[#78716C]">Rerolls a new winner for an already completed giveaway.</p>
+            <code className="text-xs font-mono font-bold text-[#A855F7]">&gt;greroll &lt;msg_id&gt;</code>
+            <p className="text-[11px] text-[#948BA3]">Rerolls a new winner for an already completed giveaway.</p>
           </div>
           <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-1">
-            <code className="text-xs font-mono font-bold text-[#EAB308]">&gt;gend &lt;msg_id&gt;</code>
-            <p className="text-[11px] text-[#78716C]">Immediately ends an active giveaway and picks winners.</p>
+            <code className="text-xs font-mono font-bold text-[#A855F7]">&gt;gend &lt;msg_id&gt;</code>
+            <p className="text-[11px] text-[#948BA3]">Immediately ends an active giveaway and picks winners.</p>
           </div>
         </div>
       </div>

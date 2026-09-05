@@ -164,7 +164,7 @@ export function J2CForm({ initialConfig, channels, guildId }: J2CFormProps) {
 
             <div className={cn("p-6 bg-slate-900/40 border border-slate-800 rounded-2xl space-y-4 transition-all duration-300", !isEnabled && "opacity-50 pointer-events-none")}>
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-[#EAB308]/10 text-[#EAB308] rounded-xl">
+                <div className="p-3 bg-[#A855F7]/10 text-[#A855F7] rounded-xl">
                   <Settings2 className="w-5 h-5" />
                 </div>
                 <div>

@@ -44,10 +44,10 @@ export default async function BackupPage({ params }: { params: { guildId: string
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h2 className="text-2xl font-black text-white flex items-center gap-3 tracking-tight font-outfit uppercase">
-            <Database className="h-7 w-7 text-[#EAB308]" />
+            <Database className="h-7 w-7 text-[#A855F7]" />
             Server Snapshot &amp; Disaster Recovery
           </h2>
-          <p className="text-[#78716C] mt-1 font-medium text-sm">
+          <p className="text-[#948BA3] mt-1 font-medium text-sm">
             1-Click golden snapshots with automated disaster recovery protection.
           </p>
         </div>

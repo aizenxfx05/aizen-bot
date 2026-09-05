@@ -31,7 +31,7 @@ export default async function ServerControlPage({ params }: { params: { guildId:
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-            <SlidersHorizontal className="h-6 w-6 text-[#EAB308]" />
+            <SlidersHorizontal className="h-6 w-6 text-[#A855F7]" />
             Live Server Control
           </h2>
           <p className="text-slate-400 mt-1">

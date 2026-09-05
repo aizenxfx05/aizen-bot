@@ -89,7 +89,7 @@ export function AdminContent() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <RefreshCw className="h-10 w-10 text-[#EAB308] animate-spin opacity-20" />
+        <RefreshCw className="h-10 w-10 text-[#A855F7] animate-spin opacity-20" />
       </div>
     );
   }
@@ -98,30 +98,30 @@ export function AdminContent() {
     { name: "Total Users", value: stats?.total_users || "0", icon: Users, color: "text-blue-500" },
     { name: "Active Servers", value: stats?.active_servers || "0", icon: Server, color: "text-emerald-500" },
     { name: "API Latency", value: stats?.api_latency || "0ms", icon: Activity, color: "text-amber-500" },
-    { name: "Database Size", value: stats?.db_size || "0 MB", icon: Database, color: "text-[#EAB308]" },
+    { name: "Database Size", value: stats?.db_size || "0 MB", icon: Database, color: "text-[#A855F7]" },
   ];
 
   return (
     <div className="space-y-10 animate-in fade-in duration-500">
       {/* Header */}
       <div className="relative group">
-        <div className="absolute -inset-1 bg-gradient-to-r from-[#EAB308] to-[#92400E] rounded-3xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
-        <div className="relative bg-[#0C0A09] border border-[#EAB308]/10 rounded-3xl p-8 lg:p-12 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+        <div className="absolute -inset-1 bg-gradient-to-r from-[#A855F7] to-[#6D28D9] rounded-3xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
+        <div className="relative bg-[#0D0B18] border border-[#A855F7]/10 rounded-3xl p-8 lg:p-12 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
           <div className="flex items-center gap-6">
-            <div className="h-16 w-16 rounded-2xl bg-[#EAB308]/10 flex items-center justify-center border border-[#EAB308]/20 shadow-2xl shadow-[#EAB308]/10">
-              <Shield className="h-8 w-8 text-[#EAB308]" />
+            <div className="h-16 w-16 rounded-2xl bg-[#A855F7]/10 flex items-center justify-center border border-[#A855F7]/20 shadow-2xl shadow-[#A855F7]/10">
+              <Shield className="h-8 w-8 text-[#A855F7]" />
             </div>
             <div>
               <h1 className="text-4xl font-black text-white tracking-tight font-outfit">Admin Control Panel</h1>
-              <p className="text-[#78716C] mt-2 font-medium">Restricted access for Aizen XFX administrators only.</p>
+              <p className="text-[#948BA3] mt-2 font-medium">Restricted access for Aizen XFX administrators only.</p>
             </div>
           </div>
           <button
             onClick={() => fetchData(true)}
-            className="flex items-center gap-3 bg-[#EAB308]/5 px-6 py-3 rounded-2xl border border-[#EAB308]/10 hover:bg-[#EAB308]/10 transition-all active:scale-95 group/refresh"
+            className="flex items-center gap-3 bg-[#A855F7]/5 px-6 py-3 rounded-2xl border border-[#A855F7]/10 hover:bg-[#A855F7]/10 transition-all active:scale-95 group/refresh"
           >
-            <RefreshCw className={cn("h-4 w-4 text-[#EAB308] transition-all", refreshing && "animate-spin")} />
-            <span className="text-xs font-black uppercase tracking-widest text-[#EAB308]">
+            <RefreshCw className={cn("h-4 w-4 text-[#A855F7] transition-all", refreshing && "animate-spin")} />
+            <span className="text-xs font-black uppercase tracking-widest text-[#A855F7]">
               {refreshing ? "Refreshing..." : "Real-time Mode"}
             </span>
           </button>
@@ -152,7 +152,7 @@ export function AdminContent() {
         <div className="lg:col-span-2 glass border border-white/5 rounded-[2.5rem] overflow-hidden">
           <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
             <div className="flex items-center gap-4">
-              <Activity className="h-5 w-5 text-[#EAB308]" />
+              <Activity className="h-5 w-5 text-[#A855F7]" />
               <h3 className="text-lg font-bold text-white">System Nodes Status</h3>
             </div>
             <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Auto-Polling Active</span>
@@ -190,7 +190,7 @@ export function AdminContent() {
         {/* Global Config */}
         <div className="glass border border-white/5 rounded-[2.5rem] overflow-hidden flex flex-col">
           <div className="p-8 border-b border-white/5 flex items-center gap-4 bg-white/[0.01]">
-            <Settings className="h-5 w-5 text-[#EAB308]" />
+            <Settings className="h-5 w-5 text-[#A855F7]" />
             <h3 className="text-lg font-bold text-white">Global Settings</h3>
           </div>
           <div className="p-8 flex-1 space-y-6">
@@ -226,7 +226,7 @@ export function AdminContent() {
               <textarea 
                 value={notification}
                 onChange={(e) => setNotification(e.target.value)}
-                className="w-full h-32 bg-white/[0.03] border border-white/5 rounded-2xl p-4 text-xs font-medium text-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[#EAB308]/30 transition-all placeholder:text-[#57534E]"
+                className="w-full h-32 bg-white/[0.03] border border-white/5 rounded-2xl p-4 text-xs font-medium text-[#F3E8FF] focus:outline-none focus:ring-1 focus:ring-[#A855F7]/30 transition-all placeholder:text-[#57534E]"
                 placeholder="Message to display across all dashboards..."
               />
             </div>

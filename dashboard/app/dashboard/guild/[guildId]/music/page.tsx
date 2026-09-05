@@ -50,10 +50,10 @@ export default async function MusicPage({ params }: { params: { guildId: string 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h2 className="text-2xl font-black text-white flex items-center gap-3 tracking-tight font-outfit uppercase">
-            <Music4 className="h-7 w-7 text-[#EAB308]" />
+            <Music4 className="h-7 w-7 text-[#A855F7]" />
             Music &amp; 24/7 Voice Node
           </h2>
-          <p className="text-[#78716C] mt-1 font-medium text-sm">
+          <p className="text-[#948BA3] mt-1 font-medium text-sm">
             High-fidelity audio streaming, 24/7 dedicated voice connection, and node management.
           </p>
         </div>

@@ -84,8 +84,12 @@ async function request<T>(
     }
 
     return response.json();
-  } catch (error) {
-    console.error(`[API Network/Fetch Error] Failed to fetch ${url}:`, error);
+  } catch (error: any) {
+    if (error?.cause?.code === "ECONNREFUSED" || error?.code === "ECONNREFUSED" || error?.message?.includes("ECONNREFUSED")) {
+      console.warn(`[API Server Offline] Bot API backend is not reachable at ${url}. Make sure your bot is running ('python CodeX.py').`);
+    } else {
+      console.error(`[API Network/Fetch Error] Failed to fetch ${url}:`, error?.message || error);
+    }
     throw error;
   }
 }

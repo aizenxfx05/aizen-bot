@@ -93,7 +93,7 @@ export default function PrivacyPage() {
             </section>
 
             <div className="pt-12 border-t border-white/5">
-              <p className="text-[10px] font-black uppercase text-[#382F48] tracking-[0.4em]">
+              <p className="text-[10px] font-black uppercase text-[#57534E] tracking-[0.4em]">
                 Last Modified: September 2026 // Neural Jurisdiction: Global Edge Network
               </p>
             </div>

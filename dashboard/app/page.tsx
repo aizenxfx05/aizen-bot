@@ -111,7 +111,7 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300">
             <Button
               onClick={() => signIn("discord", { callbackUrl: "/dashboard" })}
-              className="w-full sm:w-auto rounded-2xl px-14 py-9 text-lg font-black uppercase gap-4 group shadow-[0_0_50px_rgba(168,85,247,0.2)] bg-gradient-to-r from-[#EAB308] to-[#92400E] text-[#050508] border-none transition-all hover:scale-105 hover:shadow-[0_0_70px_rgba(168,85,247,0.3)]"
+              className="w-full sm:w-auto rounded-2xl px-14 py-9 text-lg font-black uppercase gap-4 group shadow-[0_0_50px_rgba(234,179,8,0.2)] bg-gradient-to-r from-[#EAB308] to-[#92400E] text-[#050508] border-none transition-all hover:scale-105 hover:shadow-[0_0_70px_rgba(234,179,8,0.3)]"
             >
               <LayoutDashboard className="h-6 w-6 group-hover:rotate-12 transition-transform" />
               Open Dashboard
@@ -147,7 +147,7 @@ export default function LandingPage() {
                   <div className="h-12 w-64 bg-[#EAB308]/[0.08] rounded-[20px] border border-[#EAB308]/15" />
                   <div className="h-6 w-[500px] bg-white/[0.02] rounded-xl" />
                 </div>
-                <div className="h-20 w-20 rounded-[30px] bg-[#EAB308]/[0.08] border border-[#EAB308]/20 flex items-center justify-center shadow-[0_0_30px_rgba(168,85,247,0.15)]">
+                <div className="h-20 w-20 rounded-[30px] bg-[#EAB308]/[0.08] border border-[#EAB308]/20 flex items-center justify-center shadow-[0_0_30px_rgba(234,179,8,0.15)]">
                   <Activity className="h-8 w-8 text-[#EAB308] animate-pulse" />
                 </div>
               </div>
@@ -247,7 +247,7 @@ export default function LandingPage() {
           <div className="relative aspect-square flex items-center justify-center group">
             <div className="absolute inset-0 bg-[#EAB308]/5 blur-[120px] rounded-full animate-pulse" />
             <div className="h-[80%] w-[80%] border-2 border-[#EAB308]/[0.08] rounded-full animate-[spin_60s_linear_infinite] flex items-center justify-center relative">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 h-4 w-4 rounded-full bg-[#EAB308] shadow-[0_0_20px_rgba(168,85,247,0.6)] animate-amber-pulse" />
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 h-4 w-4 rounded-full bg-[#EAB308] shadow-[0_0_20px_rgba(234,179,8,0.6)] animate-amber-pulse" />
               <div className="h-[70%] w-[70%] border border-[#EAB308]/[0.06] rounded-full animate-[spin_40s_linear_infinite_reverse] flex items-center justify-center">
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-3 w-3 rounded-full bg-white/20 shadow-[0_0_20px_rgba(255,255,255,0.2)]" />
                 <div className="h-[60%] w-[60%] border border-[#EAB308]/[0.04] rounded-full animate-[spin_20s_linear_infinite] flex items-center justify-center">
@@ -329,7 +329,7 @@ export default function LandingPage() {
                   <div className="h-32 w-32 bg-[#EAB308]/15 blur-[60px] rounded-full" />
                 </div>
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                  <Bot className="h-20 w-20 text-[#EAB308] shadow-[0_0_50px_rgba(168,85,247,0.4)] bg-[#0C0A09] rounded-3xl p-4 border border-[#EAB308]/30" />
+                  <Bot className="h-20 w-20 text-[#EAB308] shadow-[0_0_50px_rgba(234,179,8,0.4)] bg-[#0C0A09] rounded-3xl p-4 border border-[#EAB308]/30" />
                 </div>
               </div>
             </div>
@@ -366,9 +366,9 @@ export default function LandingPage() {
       {/* ── CTA Section ────────────────────────────────────────── */}
       <section className="py-48 px-6">
         <div className="max-w-6xl mx-auto relative rounded-[80px] p-24 md:p-32 overflow-hidden text-center shadow-[0_40px_100px_rgba(0,0,0,0.7)]"
-          style={{ background: "linear-gradient(135deg, #1A1500 0%, #2A1F00 40%, #1A1200 100%)", border: "1px solid rgba(168,85,247,0.2)" }}>
+          style={{ background: "linear-gradient(135deg, #1A1500 0%, #2A1F00 40%, #1A1200 100%)", border: "1px solid rgba(234,179,8,0.2)" }}>
           <div className="absolute inset-0 opacity-10"
-            style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(168,85,247,0.4) 0%, transparent 70%)" }} />
+            style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(234,179,8,0.4) 0%, transparent 70%)" }} />
           <div className="relative z-10">
             <h2 className="text-7xl md:text-[9rem] font-bold text-white tracking-tighter font-outfit mb-12 uppercase leading-[0.8] italic">
               Ready to <br />Ascend?
@@ -379,12 +379,12 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-8 tracking-widest uppercase text-xs font-black">
               <Button
                 onClick={() => signIn("discord", { callbackUrl: "/dashboard" })}
-                className="w-full sm:w-auto rounded-3xl px-16 py-10 bg-gradient-to-r from-[#EAB308] to-[#92400E] text-[#050508] hover:from-[#F59E0B] hover:to-[#EAB308] border-none shadow-[0_20px_50px_rgba(168,85,247,0.3)] font-black text-lg transition-all hover:scale-105 active:scale-95"
+                className="w-full sm:w-auto rounded-3xl px-16 py-10 bg-gradient-to-r from-[#EAB308] to-[#92400E] text-[#050508] hover:from-[#F59E0B] hover:to-[#EAB308] border-none shadow-[0_20px_50px_rgba(234,179,8,0.3)] font-black text-lg transition-all hover:scale-105 active:scale-95"
               >
                 Get Started Free
               </Button>
               <div className="flex items-center gap-3 text-[#EAB308]">
-                <div className="h-3 w-3 rounded-full bg-[#EAB308] animate-pulse shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
+                <div className="h-3 w-3 rounded-full bg-[#EAB308] animate-pulse shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
                 Aizen Core: Active
               </div>
             </div>

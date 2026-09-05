@@ -27,7 +27,8 @@ from api.schemas import (
     CustomRoleConfig, CustomRoleUpdate, AutoReactConfig, AutoReactUpdate, AutoReactTrigger,
     InvcConfig, InvcUpdate,
     RRConfig, RRUpdate, ReactionRoleEntry,
-    InviteStat, InvitesLeaderboard
+    InviteStat, InvitesLeaderboard,
+    BackupInfo, MusicConfig, MusicUpdate, GiveawayItem, GiveawayCreate
 )
 from typing import TYPE_CHECKING, List, Optional
 import math
@@ -1381,5 +1382,217 @@ async def patch_guild_rr(guild_id: int, data: RRUpdate):
     
     await db.commit()
     return {"status": "success"}
+
+
+# ── Backup Routes ─────────────────────────────────────────────────────────
+
+@router.get("/{guild_id}/backup", response_model=BackupInfo, summary="Get server backup details")
+async def get_guild_backup(guild_id: int, bot: "AizenBot" = Depends(get_bot)):
+    db = await db_manager.get_connection("db/backup.db")
+    await db.execute("""
+        CREATE TABLE IF NOT EXISTS backups (
+            backup_id TEXT PRIMARY KEY,
+            guild_id INTEGER NOT NULL,
+            guild_name TEXT NOT NULL,
+            created_by INTEGER NOT NULL,
+            created_at TEXT NOT NULL,
+            data TEXT NOT NULL
+        )
+    """)
+    await db.execute("""
+        CREATE TABLE IF NOT EXISTS auto_restore_config (
+            guild_id INTEGER PRIMARY KEY,
+            status INTEGER NOT NULL DEFAULT 0,
+            latest_backup_id TEXT,
+            last_snapshot TEXT,
+            log_channel_id INTEGER,
+            auto_nuke_recovery INTEGER NOT NULL DEFAULT 1
+        )
+    """)
+    async with db.execute("SELECT backup_id, guild_name, created_at, data FROM backups WHERE guild_id = ?", (guild_id,)) as cur:
+        row = await cur.fetchone()
+    
+    async with db.execute("SELECT status FROM auto_restore_config WHERE guild_id = ?", (guild_id,)) as cur2:
+        cfg = await cur2.fetchone()
+
+    auto_restore = bool(cfg and cfg["status"] == 1)
+
+    if not row:
+        return BackupInfo(
+            has_backup=False,
+            auto_restore=auto_restore
+        )
+
+    try:
+        data = json.loads(row["data"])
+        roles_count = len(data.get("roles", []))
+        channels_count = len(data.get("channels", []))
+    except Exception:
+        roles_count = 0
+        channels_count = 0
+
+    return BackupInfo(
+        has_backup=True,
+        backup_id=row["backup_id"],
+        created_at=row["created_at"],
+        guild_name=row["guild_name"],
+        roles_count=roles_count,
+        channels_count=channels_count,
+        auto_restore=auto_restore
+    )
+
+
+@router.post("/{guild_id}/backup", summary="Create or replace server backup (strictly 1 backup enforced)")
+async def create_guild_backup(guild_id: int, bot: "AizenBot" = Depends(get_bot)):
+    guild = bot.get_guild(guild_id)
+    if not guild:
+        raise HTTPException(status_code=404, detail="Guild not found on bot instance")
+
+    backup_cog = bot.get_cog("Backup")
+    if backup_cog and hasattr(backup_cog, "_create_snapshot_data"):
+        backup_id = await backup_cog._create_snapshot_data(guild, bot.user.id)
+        return {"status": "success", "backup_id": backup_id}
+
+    # Fallback direct DB snapshot creation
+    import secrets
+    import datetime
+    now_utc = datetime.datetime.utcnow()
+    now_str = now_utc.strftime("%Y-%m-%d %H:%M:%S UTC")
+    backup_id = f"ax-{secrets.token_hex(4)}"
+
+    roles_data = [{"name": r.name, "color": r.color.value, "position": r.position} for r in guild.roles if not r.is_default()]
+    channels_data = [{"name": c.name, "type": "voice" if isinstance(c, type(guild.voice_channels[0])) else "text"} for c in guild.channels]
+    snapshot = {"guild_name": guild.name, "guild_id": guild.id, "roles": roles_data, "channels": channels_data}
+
+    db = await db_manager.get_connection("db/backup.db")
+    await db.execute("DELETE FROM backups WHERE guild_id = ?", (guild_id,))
+    await db.execute(
+        "INSERT INTO backups (backup_id, guild_id, guild_name, created_by, created_at, data) VALUES (?, ?, ?, ?, ?, ?)",
+        (backup_id, guild_id, guild.name, bot.user.id, now_str, json.dumps(snapshot))
+    )
+    await db.commit()
+    return {"status": "success", "backup_id": backup_id}
+
+
+@router.delete("/{guild_id}/backup", summary="Delete server backup")
+async def delete_guild_backup(guild_id: int):
+    db = await db_manager.get_connection("db/backup.db")
+    await db.execute("DELETE FROM backups WHERE guild_id = ?", (guild_id,))
+    await db.commit()
+    return {"status": "success"}
+
+
+# ── Music Routes ──────────────────────────────────────────────────────────
+
+@router.get("/{guild_id}/music", response_model=MusicConfig, summary="Get Music 24/7 configuration")
+async def get_guild_music(guild_id: int, bot: "AizenBot" = Depends(get_bot)):
+    db = await db_manager.get_connection("db/247.db")
+    await db.execute("""
+        CREATE TABLE IF NOT EXISTS twentyfour_seven (
+            guild_id INTEGER PRIMARY KEY,
+            channel_id INTEGER,
+            text_channel_id INTEGER
+        )
+    """)
+    async with db.execute("SELECT channel_id, text_channel_id FROM twentyfour_seven WHERE guild_id = ?", (guild_id,)) as cur:
+        row = await cur.fetchone()
+
+    music_cog = bot.get_cog("Music")
+    node_connected = True
+    if music_cog and hasattr(music_cog, "twenty_four_seven"):
+        is_active = guild_id in music_cog.twenty_four_seven
+    else:
+        is_active = row is not None
+
+    return MusicConfig(
+        is_247=is_active,
+        channel_id=str(row["channel_id"]) if row and row["channel_id"] else None,
+        text_channel_id=str(row["text_channel_id"]) if row and row["text_channel_id"] else None,
+        node_connected=node_connected,
+        node_name="Aizen Lavalink Node 01"
+    )
+
+
+@router.patch("/{guild_id}/music", summary="Update Music 24/7 configuration")
+async def patch_guild_music(guild_id: int, data: MusicUpdate, bot: "AizenBot" = Depends(get_bot)):
+    db = await db_manager.get_connection("db/247.db")
+    await db.execute("""
+        CREATE TABLE IF NOT EXISTS twentyfour_seven (
+            guild_id INTEGER PRIMARY KEY,
+            channel_id INTEGER,
+            text_channel_id INTEGER
+        )
+    """)
+    music_cog = bot.get_cog("Music")
+
+    if data.is_247 is False:
+        await db.execute("DELETE FROM twentyfour_seven WHERE guild_id = ?", (guild_id,))
+        await db.commit()
+        if music_cog and hasattr(music_cog, "twenty_four_seven"):
+            music_cog.twenty_four_seven.pop(guild_id, None)
+        return {"status": "success"}
+
+    if data.is_247 is True:
+        ch_id = int(data.channel_id) if data.channel_id else 0
+        txt_id = int(data.text_channel_id) if data.text_channel_id else 0
+        await db.execute("""
+            INSERT INTO twentyfour_seven (guild_id, channel_id, text_channel_id)
+            VALUES (?, ?, ?)
+            ON CONFLICT(guild_id) DO UPDATE SET
+                channel_id = excluded.channel_id,
+                text_channel_id = excluded.text_channel_id
+        """, (guild_id, ch_id, txt_id))
+        await db.commit()
+        if music_cog and hasattr(music_cog, "twenty_four_seven"):
+            music_cog.twenty_four_seven[guild_id] = {"channel_id": ch_id, "text_channel_id": txt_id}
+        return {"status": "success"}
+
+    return {"status": "unchanged"}
+
+
+# ── Giveaway Routes ───────────────────────────────────────────────────────
+
+@router.get("/{guild_id}/giveaways", response_model=List[GiveawayItem], summary="List server giveaways")
+async def get_guild_giveaways(guild_id: int):
+    db = await db_manager.get_connection("db/giveaways.db")
+    await db.execute("""
+        CREATE TABLE IF NOT EXISTS Giveaway (
+            guild_id INTEGER,
+            host_id INTEGER,
+            start_time TIMESTAMP,
+            ends_at TIMESTAMP,
+            prize TEXT,
+            winners INTEGER,
+            message_id INTEGER,
+            channel_id INTEGER,
+            PRIMARY KEY (guild_id, message_id)
+        )
+    """)
+    async with db.execute(
+        "SELECT message_id, channel_id, prize, winners, ends_at, host_id FROM Giveaway WHERE guild_id = ? ORDER BY ends_at DESC",
+        (guild_id,)
+    ) as cur:
+        rows = await cur.fetchall()
+
+    return [
+        GiveawayItem(
+            message_id=str(r["message_id"]),
+            channel_id=str(r["channel_id"]),
+            prize=r["prize"],
+            winners=r["winners"],
+            ends_at=float(r["ends_at"]) if r["ends_at"] else 0.0,
+            host_id=str(r["host_id"]) if r["host_id"] else None
+        )
+        for r in rows
+    ]
+
+
+@router.delete("/{guild_id}/giveaways/{message_id}", summary="Delete or end a giveaway")
+async def delete_guild_giveaway(guild_id: int, message_id: int):
+    db = await db_manager.get_connection("db/giveaways.db")
+    await db.execute("DELETE FROM Giveaway WHERE guild_id = ? AND message_id = ?", (guild_id, message_id))
+    await db.commit()
+    return {"status": "success"}
+
 
 

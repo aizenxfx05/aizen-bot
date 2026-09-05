@@ -184,7 +184,7 @@ export default function VerificationPage({ params }: { params: { guildId: string
               {/* Verification Method */}
               <div className="p-6 bg-slate-900/40 border border-slate-800 rounded-2xl space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-3 bg-purple-500/20 text-purple-500 rounded-xl"><Fingerprint className="w-5 h-5" /></div>
+                  <div className="p-3 bg-[#EAB308]/10 text-[#EAB308] rounded-xl"><Fingerprint className="w-5 h-5" /></div>
                   <div>
                     <h4 className="font-bold text-white">Verification Method</h4>
                     <p className="text-xs text-slate-400 mt-1">How users verify themselves</p>

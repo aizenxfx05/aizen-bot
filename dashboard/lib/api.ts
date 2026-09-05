@@ -35,7 +35,10 @@ import {
   AutoRoleUpdate,
   AdminStats,
   AdminConfig,
-  AdminConfigUpdate
+  AdminConfigUpdate,
+  BackupInfo,
+  MusicConfig,
+  GiveawayItem
 } from "@/types/api";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
@@ -302,4 +305,34 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+
+  // Backup System
+  getBackup: (guildId: string) => 
+    request<BackupInfo>(`/guilds/${guildId}/backup`),
+  createBackup: (guildId: string) => 
+    request<{ status: string; backup_id: string }>(`/guilds/${guildId}/backup`, {
+      method: "POST",
+    }),
+  deleteBackup: (guildId: string) => 
+    request<{ status: string }>(`/guilds/${guildId}/backup`, {
+      method: "DELETE",
+    }),
+
+  // Music System
+  getMusic: (guildId: string) => 
+    request<MusicConfig>(`/guilds/${guildId}/music`),
+  updateMusic: (guildId: string, data: Partial<MusicConfig>) => 
+    request<{ status: string }>(`/guilds/${guildId}/music`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
+
+  // Giveaway System
+  getGiveaways: (guildId: string) => 
+    request<GiveawayItem[]>(`/guilds/${guildId}/giveaways`),
+  deleteGiveaway: (guildId: string, messageId: string) => 
+    request<{ status: string }>(`/guilds/${guildId}/giveaways/${messageId}`, {
+      method: "DELETE",
+    }),
 };
+

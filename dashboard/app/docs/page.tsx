@@ -84,7 +84,7 @@ export default function DocsPage() {
           </Link>
           
           <div className="hidden lg:flex items-center w-80 relative group">
-            <SearchIcon className="absolute left-4 h-4 w-4 text-[#382F48] group-focus-within:text-[#EAB308] transition-colors" />
+            <SearchIcon className="absolute left-4 h-4 w-4 text-[#57534E] group-focus-within:text-[#EAB308] transition-colors" />
             <input
               type="text"
               placeholder="Search documentation..."
@@ -129,7 +129,7 @@ export default function DocsPage() {
                       className={cn(
                         "w-full flex flex-col items-start gap-1 p-4 rounded-2xl transition-all text-left",
                         activeTab === item.name
-                          ? "bg-[#EAB308]/[0.08] border border-[#EAB308]/20 shadow-[0_0_20px_rgba(168,85,247,0.05)]"
+                          ? "bg-[#EAB308]/[0.08] border border-[#EAB308]/20 shadow-[0_0_20px_rgba(234,179,8,0.05)]"
                           : "hover:bg-white/[0.02] border border-transparent"
                       )}
                     >

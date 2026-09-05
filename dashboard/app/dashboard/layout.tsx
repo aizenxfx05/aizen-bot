@@ -22,7 +22,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Server, ShieldCheck, Ticket, BarChart4, FileText, Settings,
   Menu, X, Bell, User, Search, ChevronRight, Star, Sparkles, LogOut,
-  LifeBuoy, ChevronDown, Bot, Shield
+  LifeBuoy, ChevronDown, Bot, Shield, Database, Gift, Music4, SlidersHorizontal
 } from "lucide-react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { cn, isAdmin } from "@/lib/utils";
@@ -134,9 +134,24 @@ export default function DashboardLayout({
             { name: "Join to Create", href: `/dashboard/guild/${currentGuildId}/j2c`, icon: Menu },
             { name: "Custom Roles", href: `/dashboard/guild/${currentGuildId}/customroles`, icon: ShieldCheck },
             { name: "Voice Role", href: `/dashboard/guild/${currentGuildId}/invcrole`, icon: Settings },
+            { name: "Backup", href: `/dashboard/guild/${currentGuildId}/backup`, icon: Database },
+            { name: "Giveaway", href: `/dashboard/guild/${currentGuildId}/giveaway`, icon: Gift },
           ],
         },
-        { name: "Settings", href: `/dashboard/guild/${currentGuildId}/settings`, icon: Settings },
+        {
+          name: "Entertainment",
+          items: [
+            { name: "Music", href: `/dashboard/guild/${currentGuildId}/music`, icon: Music4 },
+          ],
+        },
+        {
+          name: "Management",
+          items: [
+            { name: "Logging", href: `/dashboard/guild/${currentGuildId}/logging`, icon: FileText },
+            { name: "Server Control", href: `/dashboard/guild/${currentGuildId}/server-control`, icon: SlidersHorizontal },
+            { name: "Settings", href: `/dashboard/guild/${currentGuildId}/settings`, icon: Settings },
+          ],
+        },
         { name: "Back to Servers", href: "/dashboard/guilds", icon: Server },
       ]
     : [
@@ -162,7 +177,7 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-[#050508] text-[#FAFAF9]">
-      {/* Purple Background Glow Elements */}
+      {/* Amber Background Glow Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-[#EAB308]/[0.04] blur-[120px] rounded-full animate-pulse" />
         <div className="absolute bottom-[10%] left-[-5%] w-[30%] h-[30%] bg-[#A16207]/[0.03] blur-[100px] rounded-full animate-pulse [animation-delay:2s]" />
@@ -225,7 +240,7 @@ export default function DashboardLayout({
                           className={cn(
                             "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group text-[13px] font-bold",
                             isActive
-                              ? "bg-[#EAB308]/[0.08] text-[#EAB308] border border-[#EAB308]/20 shadow-[0_0_20px_rgba(168,85,247,0.08)]"
+                              ? "bg-[#EAB308]/[0.08] text-[#EAB308] border border-[#EAB308]/20 shadow-[0_0_20px_rgba(234,179,8,0.08)]"
                               : "text-slate-400 hover:bg-white/[0.03] hover:text-slate-200"
                           )}
                         >
@@ -239,7 +254,7 @@ export default function DashboardLayout({
                           />
                           {subItem.name}
                           {isActive && (
-                            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#EAB308] animate-pulse shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
+                            <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#EAB308] animate-pulse shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
                           )}
                         </Link>
                       );
@@ -257,14 +272,14 @@ export default function DashboardLayout({
                 className={cn(
                   "flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group text-[14px] font-bold",
                   isActive
-                    ? "bg-[#EAB308]/[0.08] text-[#EAB308] border border-[#EAB308]/20 shadow-[0_0_20px_rgba(168,85,247,0.08)]"
+                    ? "bg-[#EAB308]/[0.08] text-[#EAB308] border border-[#EAB308]/20 shadow-[0_0_20px_rgba(234,179,8,0.08)]"
                     : "text-[#78716C] hover:bg-white/[0.03] hover:text-[#FAFAF9]"
                 )}
               >
                 <item.icon
                   className={cn(
                     "h-5 w-5 transition-all duration-300",
-                    isActive ? "text-[#EAB308] scale-110" : "text-[#382F48] group-hover:text-[#78716C]"
+                    isActive ? "text-[#EAB308] scale-110" : "text-[#57534E] group-hover:text-[#78716C]"
                   )}
                 />
                 {item.name}
@@ -363,12 +378,12 @@ export default function DashboardLayout({
               >
                 <Bell className="h-5 w-5" />
               {globalNotification && (
-                <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-[#EAB308] border-2 border-[#050508] shadow-[0_0_10px_rgba(168,85,247,0.5)]"></span>
+                <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-[#EAB308] border-2 border-[#050508] shadow-[0_0_10px_rgba(234,179,8,0.5)]"></span>
                 )}
               </button>
 
               {isNotificationsOpen && (
-                <div className="absolute right-0 mt-3 w-80 bg-[#0a0f1e]/90 backdrop-blur-3xl border border-white/5 rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-4 z-20 animate-in fade-in zoom-in-95 duration-300 origin-top-right">
+                <div className="absolute right-0 mt-3 w-80 bg-[#0C0B0F]/95 backdrop-blur-3xl border border-white/5 rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-4 z-20 animate-in fade-in zoom-in-95 duration-300 origin-top-right">
                     <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
                       <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Broadcast Metrics</p>
                       <button 
@@ -392,7 +407,7 @@ export default function DashboardLayout({
                     ) : (
                       <div className="py-8 flex flex-col items-center justify-center text-center">
                         <div className="h-10 w-10 rounded-full bg-[#1A1500] flex items-center justify-center mb-3">
-                          <Bell className="h-5 w-5 text-[#382F48]" />
+                          <Bell className="h-5 w-5 text-[#57534E]" />
                         </div>
                         <p className="text-xs font-bold text-slate-500">No active broadcasts</p>
                         <p className="text-[10px] font-medium text-slate-600 mt-1 uppercase tracking-widest">Everything is operating normally</p>
@@ -428,7 +443,7 @@ export default function DashboardLayout({
               </button>
 
               {isProfileOpen && (
-                <div className="absolute right-0 mt-3 w-56 bg-[#0a0f1e]/90 backdrop-blur-3xl border border-white/5 rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-2 z-20 animate-in fade-in zoom-in-95 duration-300 origin-top-right">
+                <div className="absolute right-0 mt-3 w-56 bg-[#0C0B0F]/95 backdrop-blur-3xl border border-white/5 rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-2 z-20 animate-in fade-in zoom-in-95 duration-300 origin-top-right">
                     <div className="px-4 py-3 border-b border-white/5 mb-2">
                       <p className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1">Authenticated As</p>
                       <p className="text-sm font-bold text-white truncate">{session?.user?.name || "Administrator"}</p>

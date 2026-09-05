@@ -23,8 +23,8 @@
   --primary-glow-soft:   rgba(234, 179, 8, 0.08);
 
   /* Text */
-  --foreground:          #FAFAF9;        /* Soft ethereal lavender */
-  --foreground-muted:    #78716C;        /* Muted slate violet */
+  --foreground:          #FAFAF9;        /* Warm crisp white */
+  --foreground-muted:    #78716C;        /* Muted stone */
 
   /* Borders & Glass */
   --glass-bg:            rgba(5, 5, 8, 0.80);

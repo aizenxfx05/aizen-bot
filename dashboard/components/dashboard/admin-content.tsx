@@ -98,7 +98,7 @@ export function AdminContent() {
     { name: "Total Users", value: stats?.total_users || "0", icon: Users, color: "text-blue-500" },
     { name: "Active Servers", value: stats?.active_servers || "0", icon: Server, color: "text-emerald-500" },
     { name: "API Latency", value: stats?.api_latency || "0ms", icon: Activity, color: "text-amber-500" },
-    { name: "Database Size", value: stats?.db_size || "0 MB", icon: Database, color: "text-purple-500" },
+    { name: "Database Size", value: stats?.db_size || "0 MB", icon: Database, color: "text-[#EAB308]" },
   ];
 
   return (
@@ -190,7 +190,7 @@ export function AdminContent() {
         {/* Global Config */}
         <div className="glass border border-white/5 rounded-[2.5rem] overflow-hidden flex flex-col">
           <div className="p-8 border-b border-white/5 flex items-center gap-4 bg-white/[0.01]">
-            <Settings className="h-5 w-5 text-indigo-500" />
+            <Settings className="h-5 w-5 text-[#EAB308]" />
             <h3 className="text-lg font-bold text-white">Global Settings</h3>
           </div>
           <div className="p-8 flex-1 space-y-6">
@@ -226,7 +226,7 @@ export function AdminContent() {
               <textarea 
                 value={notification}
                 onChange={(e) => setNotification(e.target.value)}
-                className="w-full h-32 bg-white/[0.03] border border-white/5 rounded-2xl p-4 text-xs font-medium text-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[#EAB308]/30 transition-all placeholder:text-[#382F48]"
+                className="w-full h-32 bg-white/[0.03] border border-white/5 rounded-2xl p-4 text-xs font-medium text-[#FAFAF9] focus:outline-none focus:ring-1 focus:ring-[#EAB308]/30 transition-all placeholder:text-[#57534E]"
                 placeholder="Message to display across all dashboards..."
               />
             </div>

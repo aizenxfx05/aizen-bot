@@ -344,3 +344,43 @@ class AdminConfig(BaseModel):
 class AdminConfigUpdate(BaseModel):
     maintenance_mode: Optional[bool] = None
     global_notification: Optional[str] = None
+
+
+class BackupInfo(BaseModel):
+    has_backup: bool
+    backup_id: Optional[str] = None
+    created_at: Optional[str] = None
+    guild_name: Optional[str] = None
+    roles_count: int = 0
+    channels_count: int = 0
+    auto_restore: bool = False
+
+
+class MusicConfig(BaseModel):
+    is_247: bool
+    channel_id: Optional[str] = None
+    text_channel_id: Optional[str] = None
+    node_connected: bool = True
+    node_name: str = "Aizen Lavalink Node"
+
+
+class MusicUpdate(BaseModel):
+    is_247: Optional[bool] = None
+    channel_id: Optional[str] = None
+    text_channel_id: Optional[str] = None
+
+
+class GiveawayItem(BaseModel):
+    message_id: str
+    channel_id: str
+    prize: str
+    winners: int
+    ends_at: float
+    host_id: Optional[str] = None
+
+
+class GiveawayCreate(BaseModel):
+    channel_id: str
+    prize: str
+    winners: int = 1
+    duration_minutes: int = 60

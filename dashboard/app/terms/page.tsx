@@ -93,7 +93,7 @@ export default function TermsPage() {
             </section>
 
             <div className="pt-12 border-t border-white/5">
-              <p className="text-[10px] font-black uppercase text-[#382F48] tracking-[0.4em]">
+              <p className="text-[10px] font-black uppercase text-[#57534E] tracking-[0.4em]">
                 September 2026 // Distributed via {process.env.NEXT_PUBLIC_BRAND_NAME || "Aizen XFX"} Neural Cloud
               </p>
             </div>

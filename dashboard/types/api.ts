@@ -277,3 +277,30 @@ export interface AdminConfigUpdate {
   maintenance_mode?: boolean;
   global_notification?: string | null;
 }
+
+export interface BackupInfo {
+  has_backup: boolean;
+  backup_id: string | null;
+  created_at: string | null;
+  guild_name: string | null;
+  roles_count: number;
+  channels_count: number;
+  auto_restore: boolean;
+}
+
+export interface MusicConfig {
+  is_247: boolean;
+  channel_id: string | null;
+  text_channel_id: string | null;
+  node_connected: boolean;
+  node_name: string;
+}
+
+export interface GiveawayItem {
+  message_id: string;
+  channel_id: string;
+  prize: string;
+  winners: number;
+  ends_at: number;
+  host_id?: string;
+}

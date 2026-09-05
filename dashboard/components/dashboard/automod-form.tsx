@@ -42,6 +42,7 @@ const PUNISHMENT_OPTIONS = [
   { value: "mute", label: "Mute User" },
   { value: "kick", label: "Kick User" },
   { value: "ban", label: "Ban User" },
+  { value: "Remove Role", label: "Remove Role" },
 ];
 
 const RULES = [

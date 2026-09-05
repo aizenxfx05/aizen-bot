@@ -23,7 +23,29 @@ import re
 class AntiInvite(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.invite_pattern = re.compile(r'(https?://)?(www\.)?(discord\.gg|discordapp\.com/invite|discord\.com/invite)/\S+')
+        self.invite_pattern = re.compile(r'(https?://)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com/invite|discord\.com/invite)/\S+')
+        self.recent_invites = {}
+
+    async def remove_user_roles(self, user: discord.Member, guild: discord.Guild, reason: str):
+        """Removes all roles from the user that the bot has permission to remove."""
+        if not guild.me.guild_permissions.manage_roles:
+            return []
+
+        bot_top_role = guild.me.top_role
+        roles_to_remove = [
+            role for role in user.roles
+            if role != guild.default_role
+            and not role.managed
+            and role.position < bot_top_role.position
+        ]
+        if not roles_to_remove:
+            return []
+
+        try:
+            await user.remove_roles(*roles_to_remove, reason=reason)
+            return [r.name for r in roles_to_remove]
+        except (discord.Forbidden, discord.HTTPException):
+            return []
 
     async def is_automod_enabled(self, guild_id):
         async with aiosqlite.connect("db/automod.db") as db:
@@ -78,6 +100,9 @@ class AntiInvite(commands.Cog):
             return
 
         guild = message.guild
+        if not guild:
+            return
+
         user = message.author
         channel = message.channel
         guild_id = guild.id
@@ -105,28 +130,57 @@ class AntiInvite(commands.Cog):
                 if any(invite.code == invite_code for invite in invite):
                     return  
 
+                # 1. Immediately delete the invite link
+                try:
+                    await message.delete()
+                except (discord.Forbidden, discord.HTTPException, discord.NotFound):
+                    pass
+
+                # 2. Track rapid invite spamming
+                current_time = message.created_at.timestamp()
+                user_invites = self.recent_invites.get(user.id, [])
+                user_invites = [t for t in user_invites if current_time - t < 10]
+                user_invites.append(current_time)
+                self.recent_invites[user.id] = user_invites
+
+                is_spam = len(user_invites) >= 2
+                reason = "Spamming invite links" if is_spam else "Posted an invite link"
+
+                # 3. Automatically remove user's roles
+                removed_roles = await self.remove_user_roles(user, guild, reason=f"Automod Anti-Invite: {reason}")
+                roles_text = f" & stripped of {len(removed_roles)} role(s)" if removed_roles else ""
+
                 punishment = await self.get_punishment(guild_id)
+                punishment_clean = (punishment or "").strip().lower()
                 action_taken = None
-                reason = "Posted an invite link"
 
                 try:
-                    if punishment == "Mute":
+                    if punishment_clean in ["remove role", "remove_role", "removerole"]:
+                        if removed_roles:
+                            action_taken = f"stripped of {len(removed_roles)} role(s)"
+                        else:
+                            action_taken = "warned (no removable roles)"
+                    elif punishment_clean == "mute":
                         timeout_duration = discord.utils.utcnow() + timedelta(minutes=12)
-                        await user.edit(timed_out_until=timeout_duration, reason="Posted an invite link")
-                        action_taken = "Muted for 12 minutes"
-                    elif punishment == "Kick":
-                        await user.kick(reason="Posted an invite link")
-                        action_taken = "Kicked"
-                    elif punishment == "Ban":
-                        await user.ban(reason="Posted an invite link")
-                        action_taken = "Banned"
-                        
-                    await message.delete()
+                        await user.edit(timed_out_until=timeout_duration, reason=reason)
+                        action_taken = f"Muted for 12 minutes{roles_text}"
+                    elif punishment_clean == "kick":
+                        await user.kick(reason=reason)
+                        action_taken = f"Kicked{roles_text}"
+                    elif punishment_clean == "ban":
+                        await user.ban(reason=reason)
+                        action_taken = f"Banned{roles_text}"
+                    else:
+                        if removed_roles:
+                            action_taken = f"stripped of {len(removed_roles)} role(s)"
+                        else:
+                            action_taken = "warned & invite deleted"
 
                     simple_embed = discord.Embed(title="Automod Anti-Invite", color=0xA855F7)
-                    simple_embed.description = f"{TICK} | {user.mention} has been successfully **{action_taken}** for **posting an invite link.**"
+                    simple_embed.description = f"{TICK} | {user.mention} has been successfully **{action_taken}** for **{reason}.**"
                     
-                    simple_embed.set_footer(text="Use the “automod logging” command to get automod logs if it is not enabled.", icon_url=self.bot.user.avatar.url)
+                    avatar_url = self.bot.user.display_avatar.url if self.bot.user else None
+                    simple_embed.set_footer(text="Use the “automod logging” command to get automod logs if it is not enabled.", icon_url=avatar_url)
                     await channel.send(embed=simple_embed, delete_after=30)
 
                     await self.log_action(guild, user, channel, action_taken, reason)

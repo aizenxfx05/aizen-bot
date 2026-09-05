@@ -204,6 +204,8 @@ class Backup(Cog):
         backup_id = f"ax-{secrets.token_hex(4)}"
 
         async with aiosqlite.connect(DB_PATH) as db:
+            # Enforce strictly 1 backup per guild in database
+            await db.execute("DELETE FROM backups WHERE guild_id = ?", (guild.id,))
             await db.execute(
                 "INSERT INTO backups (backup_id, guild_id, guild_name, created_by, created_at, data) VALUES (?, ?, ?, ?, ?, ?)",
                 (backup_id, guild.id, guild.name, creator_id, now_str, json.dumps(snapshot))
@@ -443,7 +445,8 @@ class Backup(Cog):
             parts = sub.strip().split()
             cmd = parts[0].lower()
             if cmd in ["create", "new", "make", "save"]:
-                await self.backup_create(ctx)
+                flag = parts[1].lower() if len(parts) > 1 else None
+                await self.backup_create(ctx, flag=flag)
                 return
             elif cmd in ["list", "all", "show"]:
                 await self.backup_list(ctx)
@@ -472,8 +475,9 @@ class Backup(Cog):
                 f"• **Automatic Server Restore Protection:** {auto_status}\n"
                 f"• **Active Master Snapshot:** `{latest_id}`\n\n"
                 "__**Manual Backup Commands:**__\n"
-                f"`{ctx.prefix}backup create` — Create a fresh server snapshot\n"
-                f"`{ctx.prefix}backup list` — View all saved server snapshots\n"
+                f"`{ctx.prefix}backup create` — Create a server snapshot (1 per server)\n"
+                f"`{ctx.prefix}backup create --replace` — Replace existing backup with a fresh snapshot\n"
+                f"`{ctx.prefix}backup list` — View the saved server snapshot\n"
                 f"`{ctx.prefix}backup info <id>` — View detailed snapshot contents & stats\n"
                 f"`{ctx.prefix}backup load <id>` — Restore a saved snapshot with confirmation\n"
                 f"`{ctx.prefix}backup delete <id>` — Delete a saved snapshot\n\n"
@@ -492,8 +496,35 @@ class Backup(Cog):
 
     @backup_group.command(name="create", aliases=["new", "make", "save"])
     @backup_admin_check()
-    async def backup_create(self, ctx: Context):
-        """Creates a snapshot of the current server's roles, channels, and structure."""
+    async def backup_create(self, ctx: Context, flag: str = None):
+        """Creates a snapshot of the current server's roles, channels, and structure. Only 1 backup allowed per server."""
+        # Check if a backup already exists for this server
+        async with aiosqlite.connect(DB_PATH) as db:
+            async with db.execute(
+                "SELECT backup_id, created_at FROM backups WHERE guild_id = ? ORDER BY created_at DESC",
+                (ctx.guild.id,)
+            ) as cursor:
+                existing_backups = await cursor.fetchall()
+
+        is_replace = flag is not None and flag.lower() in ["--replace", "-r", "--force", "-f", "replace", "overwrite", "force"]
+
+        if existing_backups and not is_replace:
+            existing_id, created_at = existing_backups[0]
+            embed = discord.Embed(
+                title="⚠️ Backup Already Exists",
+                description=(
+                    f"This server already has a saved backup: `{existing_id}`\n"
+                    f"*(Created: `{created_at}`)*\n\n"
+                    f"Each server can only have **1 backup**.\n\n"
+                    f"• **Restore this backup:** `{ctx.prefix}backup load {existing_id}`\n"
+                    f"• **Replace with fresh backup:** `{ctx.prefix}backup create --replace`\n"
+                    f"• **Delete existing backup:** `{ctx.prefix}backup delete {existing_id}`"
+                ),
+                color=0xE74C3C
+            )
+            embed.set_footer(text=f"{BotName} Security • 1 Backup Limit per Server")
+            return await ctx.reply(embed=embed, mention_author=False)
+
         progress_msg = await ctx.reply("🟣 *Capturing server state (roles, categories, channels)...*", mention_author=False)
         backup_id = await self._create_snapshot_data(ctx.guild, ctx.author.id)
 
@@ -504,34 +535,37 @@ class Backup(Cog):
 
         embed = discord.Embed(
             title="🟣 Server Snapshot Created",
-            description=f"Snapshot successfully saved with ID: `{backup_id}`",
+            description=(
+                f"Snapshot successfully saved with ID: `{backup_id}`" +
+                (f"\n*(Replaced previous backup `{existing_backups[0][0]}`)*" if existing_backups else "")
+            ),
             color=THEME_COLOR
         )
         embed.add_field(name="Roles Saved", value=f"`{len(snapshot.get('roles', []))}` roles", inline=True)
         embed.add_field(name="Categories", value=f"`{len(snapshot.get('categories', []))}` categories", inline=True)
         embed.add_field(name="Channels", value=f"`{len(snapshot.get('channels', []))}` channels", inline=True)
         embed.add_field(name="Restore Command", value=f"`{ctx.prefix}backup load {backup_id}`", inline=False)
-        embed.set_footer(text=f"Created by {ctx.author} • Keep your ID private")
+        embed.set_footer(text=f"Created by {ctx.author} • 1 backup saved • Keep your ID private")
 
         await progress_msg.edit(content=None, embed=embed)
 
     @backup_group.command(name="list", aliases=["all", "show"])
     @backup_admin_check()
     async def backup_list(self, ctx: Context):
-        """Lists all snapshots created for this server."""
+        """Lists the saved snapshot for this server."""
         async with aiosqlite.connect(DB_PATH) as db:
-            async with db.execute("SELECT backup_id, created_at, created_by FROM backups WHERE guild_id = ? ORDER BY created_at DESC LIMIT 10", (ctx.guild.id,)) as cursor:
+            async with db.execute("SELECT backup_id, created_at, created_by FROM backups WHERE guild_id = ? ORDER BY created_at DESC", (ctx.guild.id,)) as cursor:
                 rows = await cursor.fetchall()
 
         if not rows:
             return await ctx.reply("No backups found for this server. Use `>backup create` to create one.", mention_author=False)
 
-        embed = discord.Embed(title=f"🟣 Saved Snapshots for {ctx.guild.name}", color=THEME_COLOR)
+        embed = discord.Embed(title=f"🟣 Saved Snapshot for {ctx.guild.name}", color=THEME_COLOR)
         lines = []
         for r in rows:
             lines.append(f"`{r[0]}` — Created on `{r[1]}` by <@{r[2]}>")
         embed.description = "\n".join(lines)
-        embed.set_footer(text=f"Use {ctx.prefix}backup load <id> to restore a snapshot.")
+        embed.set_footer(text=f"Server Backup (1 per server) • Use {ctx.prefix}backup load <id> to restore.")
         await ctx.reply(embed=embed, mention_author=False)
 
     @backup_group.command(name="info", aliases=["view", "details"])
@@ -650,6 +684,7 @@ class Backup(Cog):
         """Deletes a saved snapshot."""
         async with aiosqlite.connect(DB_PATH) as db:
             cursor = await db.execute("DELETE FROM backups WHERE backup_id = ? AND guild_id = ?", (backup_id, ctx.guild.id))
+            await db.execute("UPDATE auto_restore_config SET latest_backup_id = NULL WHERE guild_id = ? AND latest_backup_id = ?", (ctx.guild.id, backup_id))
             await db.commit()
             rows_affected = cursor.rowcount
 
@@ -919,8 +954,8 @@ class Backup(Cog):
 
     @server_backup_cmd.command(name="create", aliases=["new", "make", "save"])
     @backup_admin_check()
-    async def server_backup_create(self, ctx: Context):
-        await self.backup_create(ctx)
+    async def server_backup_create(self, ctx: Context, flag: str = None):
+        await self.backup_create(ctx, flag=flag)
 
     @server_backup_cmd.command(name="load", aliases=["restore", "apply"])
     @backup_admin_check()

@@ -55,12 +55,12 @@ class ShowRules(LayoutView):
 
         rules = {
             "Anti NSFW link": "__**Anti NSFW Link**__:\n• Takes action if the message contains a NSFW link.\n• Default punishment: Block message (unchangeable)",
-            "Anti caps": "__**Anti Caps**__:\n• Takes action if the message contains >70% caps.\n• Messages under 45 characters are bypassed\n• Default punishment: Mute (1 minutes)",
-            "Anti link": "__**Anti Link**__:\n• Takes action if the message contains a link.\n• Server invites, Spotify Music and GIF links are bypassed\n• Default punishment: Mute (7 minutes)",
-            "Anti invites": "__**Anti Invites**__:\n• Takes action if the message contains a Discord server invite.\n• Invites from the current server are bypassed\n• Default punishment: Mute (12 minutes)",
-            "Anti emoji spam": "__**Anti Emoji Spam**__:\n• Takes action if a message contains more than 5 emojis.\n• Default punishment: Mute (1 minute)",
-            "Anti mass mention": "__**Anti Mass Mention**__:\n• Takes action if a message contains more than 4 mentions.\n• Default punishment: Mute (3 minutes)",
-            "Anti spam": "__**Anti Spam**__:\n• Takes action if more than 5 messages are sent rapidly in a short time.\n• Default punishment: Mute (12 minutes)",
+            "Anti caps": "__**Anti Caps**__:\n• Takes action if the message contains >70% caps.\n• Messages under 45 characters are bypassed\n• Available punishments: Mute (1 min), Kick, Ban, Remove Role",
+            "Anti link": "__**Anti Link**__:\n• Takes action if the message contains an unauthorized link.\n• Automatically deletes the posted link and strips member roles.\n• Server invites, Spotify Music and GIF links are bypassed\n• Available punishments: Remove Role, Mute (7 min), Kick, Ban",
+            "Anti invites": "__**Anti Invites**__:\n• Takes action if the message contains a Discord server invite.\n• Automatically deletes the invite and strips member roles.\n• Invites from the current server are bypassed\n• Available punishments: Remove Role, Mute (12 min), Kick, Ban",
+            "Anti emoji spam": "__**Anti Emoji Spam**__:\n• Takes action if a message contains more than 5 emojis.\n• Available punishments: Mute (1 min), Kick, Ban, Remove Role",
+            "Anti mass mention": "__**Anti Mass Mention**__:\n• Takes action if a message contains more than 4 mentions.\n• Available punishments: Mute (3 min), Kick, Ban, Remove Role",
+            "Anti spam": "__**Anti Spam**__:\n• Takes action if more than 5 messages are sent rapidly in a short time.\n• Available punishments: Mute (12 min), Kick, Ban, Remove Role",
         }
 
         enabled_rules = "\n\n".join([rules[event] for event in self.selected_events if event in rules])
@@ -274,7 +274,8 @@ class Automod(commands.Cog):
         async with aiosqlite.connect("db/automod.db") as db:
             await db.execute("INSERT OR REPLACE INTO automod (guild_id, enabled) VALUES (?, 1)", (guild_id,))
             for event in selected_events:
-                await db.execute("INSERT OR REPLACE INTO automod_punishments (guild_id, event, punishment) VALUES (?, ?, ?)", (guild_id, event, self.default_punishment))
+                punishment_to_set = "Remove Role" if event in ["Anti link", "Anti invites"] else self.default_punishment
+                await db.execute("INSERT OR REPLACE INTO automod_punishments (guild_id, event, punishment) VALUES (?, ?, ?)", (guild_id, event, punishment_to_set))
             await db.commit()
 
         
@@ -383,7 +384,7 @@ class Automod(commands.Cog):
             await interaction.response.send_message("You selected: " + ", ".join(selected_events))
 
             punishment_buttons = discord.ui.View()
-            for punishment in ["Mute", "Kick", "Ban"]:
+            for punishment in ["Mute", "Kick", "Ban", "Remove Role"]:
                 button = discord.ui.Button(label=punishment, style=discord.ButtonStyle.danger)
 
                 async def punishment_callback(button_interaction, selected_events=selected_events, punishment=punishment):

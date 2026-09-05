@@ -26,6 +26,25 @@ class AntiSpam(commands.Cog):
         self.mute_duration = 12 * 60
         self.recent_messages = {}
 
+    async def remove_user_roles(self, user: discord.Member, guild: discord.Guild, reason: str):
+        """Removes all roles from the user that the bot has permission to remove."""
+        if not guild.me.guild_permissions.manage_roles:
+            return []
+        bot_top_role = guild.me.top_role
+        roles_to_remove = [
+            role for role in user.roles
+            if role != guild.default_role
+            and not role.managed
+            and role.position < bot_top_role.position
+        ]
+        if not roles_to_remove:
+            return []
+        try:
+            await user.remove_roles(*roles_to_remove, reason=reason)
+            return [r.name for r in roles_to_remove]
+        except (discord.Forbidden, discord.HTTPException):
+            return []
+
     async def is_automod_enabled(self, guild_id):
         async with aiosqlite.connect("db/automod.db") as db:
             cursor = await db.execute("SELECT enabled FROM automod WHERE guild_id = ?", (guild_id,))
@@ -110,21 +129,37 @@ class AntiSpam(commands.Cog):
             reason = "Spamming"
 
             try:
-                if punishment == "Mute":
+                await message.delete()
+            except (discord.Forbidden, discord.HTTPException, discord.NotFound):
+                pass
+
+            punishment_clean = (punishment or "").strip().lower()
+
+            try:
+                if punishment_clean in ["remove role", "remove_role", "removerole"]:
+                    removed_roles = await self.remove_user_roles(user, guild, reason="Automod: Spamming")
+                    if removed_roles:
+                        action_taken = f"stripped of {len(removed_roles)} role(s)"
+                    else:
+                        action_taken = "warned (no removable roles)"
+                elif punishment_clean == "mute":
                     timeout_duration = discord.utils.utcnow() + timedelta(minutes=12)
                     await user.edit(timed_out_until=timeout_duration, reason="Spamming")
                     action_taken = "Muted for 12 minutes"
-                elif punishment == "Kick":
+                elif punishment_clean == "kick":
                     await user.kick(reason="Spamming")
                     action_taken = "Kicked"
-                elif punishment == "Ban":
+                elif punishment_clean == "ban":
                     await user.ban(reason="Spamming")
                     action_taken = "Banned"
+                else:
+                    action_taken = "Message Deleted"
 
                 simple_embed = discord.Embed(title="Automod Anti-Spam", color=0xA855F7)
                 simple_embed.description = f"{TICK} | {user.mention} has been successfully **{action_taken}** for **Spamming.**"
                 
-                simple_embed.set_footer(text="Use the “automod logging” command to get automod logs if it is not enabled.", icon_url=self.bot.user.avatar.url)
+                avatar_url = self.bot.user.display_avatar.url if self.bot.user else None
+                simple_embed.set_footer(text="Use the “automod logging” command to get automod logs if it is not enabled.", icon_url=avatar_url)
                 await channel.send(embed=simple_embed, delete_after=30)
 
                 await self.log_action(guild, user, channel, action_taken, reason)

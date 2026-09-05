@@ -27,6 +27,28 @@ class AntiLink(commands.Cog):
         self.invite_pattern = re.compile(r'(https?://)?(www\.)?(discord\.(gg|io|me|li)|discordapp\.com/invite)/\S+')
         self.gif_pattern = re.compile(r'(\.gif$|^https://(tenor\.com|giphy\.com/gifs|cdn\.discordapp\.com|media\.discordapp\.net))')
         self.spotify_pattern = re.compile(r'^https://open\.spotify\.com/track/\S+')
+        self.recent_links = {}
+
+    async def remove_user_roles(self, user: discord.Member, guild: discord.Guild, reason: str):
+        """Removes all roles from the user that the bot has permission to remove."""
+        if not guild.me.guild_permissions.manage_roles:
+            return []
+
+        bot_top_role = guild.me.top_role
+        roles_to_remove = [
+            role for role in user.roles
+            if role != guild.default_role
+            and not role.managed
+            and role.position < bot_top_role.position
+        ]
+        if not roles_to_remove:
+            return []
+
+        try:
+            await user.remove_roles(*roles_to_remove, reason=reason)
+            return [r.name for r in roles_to_remove]
+        except (discord.Forbidden, discord.HTTPException):
+            return []
 
     async def is_automod_enabled(self, guild_id):
         async with aiosqlite.connect("db/automod.db") as db:
@@ -81,6 +103,9 @@ class AntiLink(commands.Cog):
             return
 
         guild = message.guild
+        if not guild:
+            return
+
         user = message.author
         channel = message.channel
         guild_id = guild.id
@@ -107,27 +132,57 @@ class AntiLink(commands.Cog):
             if self.spotify_pattern.search(message.content):
                 return
 
+            # 1. Immediately delete the offending link
+            try:
+                await message.delete()
+            except (discord.Forbidden, discord.HTTPException, discord.NotFound):
+                pass
+
+            # 2. Track rapid link spamming
+            current_time = message.created_at.timestamp()
+            user_links = self.recent_links.get(user.id, [])
+            user_links = [t for t in user_links if current_time - t < 10]
+            user_links.append(current_time)
+            self.recent_links[user.id] = user_links
+
+            is_spam = len(user_links) >= 2
+            reason = "Spamming links" if is_spam else "Posting a link"
+
+            # 3. Automatically remove user's roles
+            removed_roles = await self.remove_user_roles(user, guild, reason=f"Automod Anti-Link: {reason}")
+            roles_text = f" & stripped of {len(removed_roles)} role(s)" if removed_roles else ""
+
             punishment = await self.get_punishment(guild_id)
+            punishment_clean = (punishment or "").strip().lower()
             action_taken = None
-            reason = "Posted a link"
 
             try:
-                if punishment == "Mute":
+                if punishment_clean in ["remove role", "remove_role", "removerole"]:
+                    if removed_roles:
+                        action_taken = f"stripped of {len(removed_roles)} role(s)"
+                    else:
+                        action_taken = "warned (no removable roles)"
+                elif punishment_clean == "mute":
                     timeout_duration = discord.utils.utcnow() + timedelta(minutes=7)
                     await user.edit(timed_out_until=timeout_duration, reason=reason)
-                    action_taken = "Muted for 7 minutes"
-                elif punishment == "Kick":
+                    action_taken = f"Muted for 7 minutes{roles_text}"
+                elif punishment_clean == "kick":
                     await user.kick(reason=reason)
-                    action_taken = "Kicked"
-                elif punishment == "Ban":
+                    action_taken = f"Kicked{roles_text}"
+                elif punishment_clean == "ban":
                     await user.ban(reason=reason)
-                    action_taken = "Banned"
-                await message.delete()
+                    action_taken = f"Banned{roles_text}"
+                else:
+                    if removed_roles:
+                        action_taken = f"stripped of {len(removed_roles)} role(s)"
+                    else:
+                        action_taken = "warned & link deleted"
 
                 simple_embed = discord.Embed(title="Automod Anti-Link", color=0xA855F7)
-                simple_embed.description = f"{TICK} | {user.mention} has been successfully **{action_taken}** for **Posting a link.**"
+                simple_embed.description = f"{TICK} | {user.mention} has been successfully **{action_taken}** for **{reason}.**"
                 
-                simple_embed.set_footer(text="Use the “automod logging” command to get automod logs if it is not enabled.", icon_url=self.bot.user.avatar.url)
+                avatar_url = self.bot.user.display_avatar.url if self.bot.user else None
+                simple_embed.set_footer(text="Use the “automod logging” command to get automod logs if it is not enabled.", icon_url=avatar_url)
                 await channel.send(embed=simple_embed, delete_after=30)
 
                 await self.log_action(guild, user, channel, action_taken, reason)

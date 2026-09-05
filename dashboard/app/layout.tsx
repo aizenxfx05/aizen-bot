@@ -38,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
-      <body className="font-sans antialiased text-[#F3E8FF] bg-[#07070D]">
+      <body className="font-sans antialiased text-[#FAFAF9] bg-[#050508]">
         <AuthProvider>
           {children}
           <Toaster />

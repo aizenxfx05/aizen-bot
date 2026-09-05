@@ -28,33 +28,33 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
         primary: {
-          DEFAULT: "#A855F7",       // Electric Royal Purple
-          dark:    "#7C3AED",       // Deep Violet
-          light:   "#C084FC",       // Bright Lilac
-          glow:    "rgba(168, 85, 247, 0.5)",
+          DEFAULT: "#EAB308",       // Amber Gold — the eye
+          dark:    "#A16207",       // Deep Amber
+          light:   "#F59E0B",       // Bright Amber
+          glow:    "rgba(234, 179, 8, 0.5)",
         },
         secondary: {
-          DEFAULT: "#07070D",       // Deep Void Obsidian
-          light:   "#0F0D1E",
+          DEFAULT: "#050508",       // Deep Void Obsidian
+          light:   "#111014",
         },
         accent: {
-          purple:   "rgba(168, 85, 247, 0.12)",
+          amber:    "rgba(234, 179, 8, 0.12)",
           glass:    "rgba(255, 255, 255, 0.03)",
-          lavender: "#F3E8FF",      // Ethereal lavender text
+          stone:    "#FAFAF9",      // Crisp white text
         },
-        purple: {
-          DEFAULT: "#A855F7",
-          50:  "#FAF5FF",
-          100: "#F3E8FF",
-          200: "#E9D5FF",
-          300: "#D8B4FE",
-          400: "#C084FC",
-          500: "#A855F7",
-          600: "#9333EA",
-          700: "#7E22CE",
-          800: "#581C87",
-          900: "#3B0764",
-          950: "#1E0338",
+        amber: {
+          DEFAULT: "#EAB308",
+          50:  "#FFFBEB",
+          100: "#FEF3C7",
+          200: "#FDE68A",
+          300: "#FCD34D",
+          400: "#FBBF24",
+          500: "#F59E0B",
+          600: "#D97706",
+          700: "#B45309",
+          800: "#92400E",
+          900: "#78350F",
+          950: "#451A03",
         },
       },
       backgroundImage: {

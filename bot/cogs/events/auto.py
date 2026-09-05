@@ -13,6 +13,7 @@
 # ╚══════════════════════════════════════════════════════════════════╝
 
 import os
+import time
 import asyncio
 import logging
 import aiosqlite
@@ -23,21 +24,31 @@ from utils.config import BotName
 from discord.ext import commands
 from discord.ui import Button, View
 
-DATABASE_PATH = "db/greeted_guilds.db"
+# Module-level singletons to ensure deduplication across all instances & reloads
+_GREETED_GUILDS = set()
+_GREET_LOCK = asyncio.Lock()
+_LAST_GREET_TIME = {}
+
+# Absolute database path independent of working directory
+_BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_DB_DIR = os.path.join(_BASE_DIR, "db")
+os.makedirs(_DB_DIR, exist_ok=True)
+DATABASE_PATH = os.path.join(_DB_DIR, "greeted_guilds.db")
+
 
 class Autorole(Cog):
     def __init__(self, bot: AizenBot):
         self.bot = bot
-        self._recently_greeted = set()
-        self._lock = asyncio.Lock()
 
     async def _is_first_join(self, guild_id: int) -> bool:
-        """Atomically checks and marks the guild as greeted in SQLite and memory."""
-        async with self._lock:
-            if guild_id in self._recently_greeted:
+        """Atomically checks and marks the guild as greeted in SQLite and module-level memory."""
+        now = time.time()
+        async with _GREET_LOCK:
+            if guild_id in _GREETED_GUILDS:
+                return False
+            if guild_id in _LAST_GREET_TIME and (now - _LAST_GREET_TIME[guild_id]) < 600:
                 return False
 
-            os.makedirs("db", exist_ok=True)
             try:
                 async with aiosqlite.connect(DATABASE_PATH) as db:
                     await db.execute("""
@@ -52,17 +63,19 @@ class Autorole(Cog):
                     )
                     await db.commit()
                     if cursor.rowcount == 0:
-                        # Already recorded in database by another call or replica
-                        self._recently_greeted.add(guild_id)
+                        _GREETED_GUILDS.add(guild_id)
+                        _LAST_GREET_TIME[guild_id] = now
                         return False
 
-                    self._recently_greeted.add(guild_id)
+                    _GREETED_GUILDS.add(guild_id)
+                    _LAST_GREET_TIME[guild_id] = now
                     return True
             except Exception as e:
-                logging.error(f"Error in greeted_guilds check: {e}")
-                if guild_id in self._recently_greeted:
+                logging.error(f"Error in greeted_guilds database check: {e}")
+                if guild_id in _GREETED_GUILDS:
                     return False
-                self._recently_greeted.add(guild_id)
+                _GREETED_GUILDS.add(guild_id)
+                _LAST_GREET_TIME[guild_id] = now
                 return True
 
     @commands.Cog.listener(name="on_guild_join")
@@ -72,7 +85,7 @@ class Autorole(Cog):
         if not is_first:
             return
 
-        # 2. Wait a brief moment for the Discord audit log entry to propagate
+        # 2. Wait a moment for the Discord audit log entry to write
         await asyncio.sleep(1.5)
 
         adder = None
@@ -81,7 +94,7 @@ class Autorole(Cog):
                 async for entry in guild.audit_logs(limit=5, action=discord.AuditLogAction.bot_add):
                     if entry.target and entry.target.id == self.bot.user.id:
                         adder = entry.user
-                        break  # Stop immediately once the specific adder is found
+                        break  # Stop immediately once the adder is found
         except Exception as e:
             logging.debug(f"Audit log check error: {e}")
 
@@ -91,6 +104,13 @@ class Autorole(Cog):
 
         if not adder or adder.bot:
             return
+
+        # Extra guard: prevent sending duplicate DM to the same user in short window
+        user_key = f"{adder.id}_{guild.id}"
+        async with _GREET_LOCK:
+            if user_key in _LAST_GREET_TIME and (time.time() - _LAST_GREET_TIME[user_key]) < 600:
+                return
+            _LAST_GREET_TIME[user_key] = time.time()
 
         embed = discord.Embed(
             description=(
@@ -127,7 +147,10 @@ class Autorole(Cog):
     @commands.Cog.listener(name="on_guild_remove")
     async def cleanup_guild_greet(self, guild: discord.Guild):
         """Cleans up greeting record when the bot is removed from a server."""
-        self._recently_greeted.discard(guild.id)
+        async with _GREET_LOCK:
+            _GREETED_GUILDS.discard(guild.id)
+            _LAST_GREET_TIME.pop(guild.id, None)
+
         try:
             async with aiosqlite.connect(DATABASE_PATH) as db:
                 await db.execute("DELETE FROM greeted_guilds WHERE guild_id = ?", (guild.id,))

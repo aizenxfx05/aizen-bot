@@ -52,13 +52,12 @@ async def get_bot_info(bot: "AizenBot" = Depends(get_bot)):
         latency=f"{round(bot.latency * 1000, 2)}ms"
     )
 
-@router.get("/commands", summary="Get all registered bot commands", description="Returns all active commands and cogs loaded into the bot.")
-async def get_bot_commands(bot: "AizenBot" = Depends(get_bot)):
-    """
-    Returns the list of all registered commands and loaded cogs.
-    """
+@router.get("/instance_debug", summary="Debug instance identification")
+async def get_instance_debug():
+    import socket, time
     return {
-        "command_count": len(bot.commands),
-        "commands": sorted([c.name for c in bot.commands]),
-        "cogs": sorted(list(bot.cogs.keys()))
+        "pid": os.getpid(),
+        "hostname": socket.gethostname(),
+        "timestamp": time.time()
     }
+

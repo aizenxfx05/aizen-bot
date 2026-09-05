@@ -35,7 +35,6 @@ class Guild(Cog):
         self.recently_removed_guilds = set()
         self._removal_timestamps = {}
 
-    @client.event
     @commands.Cog.listener(name="on_guild_join")
     async def on_guild_add(self, guild):
         try:
@@ -140,7 +139,6 @@ Threads : {len(guild.threads)}
         except Exception as e:
             logging.error(f"Error in on_guild_join: {e}")
 
-    @client.event
     @commands.Cog.listener(name="on_guild_remove")
     async def on_guild_remove(self, guild):
         import time

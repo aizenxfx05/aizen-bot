@@ -19,6 +19,7 @@ import os
 import time
 import json
 import logging
+import sys
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
@@ -29,11 +30,11 @@ from api.routes import bot, guilds, admin, server_management
 from api.dependencies import verify_api_key, limiter
 from api.db_manager import db_manager
 
-# Configure logging
+# Configure logging to stdout so hosting platforms (e.g. Railway) don't mark INFO as error
 logger = logging.getLogger("api_request_logs")
 logger.setLevel(logging.INFO)
 if not logger.handlers:
-    handler = logging.StreamHandler()
+    handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(logging.Formatter('%(message)s'))
     logger.addHandler(handler)
 

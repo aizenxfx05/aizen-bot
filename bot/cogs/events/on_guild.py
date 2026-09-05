@@ -34,9 +34,13 @@ class Guild(Cog):
         self.client = client
         self.recently_removed_guilds = set()
         self._removal_timestamps = {}
+        self._greeted_guilds = set()
 
     @commands.Cog.listener(name="on_guild_join")
     async def on_guild_add(self, guild):
+        if guild.id in self._greeted_guilds:
+            return
+        self._greeted_guilds.add(guild.id)
         try:
             rope = [
                 inv

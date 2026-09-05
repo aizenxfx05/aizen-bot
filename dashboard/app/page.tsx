@@ -41,10 +41,35 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 const BRAND = process.env.NEXT_PUBLIC_BRAND_NAME || "Aizen XFX";
 
 export default function LandingPage() {
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const error = params.get("error");
+      if (error) {
+        if (error === "OAuthSignin") {
+          toast.error("Discord Sign-In Failed", {
+            description: "Please check your DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, NEXTAUTH_URL, and Discord Redirect URI.",
+            duration: 10000,
+          });
+        } else if (error === "OAuthCallback") {
+          toast.error("Discord Authorization Failed", {
+            description: "Check your Discord Developer Portal OAuth2 Redirect URI.",
+            duration: 10000,
+          });
+        } else {
+          toast.error(`Authentication Error: ${error}`, {
+            description: "Please check your environment variables and configuration.",
+            duration: 10000,
+          });
+        }
+      }
+    }
+  }, []);
   return (
     <div className="min-h-screen bg-[#07070D] text-[#F3E8FF] selection:bg-[#A855F7]/30 font-sans overflow-x-hidden">
 

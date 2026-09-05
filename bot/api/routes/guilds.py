@@ -28,7 +28,8 @@ from api.schemas import (
     InvcConfig, InvcUpdate,
     RRConfig, RRUpdate, ReactionRoleEntry,
     InviteStat, InvitesLeaderboard,
-    BackupInfo, MusicConfig, MusicUpdate, GiveawayItem, GiveawayCreate
+    BackupInfo, MusicConfig, MusicUpdate, GiveawayItem, GiveawayCreate,
+    TagBotConfig, TagBotUpdate
 )
 from typing import TYPE_CHECKING, List, Optional
 import math
@@ -1593,6 +1594,116 @@ async def delete_guild_giveaway(guild_id: int, message_id: int):
     await db.execute("DELETE FROM Giveaway WHERE guild_id = ? AND message_id = ?", (guild_id, message_id))
     await db.commit()
     return {"status": "success"}
+
+
+# --- Tag Bot / Mention Alert Endpoints ---
+
+TAGBOT_DB_PATH = "db/tagbot.db"
+
+async def _ensure_tagbot_table():
+    os.makedirs("db", exist_ok=True)
+    async with aiosqlite.connect(TAGBOT_DB_PATH) as db:
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS tagbot_config (
+                guild_id INTEGER PRIMARY KEY,
+                enabled INTEGER DEFAULT 1,
+                trigger_type TEXT DEFAULT 'single',
+                response_type TEXT DEFAULT 'default',
+                custom_message TEXT DEFAULT NULL,
+                custom_title TEXT DEFAULT NULL,
+                custom_color TEXT DEFAULT '#A855F7',
+                custom_image TEXT DEFAULT NULL,
+                custom_thumbnail TEXT DEFAULT NULL,
+                show_invite INTEGER DEFAULT 1,
+                show_support INTEGER DEFAULT 1,
+                show_dashboard INTEGER DEFAULT 1,
+                auto_delete INTEGER DEFAULT 0,
+                alert_channel_id TEXT DEFAULT NULL,
+                alert_enabled INTEGER DEFAULT 0
+            )
+        """)
+        await db.commit()
+
+
+@router.get("/{guild_id}/tagbot", response_model=TagBotConfig, summary="Get Tag Bot / Mention Alert config")
+@router.get("/{guild_id}/mention", response_model=TagBotConfig, summary="Get Mention Alert config (alias)")
+async def get_guild_tagbot(guild_id: int):
+    await _ensure_tagbot_table()
+    async with aiosqlite.connect(TAGBOT_DB_PATH) as db:
+        db.row_factory = aiosqlite.Row
+        async with db.execute("SELECT * FROM tagbot_config WHERE guild_id = ?", (guild_id,)) as cur:
+            row = await cur.fetchone()
+            if row:
+                return TagBotConfig(
+                    guild_id=str(row["guild_id"]),
+                    enabled=bool(row["enabled"]),
+                    trigger_type=row["trigger_type"] or "single",
+                    response_type=row["response_type"] or "default",
+                    custom_message=row["custom_message"],
+                    custom_title=row["custom_title"],
+                    custom_color=row["custom_color"] or "#A855F7",
+                    custom_image=row["custom_image"],
+                    custom_thumbnail=row["custom_thumbnail"],
+                    show_invite=bool(row["show_invite"]),
+                    show_support=bool(row["show_support"]),
+                    show_dashboard=bool(row["show_dashboard"]),
+                    auto_delete=int(row["auto_delete"] or 0),
+                    alert_channel_id=str(row["alert_channel_id"]) if row["alert_channel_id"] else None,
+                    alert_enabled=bool(row["alert_enabled"])
+                )
+    return TagBotConfig(guild_id=str(guild_id))
+
+
+@router.patch("/{guild_id}/tagbot", summary="Update Tag Bot / Mention Alert config")
+@router.patch("/{guild_id}/mention", summary="Update Mention Alert config (alias)")
+async def patch_guild_tagbot(guild_id: int, data: TagBotUpdate):
+    await _ensure_tagbot_table()
+    async with aiosqlite.connect(TAGBOT_DB_PATH) as db:
+        async with db.execute("SELECT 1 FROM tagbot_config WHERE guild_id = ?", (guild_id,)) as cur:
+            exists = await cur.fetchone()
+
+        if not exists:
+            await db.execute("""
+                INSERT INTO tagbot_config (
+                    guild_id, enabled, trigger_type, response_type,
+                    custom_message, custom_title, custom_color,
+                    custom_image, custom_thumbnail, show_invite,
+                    show_support, show_dashboard, auto_delete,
+                    alert_channel_id, alert_enabled
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                guild_id,
+                1 if data.enabled is not False else 0,
+                data.trigger_type or "single",
+                data.response_type or "default",
+                data.custom_message,
+                data.custom_title,
+                data.custom_color or "#A855F7",
+                data.custom_image,
+                data.custom_thumbnail,
+                1 if data.show_invite is not False else 0,
+                1 if data.show_support is not False else 0,
+                1 if data.show_dashboard is not False else 0,
+                data.auto_delete or 0,
+                data.alert_channel_id,
+                1 if data.alert_enabled else 0
+            ))
+        else:
+            fields = []
+            params = []
+            update_dict = data.dict(exclude_unset=True)
+            for k, v in update_dict.items():
+                if isinstance(v, bool):
+                    v = 1 if v else 0
+                fields.append(f"{k} = ?")
+                params.append(v)
+            if fields:
+                query = f"UPDATE tagbot_config SET {', '.join(fields)} WHERE guild_id = ?"
+                params.append(guild_id)
+                await db.execute(query, params)
+        await db.commit()
+    return {"status": "success"}
+
 
 
 

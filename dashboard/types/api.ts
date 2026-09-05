@@ -304,3 +304,39 @@ export interface GiveawayItem {
   ends_at: number;
   host_id?: string;
 }
+
+export interface TagBotConfig {
+  guild_id: string;
+  enabled: boolean;
+  trigger_type: "single" | "any";
+  response_type: "default" | "custom";
+  custom_message: string | null;
+  custom_title: string | null;
+  custom_color: string;
+  custom_image: string | null;
+  custom_thumbnail: string | null;
+  show_invite: boolean;
+  show_support: boolean;
+  show_dashboard: boolean;
+  auto_delete: number;
+  alert_channel_id: string | null;
+  alert_enabled: boolean;
+}
+
+export interface TagBotUpdate {
+  enabled?: boolean;
+  trigger_type?: "single" | "any";
+  response_type?: "default" | "custom";
+  custom_message?: string | null;
+  custom_title?: string | null;
+  custom_color?: string;
+  custom_image?: string | null;
+  custom_thumbnail?: string | null;
+  show_invite?: boolean;
+  show_support?: boolean;
+  show_dashboard?: boolean;
+  auto_delete?: number;
+  alert_channel_id?: string | null;
+  alert_enabled?: boolean;
+}
+

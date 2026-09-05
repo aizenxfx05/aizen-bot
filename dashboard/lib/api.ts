@@ -38,7 +38,9 @@ import {
   AdminConfigUpdate,
   BackupInfo,
   MusicConfig,
-  GiveawayItem
+  GiveawayItem,
+  TagBotConfig,
+  TagBotUpdate
 } from "@/types/api";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
@@ -338,5 +340,22 @@ export const api = {
     request<{ status: string }>(`/guilds/${guildId}/giveaways/${messageId}`, {
       method: "DELETE",
     }),
+
+  // Tag Bot / Mention Alert System
+  getTagBot: (guildId: string) =>
+    request<TagBotConfig>(`/guilds/${guildId}/tagbot`),
+  updateTagBot: (guildId: string, data: TagBotUpdate) =>
+    request<{ status: string }>(`/guilds/${guildId}/tagbot`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
+  getMentionAlert: (guildId: string) =>
+    request<TagBotConfig>(`/guilds/${guildId}/mention`),
+  updateMentionAlert: (guildId: string, data: TagBotUpdate) =>
+    request<{ status: string }>(`/guilds/${guildId}/mention`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
 };
+
 

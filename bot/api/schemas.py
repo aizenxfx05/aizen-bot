@@ -384,3 +384,41 @@ class GiveawayCreate(BaseModel):
     prize: str
     winners: int = 1
     duration_minutes: int = 60
+
+
+# --- Tag Bot / Mention Alert Schemas ---
+
+class TagBotConfig(BaseModel):
+    guild_id: str
+    enabled: bool = True
+    trigger_type: str = "single"  # "single" | "any"
+    response_type: str = "default"  # "default" | "custom"
+    custom_message: Optional[str] = None
+    custom_title: Optional[str] = None
+    custom_color: str = "#A855F7"
+    custom_image: Optional[str] = None
+    custom_thumbnail: Optional[str] = None
+    show_invite: bool = True
+    show_support: bool = True
+    show_dashboard: bool = True
+    auto_delete: int = 0  # in seconds, 0 = disabled
+    alert_channel_id: Optional[str] = None
+    alert_enabled: bool = False
+
+
+class TagBotUpdate(BaseModel):
+    enabled: Optional[bool] = None
+    trigger_type: Optional[str] = None
+    response_type: Optional[str] = None
+    custom_message: Optional[str] = None
+    custom_title: Optional[str] = None
+    custom_color: Optional[str] = None
+    custom_image: Optional[str] = None
+    custom_thumbnail: Optional[str] = None
+    show_invite: Optional[bool] = None
+    show_support: Optional[bool] = None
+    show_dashboard: Optional[bool] = None
+    auto_delete: Optional[int] = None
+    alert_channel_id: Optional[str] = None
+    alert_enabled: Optional[bool] = None
+

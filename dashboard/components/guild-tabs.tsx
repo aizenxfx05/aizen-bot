@@ -43,7 +43,8 @@ import {
   Zap,
   Mic,
   Mail,
-  SlidersHorizontal
+  SlidersHorizontal,
+  AtSign
 } from "lucide-react";
 
 interface Tab {
@@ -83,6 +84,7 @@ export function GuildTabs({ guildId }: { guildId: string }) {
     { name: "Auto React", href: `/dashboard/guild/${guildId}/autoreact`, icon: Zap },
     { name: "Custom Roles", href: `/dashboard/guild/${guildId}/customroles`, icon: Sparkles },
     { name: "Join DM", href: `/dashboard/guild/${guildId}/joindm`, icon: Mail },
+    { name: "Tag Bot / Alert", href: `/dashboard/guild/${guildId}/tagbot`, icon: AtSign },
     { name: "Leveling", href: `/dashboard/guild/${guildId}/leveling`, icon: BarChart4 },
     { name: "Logging", href: `/dashboard/guild/${guildId}/logging`, icon: FileText },
     { name: "Settings", href: `/dashboard/guild/${guildId}/settings`, icon: Settings },

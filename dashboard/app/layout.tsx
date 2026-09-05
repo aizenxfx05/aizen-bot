@@ -29,6 +29,11 @@ const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || "Aizen XFX";
 export const metadata: Metadata = {
   title: `${brandName} — Ultimate Discord Security Bot`,
   description: `${brandName} — Advanced Discord community management, AI chat, and military-grade server security.`,
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({

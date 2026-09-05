@@ -59,11 +59,11 @@ export default function LandingPage() {
       <nav className="fixed top-0 w-full z-50 border-b border-white/[0.03] bg-[#07070D]/80 backdrop-blur-3xl transition-all duration-500">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4 group cursor-pointer">
-            <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-[#A855F7] to-[#7C3AED] flex items-center justify-center shadow-lg shadow-[#A855F7]/20 border border-white/10 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 overflow-hidden relative">
+            <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-[#A855F7] to-[#7C3AED] p-[2px] flex items-center justify-center shadow-lg shadow-[#A855F7]/30 border border-[#A855F7]/30 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 overflow-hidden relative">
               <img 
                 src="/logo.png" 
-                alt="Logo" 
-                className="h-full w-full object-cover relative z-10" 
+                alt="Aizen XFX Logo" 
+                className="h-full w-full object-cover rounded-[14px] relative z-10" 
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
                 }} 

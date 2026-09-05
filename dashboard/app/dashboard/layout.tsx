@@ -201,12 +201,12 @@ export default function DashboardLayout({
         {/* Header */}
         <div className="flex h-16 items-center px-6 mt-4 flex-shrink-0">
           <div className="flex items-center gap-3 group">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-[#A855F7] to-[#7C3AED] flex items-center justify-center shadow-lg shadow-[#A855F7]/30 group-hover:scale-110 transition-transform border border-white/10 overflow-hidden relative">
+            <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-[#A855F7] to-[#7C3AED] p-[2px] flex items-center justify-center shadow-lg shadow-[#A855F7]/30 group-hover:scale-105 transition-all border border-[#A855F7]/30 overflow-hidden relative">
               {/* Custom Logo Image (falls back to Bot icon if not provided) */}
               <img 
                 src="/logo.png" 
-                alt="Logo" 
-                className="h-full w-full object-cover relative z-10" 
+                alt="Aizen XFX Logo" 
+                className="h-full w-full object-cover rounded-[14px] relative z-10" 
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
                 }} 
